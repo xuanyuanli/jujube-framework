@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.xuanyuanli</groupId>
+        <artifactId>jujube-parent</artifactId>
+        <version>3.1.0</version>
+        <relativePath/>
+    </parent>
+    <artifactId>jujube-core-base</artifactId>
+    <version>3.1.0</version>
+    <description>极简基础核心模块 - 零外部依赖</description>
+    <packaging>jar</packaging>
+
+    <name>Jujube Core Base</name>
+    <url>https://github.com/xuanyuanli/jujube-core/</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>xuanyuanli</name>
+            <email>xuanyuanli999@gmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:xuanyuanli/jujube-core.git</connection>
+        <developerConnection>scm:git:git@github.com:xuanyuanli/jujube-core.git</developerConnection>
+        <url>git@github.com:xuanyuanli/jujube-core.git</url>
+    </scm>
+
+    <!-- 无任何外部依赖，仅依赖JDK -->
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- 测试依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

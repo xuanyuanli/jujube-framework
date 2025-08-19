@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.xuanyuanli</groupId>
+        <artifactId>jujube-parent</artifactId>
+        <version>3.1.0</version>
+        <relativePath/>
+    </parent>
+    <artifactId>jujube-core-all</artifactId>
+    <version>3.1.0</version>
+    <description>完整功能聚合模块</description>
+    <packaging>jar</packaging>
+
+    <name>Jujube Core All</name>
+    <url>https://github.com/xuanyuanli/jujube-core/</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>xuanyuanli</name>
+            <email>xuanyuanli999@gmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:xuanyuanli/jujube-core.git</connection>
+        <developerConnection>scm:git:git@github.com:xuanyuanli/jujube-core.git</developerConnection>
+        <url>git@github.com:xuanyuanli/jujube-core.git</url>
+    </scm>
+
+    <dependencies>
+        <!-- 聚合所有子模块 -->
+        <dependency>
+            <groupId>cn.xuanyuanli</groupId>
+            <artifactId>jujube-core-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.xuanyuanli</groupId>
+            <artifactId>jujube-core-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.xuanyuanli</groupId>
+            <artifactId>jujube-core-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.xuanyuanli</groupId>
+            <artifactId>jujube-core-image</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.xuanyuanli</groupId>
+            <artifactId>jujube-core-office</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.xuanyuanli</groupId>
+            <artifactId>jujube-core-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.xuanyuanli</groupId>
+            <artifactId>jujube-core-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.xuanyuanli</groupId>
+            <artifactId>jujube-core-spring</artifactId>
+        </dependency>
+    </dependencies>
+</project>
