@@ -16,12 +16,6 @@ Jujube Core 是一个功能丰富的Java核心工具库，旨在为Java开发者
 
 与传统轻量级工具包不同，**Jujube Core** 集成了众多业界流行的三方包作为基础，更适合作为企业级项目的二方包使用。如果你需要一个轻量级的三方包，推荐使用 [Hutool](https://hutool.cn/) 等其他选择。
 
-## ✨ 最新动态
-
-- **[3.1.0](https://github.com/xuanyuanli/jujube-core/releases/tag/v3.1.0)** - 🏗️ 全面重构为模块化架构，支持按需引入
-- **[3.0.0](https://github.com/xuanyuanli/jujube-core/releases/tag/v3.0.0)** - 升级到Java 21，全面优化性能
-- **[2.0](https://github.com/xuanyuanli/jujube-core/releases/tag/v2.0)** - 包结构调整，大量工具类性能优化
-
 ## 🏗️ 模块化架构
 
 Jujube Core 3.x 版本采用模块化设计，您可以根据需要选择引入特定功能模块：
@@ -214,7 +208,7 @@ ApplicationContext context = ApplicationContextHolder.get();
 
 ## 🔗 相关链接
 
-- [GitHub 仓库](https://github.com/xuanyuanli/jujube-core)
+- [GitHub 仓库](https://github.com/xuanyuanli/jujube-framework)
 - [Maven Central](https://search.maven.org/search?q=g:cn.xuanyuanli%20AND%20a:jujube-core)
-- [问题反馈](https://github.com/xuanyuanli/jujube-core/issues)
+- [问题反馈](https://github.com/xuanyuanli/jujube-framework/issues)
 

@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Jujube Core JSON</name>
-    <url>https://github.com/xuanyuanli/jujube-core/</url>
+    <url>https://github.com/xuanyuanli/jujube-framework/</url>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -28,9 +28,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:xuanyuanli/jujube-core.git</connection>
-        <developerConnection>scm:git:git@github.com:xuanyuanli/jujube-core.git</developerConnection>
-        <url>git@github.com:xuanyuanli/jujube-core.git</url>
+        <connection>scm:git:git@github.com:xuanyuanli/jujube-framework.git</connection>
+        <developerConnection>scm:git:git@github.com:xuanyuanli/jujube-framework.git</developerConnection>
+        <url>git@github.com:xuanyuanli/jujube-framework.git</url>
     </scm>
 
     <dependencies>

@@ -28,9 +28,6 @@
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
-    "additionalDirectories": [
-      "../jujube-parent",
-      "../jujube-core"
-    ]
+    "additionalDirectories": []
   }
 }

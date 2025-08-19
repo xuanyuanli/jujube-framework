@@ -14,7 +14,7 @@
 
     <name>Jujube JDBC Spring Boot Starter</name>
     <description>Jujube JDBC的Spring Boot Starter</description>
-    <url>https://github.com/xuanyuanli/jujube-jdbc/</url>
+    <url>https://github.com/xuanyuanli/jujube-framework/</url>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -28,9 +28,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:xuanyuanli/jujube-jdbc.git</connection>
-        <developerConnection>scm:git:git@github.com:xuanyuanli/jujube-jdbc.git</developerConnection>
-        <url>git@github.com:xuanyuanli/jujube-jdbc.git</url>
+        <connection>scm:git:git@github.com:xuanyuanli/jujube-framework.git</connection>
+        <developerConnection>scm:git:git@github.com:xuanyuanli/jujube-framework.git</developerConnection>
+        <url>git@github.com:xuanyuanli/jujube-framework.git</url>
     </scm>
 
     <dependencies>

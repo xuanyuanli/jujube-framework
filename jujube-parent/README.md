@@ -16,16 +16,6 @@ Jujube Parent 是 Jujube 系列项目的 Maven 父 POM，为所有子模块提�
 - **版本控制**：集中管理 Jujube 系列模块的版本号
 - **质量保证**：配置代码质量检查和测试标准
 
-## 📦 子模块管理
-
-Jujube Parent 管理以下核心模块：
-
-| 模块                                                                                               | 说明                       | 版本    |
-|--------------------------------------------------------------------------------------------------|--------------------------|-------|
-| [jujube-core](https://github.com/xuanyuanli/jujube-core)                                         | 核心工具库                    | 3.0.0 |
-| [jujube-jdbc](https://github.com/xuanyuanli/jujube-jdbc)                                         | JDBC 增强工具                | 3.0.0 |
-| [spring-boot-starter-jujube-jdbc](https://github.com/xuanyuanli/spring-boot-starter-jujube-jdbc) | Spring Boot JDBC Starter | 3.0.0 |
-
 ## 🛠️ 技术栈
 
 ### 基础框架
@@ -175,8 +165,8 @@ Jujube Parent 遵循语义化版本规范：
 
 ## 🔗 相关链接
 
-- [GitHub 仓库](https://github.com/xuanyuanli/jujube-parent)
+- [GitHub 仓库](https://github.com/xuanyuanli/jujube-framework)
 - [Maven Central](https://search.maven.org/search?q=g:cn.xuanyuanli%20AND%20a:jujube-parent)
-- [问题反馈](https://github.com/xuanyuanli/jujube-parent/issues)
-- [Jujube Core](https://github.com/xuanyuanli/jujube-core) - 核心工具库
-- [Jujube JDBC](https://github.com/xuanyuanli/jujube-jdbc) - ORM工具
+- [问题反馈](https://github.com/xuanyuanli/jujube-framework/issues)
+- [Jujube Core](https://github.com/xuanyuanli/jujube-framework) - 核心工具库
+- [Jujube JDBC](https://github.com/xuanyuanli/jujube-framework) - ORM工具

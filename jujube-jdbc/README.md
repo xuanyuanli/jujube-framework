@@ -21,11 +21,6 @@ Jujube JDBC 是一款基于 Spring JDBC 的轻量级 ORM 框架，旨在简化 J
 - 🔄 **分页支持** - 内置分页功能，支持复杂查询分页
 - 🎯 **规格查询** - 支持链式调用构建复杂查询条件
 
-## ✨ 最新动态
-
-- **v3.0.0** - 全面升级至 Java 21 + Spring Boot 3.x，性能优化，架构重构
-- **v2.1** - 包结构调整，性能大幅优化，增加 @Column 注解实现表字段对应
-
 ## 🚀 快速开始
 
 ### 📦 Maven 依赖
@@ -594,9 +589,9 @@ class UserDaoTest {
 
 ## 🔗 相关链接
 
-- 📚 [详细文档](https://github.com/xuanyuanli/jujube-jdbc)
-- 🐛 [问题反馈](https://github.com/xuanyuanli/jujube-jdbc/issues)
-- 💬 [讨论区](https://github.com/xuanyuanli/jujube-jdbc/discussions)
+- 📚 [详细文档](https://github.com/xuanyuanli/jujube-framework)
+- 🐛 [问题反馈](https://github.com/xuanyuanli/jujube-framework/issues)
+- 💬 [讨论区](https://github.com/xuanyuanli/jujube-framework/discussions)
 - 📦 [Maven Central](https://search.maven.org/search?q=g:cn.xuanyuanli%20AND%20a:jujube-jdbc)
 
 ## 👨‍💻 作者
