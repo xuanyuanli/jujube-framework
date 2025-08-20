@@ -1,7 +1,5 @@
 package cn.xuanyuanli.core.util;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -105,8 +103,8 @@ public class Beans {
     /**
      * 基本类型封装类列表
      */
-    private final static List<Class<?>> BASIC_TYPE = Lists.newArrayList(Double.class, String.class, Float.class, Byte.class, Integer.class, Character.class,
-            Long.class, Short.class, Boolean.class);
+    private final static List<Class<?>> BASIC_TYPE = new ArrayList<>(Arrays.asList(Double.class, String.class, Float.class, Byte.class, Integer.class, Character.class,
+            Long.class, Short.class, Boolean.class));
     /**
      * 转换工具类
      */
@@ -540,7 +538,7 @@ public class Beans {
      * @return {@link Map}<{@link String}, {@link Object}>
      */
     public static Map<String, Object> getFormalParamSimpleMapping(Method method, Object... args) {
-        Map<String, Object> result = Maps.newHashMap();
+        Map<String, Object> result = new HashMap<>();
         String[] names = getMethodParamNames(method);
         if (names == null || names.length == 0) {
             return result;

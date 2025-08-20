@@ -3,7 +3,8 @@ package cn.xuanyuanli.core.util;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 public class RandomsTest {
@@ -66,6 +67,6 @@ public class RandomsTest {
 
     @Test
     void randomCollection() {
-        assertThat(Randoms.randomList(Lists.newArrayList(1, 2, 3, 4, 5), 2)).hasSize(2);
+        assertThat(Randoms.randomList(new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5)), 2)).hasSize(2);
     }
 }

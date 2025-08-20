@@ -2,7 +2,7 @@ package cn.xuanyuanli.core.util.office;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -49,8 +49,8 @@ class ExcelWriterTest {
     @Test
     void writeExcelWithTemplate() throws IOException {
         List<List<String>> lines = new ArrayList<>();
-        lines.add(Lists.newArrayList("title1", "title2", "title3"));
-        lines.add(Lists.newArrayList("1", "a", "#"));
+        lines.add(new ArrayList<>(Arrays.asList("title1", "title2", "title3")));
+        lines.add(new ArrayList<>(Arrays.asList("1", "a", "#")));
         File destFile = new File(SystemProperties.TMPDIR, SnowFlakes.nextId() + "-ExcelWriterTest.xlsx");
         ExcelWriter.writeExcelWithTemplate(TEMPLATE_FILE.getAbsolutePath(), destFile.getAbsolutePath(), 1, lines,
                 sheet -> ExcelWriter.setValidation(sheet, new String[]{"op1", "op2"}, 0, 0, 3, 3));
@@ -75,8 +75,8 @@ class ExcelWriterTest {
     @Test
     void generateExcel() throws IOException {
         List<List<String>> lines = new ArrayList<>();
-        lines.add(Lists.newArrayList("title1", "title2", "title3"));
-        lines.add(Lists.newArrayList("1", "a", "#"));
+        lines.add(new ArrayList<>(Arrays.asList("title1", "title2", "title3")));
+        lines.add(new ArrayList<>(Arrays.asList("1", "a", "#")));
         File destFile = new File(SystemProperties.TMPDIR, SnowFlakes.nextId() + "-ExcelWriterTest.xlsx");
         ExcelWriter.generateExcel(destFile, lines);
         ExcelReader reader;
@@ -97,8 +97,8 @@ class ExcelWriterTest {
     @Test
     void generateCsv() {
         List<List<String>> lines = new ArrayList<>();
-        lines.add(Lists.newArrayList("title1", "title2", "title3"));
-        lines.add(Lists.newArrayList("中国", "a", "#"));
+        lines.add(new ArrayList<>(Arrays.asList("title1", "title2", "title3")));
+        lines.add(new ArrayList<>(Arrays.asList("中国", "a", "#")));
         File destFile = new File(SystemProperties.TMPDIR, SnowFlakes.nextId() + "-ExcelWriterTest.xlsx");
         ExcelWriter.generateCsv(destFile, lines);
         CsvReader reader = new CsvReader(destFile, Charsets.GBK, ExcelReaderConfig.DEFAULT);
@@ -116,8 +116,8 @@ class ExcelWriterTest {
     @Test
     void generateCsvInputStream() throws IOException {
         List<List<String>> lines = new ArrayList<>();
-        lines.add(Lists.newArrayList("title1", "title2", "title3"));
-        lines.add(Lists.newArrayList("中国", "a", "#"));
+        lines.add(new ArrayList<>(Arrays.asList("title1", "title2", "title3")));
+        lines.add(new ArrayList<>(Arrays.asList("中国", "a", "#")));
         InputStream inputStream = ExcelWriter.generateCsvInputStream(lines);
         Assertions.assertThat(inputStream).isNotNull();
         Assertions.assertThat(IOUtils.toByteArray(inputStream).length).isEqualTo(29);
@@ -130,7 +130,7 @@ class ExcelWriterTest {
         entity.setAuctioneerName("保利");
         entity.setBeginTime(1602536230L);
         entity.setCommission(52012.63D);
-        List<List<String>> lines = ExcelWriter.getLinesFromEntities(Lists.newArrayList(entity), true);
+        List<List<String>> lines = ExcelWriter.getLinesFromEntities(new ArrayList<>(List.of(entity)), true);
         Assertions.assertThat(lines.toString()).isEqualTo("[[拍卖行名称, 开始时间, 佣金], [保利, 2020-10-13 04:57:10, 52012.63]]");
     }
 

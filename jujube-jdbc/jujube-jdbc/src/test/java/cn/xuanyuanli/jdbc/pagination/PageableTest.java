@@ -2,12 +2,12 @@ package cn.xuanyuanli.jdbc.pagination;
 
 import cn.xuanyuanli.core.util.Pojos;
 import cn.xuanyuanli.core.lang.BaseEntity;
-import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +46,7 @@ public class PageableTest {
     @Test
     void getData(){
         Pageable<String> pageable = new Pageable<>();
-        pageable.setData(Lists.newArrayList("1"));
+        pageable.setData(new ArrayList<>(List.of("1")));
         assertThat(pageable.getData()).containsOnly("1");
     }
 
@@ -75,13 +75,13 @@ public class PageableTest {
     void toGenericType(){
         Pageable<FromBO> pageable = new Pageable<>();
         pageable.setTotalElements(1);
-        pageable.setData(Lists.newArrayList(new FromBO().setAge(1).setName("a").setList(Lists.newArrayList("0"))));
+        pageable.setData(new ArrayList<>(Collections.singletonList(new FromBO().setAge(1).setName("a").setList(new ArrayList<>(List.of("0"))))));
         Pageable<DestBO> boPageable = pageable.toGenericType(DestBO.class);
         assertThat(boPageable.getIndex()).isEqualTo(1);
         assertThat(boPageable.getSize()).isEqualTo(10);
         assertThat(boPageable.getTotalElements()).isEqualTo(1);
         assertThat(boPageable.getStart()).isEqualTo(0);
-        assertThat(boPageable.getData()).containsOnly(new DestBO().setAge(1).setName("a").setList(Lists.newArrayList("0")));
+        assertThat(boPageable.getData()).containsOnly(new DestBO().setAge(1).setName("a").setList(new ArrayList<>(List.of("0"))));
     }
 
     @Test
@@ -101,19 +101,19 @@ public class PageableTest {
     void toGenericFunc(){
         Pageable<FromBO> pageable = new Pageable<>();
         pageable.setTotalElements(1);
-        pageable.setData(Lists.newArrayList(new FromBO().setAge(1).setName("a").setList(Lists.newArrayList("0"))));
+        pageable.setData(new ArrayList<>(Collections.singletonList(new FromBO().setAge(1).setName("a").setList(new ArrayList<>(List.of("0"))))));
         Pageable<DestBO> boPageable = pageable.toGenericType(f-> Pojos.mapping(f,DestBO.class));
         assertThat(boPageable.getIndex()).isEqualTo(1);
         assertThat(boPageable.getSize()).isEqualTo(10);
         assertThat(boPageable.getTotalElements()).isEqualTo(1);
         assertThat(boPageable.getStart()).isEqualTo(0);
-        assertThat(boPageable.getData()).containsOnly(new DestBO().setAge(1).setName("a").setList(Lists.newArrayList("0")));
+        assertThat(boPageable.getData()).containsOnly(new DestBO().setAge(1).setName("a").setList(new ArrayList<>(List.of("0"))));
     }
 
     @Test
     void iterator(){
         Pageable<FromBO> pageable = new Pageable<>();
-        ArrayList<FromBO> data = Lists.newArrayList(new FromBO().setAge(1).setName("a").setList(Lists.newArrayList("0")));
+        ArrayList<FromBO> data = new ArrayList<>(Collections.singletonList(new FromBO().setAge(1).setName("a").setList(new ArrayList<>(List.of("0")))));
         pageable.setData(data);
         assertThat(pageable.iterator().next()).isEqualTo(data.iterator().next());
     }

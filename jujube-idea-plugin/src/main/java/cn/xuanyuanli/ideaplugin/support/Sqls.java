@@ -1,6 +1,5 @@
 package cn.xuanyuanli.ideaplugin.support;
 
-import com.google.common.collect.Lists;
 import com.intellij.database.model.DasTable;
 import com.intellij.database.model.DataType;
 import com.intellij.database.psi.DbDataSource;
@@ -34,10 +33,10 @@ import cn.xuanyuanli.util.CamelCase;
  */
 public class Sqls {
 
-    private static final List<String> INT_STRS = Lists.newArrayList("type", "checked", "is", "need", "has", "enable", "status", "state", "ratio");
-    private static final List<String> LONG_STRS = Lists.newArrayList("id", "time", "count");
-    private static final List<String> STRING_STRS = Lists.newArrayList("lotid", "jump");
-    private static final List<String> DOUBLE_STRS = Lists.newArrayList("price", "account", "amount", "total", "charge", "commission", "tax", "exchange");
+    private static final List<String> INT_STRS = List.of("type", "checked", "is", "need", "has", "enable", "status", "state", "ratio");
+    private static final List<String> LONG_STRS = List.of("id", "time", "count");
+    private static final List<String> STRING_STRS = List.of("lotid", "jump");
+    private static final List<String> DOUBLE_STRS = List.of("price", "account", "amount", "total", "charge", "commission", "tax", "exchange");
 
 
     /**

@@ -1,7 +1,8 @@
 package cn.xuanyuanli.jdbc.base.jpa.strategy;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import cn.xuanyuanli.jdbc.base.jpa.JpaBaseDaoSupport;
@@ -38,7 +39,7 @@ public class FindAllQuery extends BaseQueryStrategy {
         Spec spec = new Spec();
         DefaultHandlerChain selfChain = new DefaultHandlerChain();
         selfChain.addHandlers(HandlerContext.PREPOSITION_HANDLER);
-        selfChain.handler(method, spec, tmname, Lists.newArrayList(args));
+        selfChain.handler(method, spec, tmname, new ArrayList<>(Arrays.asList(args)));
         List<String> selectFields = getSelectFieldsByMethod(method, tableName);
         return new Query(selectFields.stream().map(e -> new DbAndEntityFiled(e, null)).collect(Collectors.toList()), spec);
     }

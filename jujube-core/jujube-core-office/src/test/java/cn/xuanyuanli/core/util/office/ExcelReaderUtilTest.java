@@ -1,6 +1,6 @@
 package cn.xuanyuanli.core.util.office;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +24,7 @@ class ExcelReaderUtilTest {
     @Test
     void testIsEmtpyRow() {
         Assertions.assertTrue(ExcelReaderUtil.isEmtpyRow(new ArrayList<>()));
-        Assertions.assertFalse(ExcelReaderUtil.isEmtpyRow(Lists.newArrayList("1", "2", "3")));
+        Assertions.assertFalse(ExcelReaderUtil.isEmtpyRow(new ArrayList<>(Arrays.asList("1", "2", "3"))));
     }
 
     @Test

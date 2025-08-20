@@ -22,17 +22,17 @@ Jujube Core 3.x 版本采用模块化设计，您可以根据需要选择引入�
 
 ### 📦 模块列表
 
-| 模块 | 功能描述 | 依赖说明 |
-|------|----------|----------|
-| `jujube-core-base` | 基础核心模块 | 零外部依赖，仅依赖JDK |
-| `jujube-core-utils` | 通用工具模块 | 依赖 Apache Commons、Guava 等 |
-| `jujube-core-json` | JSON处理模块 | 基于 Jackson |
-| `jujube-core-image` | 图像处理模块 | 图片处理、二维码生成 |
-| `jujube-core-office` | 办公文档模块 | Excel、Word、CSV 处理 |
-| `jujube-core-security` | 安全加密模块 | AES 等加密算法 |
-| `jujube-core-web` | Web开发模块 | HTTP、网络、用户代理解析 |
-| `jujube-core-spring` | Spring集成模块 | Spring 环境增强功能 |
-| `jujube-core-all` | 完整功能聚合模块 | 包含所有子模块 |
+| 模块 | 功能描述 | 依赖说明                 |
+|------|----------|----------------------|
+| `jujube-core-base` | 基础核心模块 | 仅依赖Slf4j 和 JDK |
+| `jujube-core-utils` | 通用工具模块 | 依赖 Apache Commons 等  |
+| `jujube-core-json` | JSON处理模块 | 基于 Jackson           |
+| `jujube-core-image` | 图像处理模块 | 图片处理、二维码生成           |
+| `jujube-core-office` | 办公文档模块 | Excel、Word、CSV 处理    |
+| `jujube-core-security` | 安全加密模块 | AES 等加密算法            |
+| `jujube-core-web` | Web开发模块 | HTTP、网络、用户代理解析       |
+| `jujube-core-spring` | Spring集成模块 | Spring 环境增强功能        |
+| `jujube-core-all` | 完整功能聚合模块 | 包含所有子模块              |
 
 ## 🚀 快速开始
 
@@ -125,7 +125,6 @@ Jujube Core 3.x 版本采用模块化设计，您可以根据需要选择引入�
 
 ### 🔧 工具模块 (`jujube-core-utils`)
 - **通用工具**：[Apache Commons](https://commons.apache.org/) (Lang3, Text, IO, BeanUtils)
-- **集合处理**：[Google Guava](https://github.com/google/guava)
 - **字节码处理**：[Javassist](https://www.javassist.org/)
 - **模板引擎**：[FreeMarker](https://freemarker.apache.org/)
 - **拼音处理**：[pinyin4j](https://github.com/belerweb/pinyin4j)

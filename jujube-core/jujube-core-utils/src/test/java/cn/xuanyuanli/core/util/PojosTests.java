@@ -2,11 +2,8 @@ package cn.xuanyuanli.core.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -93,6 +90,7 @@ public class PojosTests {
         addresses.add(sex);
         Record record = new Record().set("addresses", addresses);
         User user = Pojos.mapping(record, User.class);
+        //noinspection AssertBetweenInconvertibleTypes
         assertThat(user.getAddresses()).isEqualTo(addresses);
     }
 
@@ -171,7 +169,7 @@ public class PojosTests {
         User user = new User();
         Sex sex = new Sex().setName("a");
         user.setSex(sex).setAge(10);
-        ArrayList<Address> addresses = Lists.newArrayList(new Address().setAddress("bj"));
+        ArrayList<Address> addresses = new ArrayList<>(Collections.singletonList(new Address().setAddress("bj")));
         user.setAddresses(addresses);
         User copy = Pojos.mapping(user, User.class);
         assertThat(copy.getSex()).isEqualTo(sex);
@@ -189,7 +187,7 @@ public class PojosTests {
     @Test
     public void mappingArrayBean() {
         User user = new User().setAge(12);
-        List<UserPrimitiveAge> userPrimitive = Pojos.mappingArray(Lists.newArrayList(user), UserPrimitiveAge.class);
+        List<UserPrimitiveAge> userPrimitive = Pojos.mappingArray(new ArrayList<>(Collections.singletonList(user)), UserPrimitiveAge.class);
         assertThat(userPrimitive.get(0).getAge()).isEqualTo(12);
     }
 
@@ -197,7 +195,7 @@ public class PojosTests {
     public void mappingArrayMap() {
         Record record = new Record().set("id", 1).set("name", "b");
         Record record1 = new Record().set("id", 2).set("name", "a").set("age", 1);
-        List<User> users = Pojos.mappingArray(Lists.newArrayList(record, record1), User.class);
+        List<User> users = Pojos.mappingArray(new ArrayList<>(Arrays.asList(record, record1)), User.class);
         assertThat(users.get(0).getAge()).isNull();
         assertThat(users.get(1).getAge()).isEqualTo(1);
         assertThat(users.get(0).getId()).isEqualTo(1L);
@@ -210,7 +208,7 @@ public class PojosTests {
     public void mappingArrayMapFieldMapping() {
         Record record = new Record().set("id", 1).set("a_name", "b");
         Record record1 = new Record().set("id", 2).set("a_name", "a").set("age", 1);
-        List<User> users = Pojos.mappingArray(Lists.newArrayList(record, record1), User.class, new FieldMapping().field("a_name", "name"));
+        List<User> users = Pojos.mappingArray(new ArrayList<>(Arrays.asList(record, record1)), User.class, new FieldMapping().field("a_name", "name"));
         assertThat(users.get(0).getAge()).isNull();
         assertThat(users.get(1).getAge()).isEqualTo(1);
         assertThat(users.get(0).getId()).isEqualTo(1L);
@@ -223,7 +221,7 @@ public class PojosTests {
     public void mappingArrayBeanAndMap() {
         Record record = new Record().set("id", 2).set("name", "a").set("age", 1);
         User record1 = new User().setId(1L).setName("b").setSex(new Sex().setName("nan"));
-        List<User> users = Pojos.mappingArray(Lists.newArrayList(record, record1), User.class);
+        List<User> users = Pojos.mappingArray(new ArrayList<>(Arrays.asList(record, record1)), User.class);
         assertThat(users.get(1).getAge()).isNull();
         assertThat(users.get(0).getAge()).isEqualTo(1);
         assertThat(users.get(1).getId()).isEqualTo(1L);

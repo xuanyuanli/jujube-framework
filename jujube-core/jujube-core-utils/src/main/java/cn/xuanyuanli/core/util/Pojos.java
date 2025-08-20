@@ -1,6 +1,5 @@
 package cn.xuanyuanli.core.util;
 
-import com.google.common.collect.Lists;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -206,7 +205,7 @@ public class Pojos {
         List<String> fieldNames;
         if (sourceObj instanceof Map) {
             Map<String, ?> map = (Map<String, ?>) sourceObj;
-            fieldNames = Lists.newArrayList(new TreeSet<>(map.keySet()));
+            fieldNames = new ArrayList<>(new TreeSet<>(map.keySet()));
         } else {
             fieldNames = Beans.getAllDeclaredFieldNames(sourceObj.getClass());
         }

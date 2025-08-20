@@ -1,32 +1,24 @@
 package cn.xuanyuanli.core.util;
 
-import com.fasterxml.jackson.core.JsonParser;
+import cn.xuanyuanli.core.lang.Record;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Table;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-import cn.xuanyuanli.core.lang.Record;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Json工具
@@ -52,37 +44,6 @@ public class Jsons {
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         OBJECT_MAPPER.configure(SerializationFeature.WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS, true);
         OBJECT_MAPPER.configure(Feature.ALLOW_SINGLE_QUOTES, true);
-
-        // 添加序列化方案
-        OBJECT_MAPPER.registerModule(new GuavaModule());
-        OBJECT_MAPPER.registerModule(new JodaModule());
-        OBJECT_MAPPER.registerModule(new Jdk8Module());
-        // Guava的Table没有反序列化方案，只能使用自定义方案了
-        SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addDeserializer(Table.class, new TableDeserializer());
-        OBJECT_MAPPER.registerModule(simpleModule);
-    }
-
-    /**
-     * Guavua Table的反序列化方案
-     */
-    public static class TableDeserializer extends JsonDeserializer<Table<?, ?, ?>> {
-
-        @Override
-        public Table<?, ?, ?> deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
-            final ImmutableTable.Builder<Object, Object, Object> tableBuilder = ImmutableTable.builder();
-            @SuppressWarnings("unchecked") final Map<Object, Map<Object, Object>> rowMap = jp.readValueAs(Map.class);
-            for (final Map.Entry<Object, Map<Object, Object>> rowEntry : rowMap.entrySet()) {
-                final Object rowKey = rowEntry.getKey();
-                for (final Map.Entry<Object, Object> cellEntry : rowEntry.getValue().entrySet()) {
-                    final Object colKey = cellEntry.getKey();
-                    final Object val = cellEntry.getValue();
-                    tableBuilder.put(rowKey, colKey, val);
-                }
-            }
-            return tableBuilder.build();
-        }
-
     }
 
     /**
@@ -171,6 +132,7 @@ public class Jsons {
      * @return {@link List}<{@link Map}<{@link String},{@link Object}>>
      */
     public static List<Map<String,Object>> parseJsonToListMap(String text) {
+        //noinspection Convert2Diamond
         return parseJson(text, new TypeReference<List<Map<String,Object>>>() {
         });
     }
@@ -192,6 +154,7 @@ public class Jsons {
      * @return {@link List}<{@link String}>
      */
     public static List<String> parseJsonToListString(String text) {
+        //noinspection Convert2Diamond
         return parseJson(text, new TypeReference<List<String>>() {
         });
     }

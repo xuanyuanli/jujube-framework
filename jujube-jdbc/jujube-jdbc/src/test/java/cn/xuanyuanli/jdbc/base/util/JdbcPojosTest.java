@@ -1,6 +1,7 @@
 package cn.xuanyuanli.jdbc.base.util;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -41,7 +42,7 @@ class JdbcPojosTest {
     void mappingArray() {
         RecordEntity record = new RecordEntity();
         record.set("id", 10L).set("name", "li").set("t_title", "art");
-        List<JdbcPojosTestUser> users = JdbcPojos.mappingArray(Lists.newArrayList(record), JdbcPojosTestUser.class);
+        List<JdbcPojosTestUser> users = JdbcPojos.mappingArray(new ArrayList<>(List.of(record)), JdbcPojosTestUser.class);
         Assertions.assertThat(users).hasSize(1);
         JdbcPojosTestUser user = users.get(0);
         Assertions.assertThat(user.getId()).isEqualTo(10L);

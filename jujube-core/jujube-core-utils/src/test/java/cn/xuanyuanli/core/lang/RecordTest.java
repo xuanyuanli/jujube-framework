@@ -2,14 +2,14 @@ package cn.xuanyuanli.core.lang;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import cn.xuanyuanli.core.lang.BaseEntity;
 import cn.xuanyuanli.core.util.Dates;
 import org.junit.jupiter.api.Test;
 
@@ -118,15 +118,15 @@ public class RecordTest {
         Record record = new Record().set("ids", "123");
         assertThat(record.getListRecord("ids")).isNull();
 
-        record = new Record().set("ids", Sets.newHashSet(1, 2, 3));
+        record = new Record().set("ids", new HashSet<>(Arrays.asList(1, 2, 3)));
         assertThat(record.getListRecord("ids")).hasSize(3).containsSequence(new Record(), new Record(), new Record());
 
         Record r1 = new Record().set("a", "a");
         Record r2 = new Record().set("b", "b");
-        record = new Record().set("ids", Sets.newHashSet(r1, r2));
+        record = new Record().set("ids", new HashSet<>(Arrays.asList(r1, r2)));
         assertThat(record.getListRecord("ids")).hasSize(2).containsSequence(r1, r2);
 
-        record = new Record().set("ids", Lists.newArrayList(r1, r2));
+        record = new Record().set("ids", new ArrayList<>(Arrays.asList(r1, r2)));
         assertThat(record.getListRecord("ids")).hasSize(2).containsSequence(r1, r2);
     }
 
@@ -135,10 +135,10 @@ public class RecordTest {
         Record record = new Record().set("ids", "123");
         assertThat(record.getListString("ids")).isNull();
 
-        record = new Record().set("ids", Sets.newHashSet(1, 2, 3));
+        record = new Record().set("ids", new HashSet<>(Arrays.asList(1, 2, 3)));
         assertThat(record.getListString("ids")).containsSequence("1", "2", "3");
 
-        record = new Record().set("ids", Lists.newArrayList("1", "2"));
+        record = new Record().set("ids", new ArrayList<>(Arrays.asList("1", "2")));
         assertThat(record.getListString("ids")).containsSequence("1", "2");
     }
 

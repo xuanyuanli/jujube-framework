@@ -1,8 +1,8 @@
 package cn.xuanyuanli.jdbc.base.spec;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,7 +62,7 @@ public class SpecSupport {
         if (searchParams == null) {
             throw new IllegalArgumentException("param can not be null");
         }
-        Map<String, SpecSupport> filters = Maps.newHashMap();
+        Map<String, SpecSupport> filters = new HashMap<>();
         for (Entry<String, Object> entry : searchParams.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();

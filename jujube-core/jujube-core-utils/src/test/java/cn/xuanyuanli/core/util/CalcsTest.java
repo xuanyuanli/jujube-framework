@@ -1,6 +1,7 @@
 package cn.xuanyuanli.core.util;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -171,11 +172,11 @@ public class CalcsTest {
 
     @Test
     void getAverage() {
-        Assertions.assertThat(Calcs.getAverage(Lists.newArrayList(12, 13, 14, 11, 10))).isEqualTo(12);
+        Assertions.assertThat(Calcs.getAverage(new ArrayList<>(Arrays.asList(12, 13, 14, 11, 10)))).isEqualTo(12);
     }
 
     @Test
     void getMedian() {
-        Assertions.assertThat(Calcs.getMedian(Lists.newArrayList(12, 13, 14, 11, 10))).isEqualTo(13);
+        Assertions.assertThat(Calcs.getMedian(new ArrayList<>(Arrays.asList(12, 13, 14, 11, 10)))).isEqualTo(13);
     }
 }

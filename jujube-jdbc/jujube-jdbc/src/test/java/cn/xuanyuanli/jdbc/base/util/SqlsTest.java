@@ -1,6 +1,6 @@
 package cn.xuanyuanli.jdbc.base.util;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -170,7 +170,7 @@ public class SqlsTest {
 
     @Test
     public void singleQuotes() {
-        String sql = Sqls.inJoin(Lists.newArrayList("name", "17世纪 铜鎏金自在观音'd", "\\d'"));
+        String sql = Sqls.inJoin(new ArrayList<>(Arrays.asList("name", "17世纪 铜鎏金自在观音'd", "\\d'")));
         Assertions.assertThat(sql).isEqualTo("'name','17世纪 铜鎏金自在观音\\'d','\\\\d\\''");
     }
 
@@ -178,25 +178,25 @@ public class SqlsTest {
     public void getBatchInsertSql() {
         List<Map<String, Object>> mapList = new ArrayList<>();
         mapList.add(Collections3.newHashMap("id", "1", "age", 12, "name_cn", null));
-        String sql = Sqls.getBatchInsertSql("user", Lists.newArrayList("id", "age", "name_cn"), mapList);
+        String sql = Sqls.getBatchInsertSql("user", new ArrayList<>(Arrays.asList("id", "age", "name_cn")), mapList);
         Assertions.assertThat(sql).isEqualTo("insert into user (`id` ,`age` ,`name_cn`) values('1' ,12 ,NULL)");
     }
 
     @Test
     public void getBatchInsertSql2() {
-        String sql = Sqls.getBatchInsertSql("user", Lists.newArrayList(new BatchEntity(1L, 12, "jack", null)));
+        String sql = Sqls.getBatchInsertSql("user", new ArrayList<>(List.of(new BatchEntity(1L, 12, "jack", null))));
         Assertions.assertThat(sql).isEqualTo("insert into user (`age` ,`desc` ,`id` ,`name_cn`) values(12 ,NULL ,1 ,'jack')");
     }
 
     @Test
     void realSql(){
-        String sql = Sqls.realSql("select * from a where t = ? and b like ?", Lists.newArrayList(1, "%2"));
+        String sql = Sqls.realSql("select * from a where t = ? and b like ?", new ArrayList<>(Arrays.asList(1, "%2")));
         Assertions.assertThat(sql).isEqualTo("select * from a where t = 1 and b like '%2'");
 
-        sql = Sqls.realSql("insert into a values(?,?,?)", Lists.newArrayList(1, 2,3));
+        sql = Sqls.realSql("insert into a values(?,?,?)", new ArrayList<>(Arrays.asList(1, 2,3)));
         Assertions.assertThat(sql).isEqualTo("insert into a values(1,2,3)");
 
-        sql = Sqls.realSql("update info set a=?,b=? where id=?", Lists.newArrayList(1, 2,3,4));
+        sql = Sqls.realSql("update info set a=?,b=? where id=?", new ArrayList<>(Arrays.asList(1, 2,3,4)));
         Assertions.assertThat(sql).isEqualTo("update info set a=1,b=2 where id=3");
     }
 

@@ -1,6 +1,5 @@
 package cn.xuanyuanli.core.util.office;
 
-import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -138,7 +137,7 @@ public class CsvReader implements Iterable<List<String>> {
      * @return {@link List}<{@link String}>
      */
     private List<String> recordToStringList(CSVRecord record) {
-        List<String> list = Lists.newArrayList();
+        List<String> list = new ArrayList<>();
         for (String cellContent : record) {
             if (config.isTrimCellContent()) {
                 cellContent = cellContent.trim();

@@ -3,7 +3,7 @@ package cn.xuanyuanli.jdbc.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -198,7 +198,7 @@ public class UserDaoTest {
 
     @Test
     public void findByDepartmentIdIn() {
-        List<User> users = userDao.findByDepartmentIdIn(Lists.newArrayList(2L, 3L));
+        List<User> users = userDao.findByDepartmentIdIn(new ArrayList<>(Arrays.asList(2L, 3L)));
         assertThat(users).hasSize(7);
     }
 
@@ -313,7 +313,7 @@ public class UserDaoTest {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "人");
         map.put("age", 1);
-        map.put("ids", Lists.newArrayList(1, 2, 3, 4, 5, 6));
+        map.put("ids", new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6)));
         PageableRequest request = new PageableRequest(1, 10);
         Pageable<UserPO> pageable = userDao.pageForUserList(map, request);
         assertThat(pageable.getTotalElements()).isEqualTo(2);
@@ -356,13 +356,13 @@ public class UserDaoTest {
 
     @Test
     public void findByAgeIn() {
-        List<User> list = userDao.findByAgeIn(Lists.newArrayList(10, 20, 9));
+        List<User> list = userDao.findByAgeIn(new ArrayList<>(Arrays.asList(10, 20, 9)));
         assertThat(list).isNotNull();
     }
 
     @Test
     public void queryUserByIds() {
-        List<UserPO> list = userDao.queryUserByIds(Lists.newArrayList(10L));
+        List<UserPO> list = userDao.queryUserByIds(new ArrayList<>(List.of(10L)));
         assertThat(list.get(0).getName()).isEqualTo("美国");
     }
 

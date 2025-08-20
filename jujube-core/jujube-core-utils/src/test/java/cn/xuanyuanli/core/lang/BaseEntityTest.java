@@ -1,6 +1,7 @@
 package cn.xuanyuanli.core.lang;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -70,7 +71,7 @@ public class BaseEntityTest {
         InnerBO bo = new InnerBO();
         bo.setName("efg");
         destEntity.setBo(bo);
-        destEntity.setList(Lists.newArrayList("7"));
+        destEntity.setList(new ArrayList<>(List.of("7")));
         FromBO fromBO = destEntity.toBO(FromBO.class);
         Assertions.assertThat(fromBO.getAge()).isEqualTo(destEntity.getAge());
         Assertions.assertThat(fromBO.getName()).isEqualTo(destEntity.getName());
@@ -97,7 +98,7 @@ public class BaseEntityTest {
     @Test
     public void cloneSelfArr() {
         DestEntity destEntity = new DestEntity();
-        destEntity.setList(Lists.newArrayList("7", "8"));
+        destEntity.setList(new ArrayList<>(Arrays.asList("7", "8")));
         DestEntity target = destEntity.cloneSelf();
         target.getList().remove("8");
         Assertions.assertThat(target.getList()).containsExactly("7");

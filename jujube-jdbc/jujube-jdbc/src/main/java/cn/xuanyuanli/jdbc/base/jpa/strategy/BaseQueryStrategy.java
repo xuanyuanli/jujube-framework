@@ -1,6 +1,5 @@
 package cn.xuanyuanli.jdbc.base.jpa.strategy;
 
-import com.google.common.collect.Lists;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,7 +103,7 @@ public abstract class BaseQueryStrategy {
         handlerChain.addHandlers(HandlerContext.PREPOSITION_HANDLER);
         handlerChain.addHandlers(HandlerContext.COMPLEX_HANDLER);
         handlerChain.addHandlers(HandlerContext.SIMPLE_HANDLER);
-        handlerChain.handler(method, spec, tmname, Lists.newArrayList(args));
+        handlerChain.handler(method, spec, tmname, new ArrayList<>(Arrays.asList(args)));
         return spec;
     }
 

@@ -1,6 +1,5 @@
 package cn.xuanyuanli.jdbc.binding;
 
-import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -8,12 +7,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -54,8 +48,8 @@ public class DaoSqlRegistry {
     /**
      * JPA方法支持的返回类型
      */
-    private final static List<Class<?>> JPA_METHOD_ALLOW_RETURN_TYPE = Lists.newArrayList(Double.class, Float.class, String.class, Integer.class, Long.class,
-            BigDecimal.class, double.class, float.class, int.class, long.class);
+    private final static List<Class<?>> JPA_METHOD_ALLOW_RETURN_TYPE = new ArrayList<>(Arrays.asList(Double.class, Float.class, String.class, Integer.class, Long.class,
+            BigDecimal.class, double.class, float.class, int.class, long.class));
 
     private static final ConcurrentMap<String, String> DB_COLUMN_CACHE = new ConcurrentHashMap<>();
 

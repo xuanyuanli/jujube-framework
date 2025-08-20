@@ -3,16 +3,8 @@ package cn.xuanyuanli.core.util;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -53,7 +45,7 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(123L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(12L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(36L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user, user2, user3);
+        List<ChildUser> data = new ArrayList<>(Arrays.asList(user, user2, user3));
         List<String> list = Collections3.extractToListString(data, "name");
         assertThat(list).hasSize(3).contains("bc", "ef", "df");
     }
@@ -63,11 +55,11 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(123L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(12L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(36L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user, user2, user3);
+        List<ChildUser> data = new ArrayList<>(Arrays.asList(user, user2, user3));
         assertThat(Collections3.getOne(data, "cardId", 123L)).isEqualTo(user);
 
         Record record = new Record().set("id", 34L);
-        List<Record> list = Lists.newArrayList(record);
+        List<Record> list = new ArrayList<>(Collections.singletonList(record));
         long id = 34;
         assertThat(Collections3.getOne(list, "id", id)).hasSize(1);
 
@@ -78,7 +70,7 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(12L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(12L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(36L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user, user2, user3);
+        List<ChildUser> data = new ArrayList<>(Arrays.asList(user, user2, user3));
         assertThat(Collections3.getPart(data, "cardId", 12L)).hasSize(2).contains(user, user2);
     }
 
@@ -93,7 +85,7 @@ public class Collections3Test {
         User user = new ChildUser().setCardId(12L).setName("bc");
         User user2 = new ChildUser().setCardId(123L).setName("ef");
         User user3 = new ChildUser().setCardId(36L).setName("df");
-        List<User> data = Lists.newArrayList(user, user2, user3);
+        List<User> data = new ArrayList<>(Arrays.asList(user, user2, user3));
         assertThat(Collections3.extractToMap(data, "cardId", "name")).hasSize(3).containsEntry(12L, "bc");
     }
 
@@ -102,7 +94,7 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(12L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(123L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(36L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user, user2, user3);
+        List<ChildUser> data = new ArrayList<>(Arrays.asList(user, user2, user3));
         assertThat(Collections3.extractToList(data, "name")).hasSize(3).contains("bc", "df", "ef");
     }
 
@@ -113,7 +105,7 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(12L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(123L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(36L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user, user2, user3);
+        List<ChildUser> data = new ArrayList<>(Arrays.asList(user, user2, user3));
         assertThat(Collections3.extractToList(data, "cardId", int.class)).hasSize(3).contains(12, 123, 36);
     }
 
@@ -122,8 +114,8 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(12L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(123L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(36L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user);
-        List<ChildUser> data2 = Lists.newArrayList(user2, user3);
+        List<ChildUser> data = new ArrayList<>(Collections.singletonList(user));
+        List<ChildUser> data2 = new ArrayList<>(Arrays.asList(user2, user3));
         assertThat(Collections3.union(data, data2)).hasSize(3).contains(user, user2, user3);
     }
 
@@ -132,8 +124,8 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(12L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(123L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(36L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user, user2);
-        List<ChildUser> data2 = Lists.newArrayList(user2, user3);
+        List<ChildUser> data = new ArrayList<>(Arrays.asList(user, user2));
+        List<ChildUser> data2 = new ArrayList<>(Arrays.asList(user2, user3));
         assertThat(Collections3.subtract(data, data2)).hasSize(1).contains(user);
     }
 
@@ -142,8 +134,8 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(12L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(123L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(36L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user, user2);
-        List<ChildUser> data2 = Lists.newArrayList(user2, user3);
+        List<ChildUser> data = new ArrayList<>(Arrays.asList(user, user2));
+        List<ChildUser> data2 = new ArrayList<>(Arrays.asList(user2, user3));
         assertThat(Collections3.intersection(data, data2)).hasSize(1).contains(user2);
     }
 
@@ -154,7 +146,7 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(12L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(123L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(36L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user, user2, user3);
+        List<ChildUser> data = new ArrayList<>(Arrays.asList(user, user2, user3));
         assertThat(Collections3.containsFieldValue(data, "name", "df")).isTrue();
         assertThat(Collections3.containsFieldValue(data, "name", "df3")).isFalse();
     }
@@ -164,7 +156,7 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(12L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(12L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(123L).setName("df");
-        List<ChildUser> data = Lists.newArrayList(user, user2, user3);
+        List<ChildUser> data = new ArrayList<>(Arrays.asList(user, user2, user3));
         List<ChildUser> list = Collections3.deWeight(data, ChildUser::getCardId);
         assertThat(list).hasSize(2);
     }
@@ -189,18 +181,18 @@ public class Collections3Test {
 
     @Test
     void extractToString() {
-        ArrayList<User> list = Lists.newArrayList(new User().setName("a"), new User().setName("b"));
+        ArrayList<User> list = new ArrayList<>(Arrays.asList(new User().setName("a"), new User().setName("b")));
         assertThat(Collections3.extractToString(list, "name", ",")).isEqualTo("a,b");
         assertThat(Collections3.extractToString(list, "id", ",")).isEqualTo(",");
     }
 
     @Test
     void isEmptyCollection() {
-        assertThat(Collections3.isEmpty(Lists.newArrayList())).isTrue();
+        assertThat(Collections3.isEmpty(new ArrayList<>())).isTrue();
         assertThat(Collections3.isEmpty(new HashSet<>())).isTrue();
         //noinspection ConstantValue
         assertThat(Collections3.isEmpty((Collection<?>) null)).isTrue();
-        assertThat(Collections3.isEmpty(Lists.newArrayList(1))).isFalse();
+        assertThat(Collections3.isEmpty(new ArrayList<>(List.of(1)))).isFalse();
     }
 
     @Test
@@ -215,11 +207,11 @@ public class Collections3Test {
 
     @Test
     void isNotEmpty() {
-        assertThat(Collections3.isNotEmpty(Lists.newArrayList())).isFalse();
+        assertThat(Collections3.isNotEmpty(new ArrayList<>())).isFalse();
         assertThat(Collections3.isNotEmpty(new HashSet<>())).isFalse();
         //noinspection ConstantValue
         assertThat(Collections3.isNotEmpty(null)).isFalse();
-        assertThat(Collections3.isNotEmpty(Lists.newArrayList(1))).isTrue();
+        assertThat(Collections3.isNotEmpty(new ArrayList<>(List.of(1)))).isTrue();
     }
 
     @Test
@@ -262,7 +254,7 @@ public class Collections3Test {
         ChildUser user = (ChildUser) new ChildUser().setCardId(12L).setName("bc");
         ChildUser user2 = (ChildUser) new ChildUser().setCardId(12L).setName("ef");
         ChildUser user3 = (ChildUser) new ChildUser().setCardId(123L).setName("df");
-        List<ChildUser> list = Collections3.getListFromIterator(Lists.newArrayList(user, user2, user3).iterator());
+        List<ChildUser> list = Collections3.getListFromIterator(new ArrayList<>(Arrays.asList(user, user2, user3)).iterator());
         assertThat(list).hasSize(3);
         assertThat(list).containsExactly(user, user2, user3);
     }

@@ -1,7 +1,8 @@
 package cn.xuanyuanli.core.util.useragent;
 
-import com.google.common.collect.Lists;
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import cn.xuanyuanli.core.util.Texts;
 
@@ -23,7 +24,7 @@ public class OS extends UserAgentInfo {
 	/**
 	 * 支持的引擎类型
 	 */
-	public static final List<OS> OSES = Lists.newArrayList(
+	public static final List<OS> OSES = new ArrayList<>(Arrays.asList(
 			//
 			new OS("Windows 10 or Windows Server 2016", "windows nt 10\\.0", "windows nt (10\\.0)"),
 			//
@@ -74,7 +75,7 @@ public class OS extends UserAgentInfo {
 			new OS("Adobe Air", "AdobeAir\\/([\\d\\w\\.\\-]+)", "AdobeAir\\/([\\d\\w\\.\\-]+)"),
 			//
 			new OS("Java", "Java[\\s]+([\\d\\w\\.\\-]+)", "Java[\\s]+([\\d\\w\\.\\-]+)")
-	);
+	));
 
 	/**
 	 * 添加自定义的系统类型

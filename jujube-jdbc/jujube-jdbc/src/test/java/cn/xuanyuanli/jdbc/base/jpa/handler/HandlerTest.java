@@ -2,7 +2,8 @@ package cn.xuanyuanli.jdbc.base.jpa.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.Data;
 import cn.xuanyuanli.jdbc.base.BaseDao;
@@ -61,7 +62,7 @@ public class HandlerTest {
         EqHandler eqHandler = new EqHandler();
         Spec spec = new Spec();
         String methodName = "UserType";
-        List<Object> args = Lists.newArrayList(1);
+        List<Object> args = new ArrayList<>(List.of(1));
         eqHandler.handler(demoMethod(), spec, methodName, args, null);
         assertThat(spec.getFilterSql()).isEqualTo("`user_type`= ?");
         assertThat(spec.getFilterParams()).contains(1).hasSize(1);
@@ -75,7 +76,7 @@ public class HandlerTest {
         selfChain.addHandlers(HandlerContext.COMPLEX_HANDLER);
         selfChain.addHandlers(HandlerContext.SIMPLE_HANDLER);
         String tmname = "NameLikeAndSourceNotLike";
-        List<Object> args = Lists.newArrayList("12", "微软");
+        List<Object> args = new ArrayList<>(Arrays.asList("12", "微软"));
         selfChain.handler(demoMethod(), spec, tmname, args);
         assertThat(spec.getFilterSql()).isEqualTo("(`name` like ? and `source` not like ?)");
         assertThat(args).isEmpty();
@@ -89,7 +90,7 @@ public class HandlerTest {
         selfChain.addHandlers(HandlerContext.COMPLEX_HANDLER);
         selfChain.addHandlers(HandlerContext.SIMPLE_HANDLER);
         String tmname = "AgeAndNameLikeAndTypeBetweenAndSourceInAndTitleIsNullAndSubTitleIsNotNullAndMobileNotOrderByIdDescLimit10";
-        List<Object> args = Lists.newArrayList(12, "微软", 3, 6, Lists.newArrayList("a\\", "b'"), "15911105446");
+        List<Object> args = new ArrayList<>(Arrays.asList(12, "微软", 3, 6, new ArrayList<>(Arrays.asList("a\\", "b'")), "15911105446"));
         selfChain.handler(demoMethod(), spec, tmname, args);
         assertThat(spec.getFilterSql()).isEqualTo(
                 "(`age`= ? and `name` like ? and `type` between ? and ? and `source` in(?,?) and `title` is null and `sub_title` is not null and `mobile` <> ?)");
@@ -108,7 +109,7 @@ public class HandlerTest {
         selfChain.addHandlers(HandlerContext.COMPLEX_HANDLER);
         selfChain.addHandlers(HandlerContext.SIMPLE_HANDLER);
         String tmname = "SourceNotInAndTitleIn";
-        List<Object> args = Lists.newArrayList(Lists.newArrayList("1", "2"), Lists.newArrayList("a", "b"));
+        List<Object> args = new ArrayList<>(Arrays.asList(new ArrayList<>(Arrays.asList("1", "2")), new ArrayList<>(Arrays.asList("a", "b"))));
         selfChain.handler(demoMethod(), spec, tmname, args);
         assertThat(spec.getFilterSql()).isEqualTo("(`source` not in(?,?) and `title` in(?,?))");
         assertThat(args).isEmpty();
@@ -124,7 +125,7 @@ public class HandlerTest {
         selfChain.addHandlers(HandlerContext.COMPLEX_HANDLER);
         selfChain.addHandlers(HandlerContext.SIMPLE_HANDLER);
         String tmname = "BeginTimeIsNotNullAndParentIdAndStatusNotAndAuthStatusInOrderByBeginTime";
-        List<Object> args = Lists.newArrayList(0, 1, Lists.newArrayList("a", "b"));
+        List<Object> args = new ArrayList<>(Arrays.asList(0, 1, new ArrayList<>(Arrays.asList("a", "b"))));
         selfChain.handler(demoMethod(), spec, tmname, args);
         assertThat(spec.getFilterSql()).isEqualTo("(`begin_time` is not null and `parent_id`= ? and `status` <> ? and `auth_status` in(?,?))");
         assertThat(args).isEmpty();
@@ -159,7 +160,7 @@ public class HandlerTest {
         selfChain.addHandlers(HandlerContext.COMPLEX_HANDLER);
         selfChain.addHandlers(HandlerContext.SIMPLE_HANDLER);
         String tmname = "IdAndTitleIsNotEmpty";
-        List<Object> args = Lists.newArrayList(12L);
+        List<Object> args = new ArrayList<>(List.of(12L));
         selfChain.handler(demoMethod(), spec, tmname, args);
         assertThat(spec.getFilterSql()).isEqualTo("(`id`= ? and `title` <> '')");
         Object[] filterParams = spec.getFilterParams();
@@ -184,7 +185,7 @@ public class HandlerTest {
         selfChain.addHandlers(HandlerContext.COMPLEX_HANDLER);
         selfChain.addHandlers(HandlerContext.SIMPLE_HANDLER);
         String tmname = "AgeGtAndTypeLteAndSourceGteAndIdLt";
-        List<Object> args = Lists.newArrayList(3, 6, 1, 2);
+        List<Object> args = new ArrayList<>(Arrays.asList(3, 6, 1, 2));
         selfChain.handler(demoMethod(), spec, tmname, args);
         assertThat(spec.getFilterSql()).isEqualTo("(`age` > ? and `type` <= ? and `source` >= ? and `id` < ?)");
         assertThat(spec.getFilterParams()).containsExactly(3, 6, 1, 2).hasSize(4);
@@ -196,7 +197,7 @@ public class HandlerTest {
         chain.addHandlers(HandlerContext.SIMPLE_HANDLER);
         Spec spec = new Spec();
         String methodName = "NameJsonContains";
-        List<Object> args = Lists.newArrayList("li");
+        List<Object> args = new ArrayList<>(List.of("li"));
         chain.handler(demoMethod(), spec, methodName, args);
         assertThat(spec.getFilterSql()).isEqualTo(" json_contains(`name`, ?)");
         assertThat(spec.getFilterParams()).containsExactly("\"li\"");
@@ -208,7 +209,7 @@ public class HandlerTest {
         chain.addHandlers(HandlerContext.SIMPLE_HANDLER);
         Spec spec = new Spec();
         String methodName = "NameJsonContains$";
-        List<Object> args = Lists.newArrayList(0,"$[0]");
+        List<Object> args = new ArrayList<>(Arrays.asList(0,"$[0]"));
         chain.handler(demoMethod(), spec, methodName, args);
         assertThat(spec.getFilterSql()).isEqualTo(" json_contains(`name`, ?, ?)");
         assertThat(spec.getFilterParams()).containsExactly("0","$[0]");

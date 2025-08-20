@@ -1,6 +1,6 @@
 package cn.xuanyuanli.core.util;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class Resources {
      * @return {@link List}<{@link Class}<{@link ?}>>
      */
     public static List<Class<?>> getPackageClasses(String packageName) {
-        List<Class<?>> list = Lists.newArrayList();
+        List<Class<?>> list = new ArrayList<>();
         String packageSearchPath =
                 ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + ClassUtils.convertClassNameToResourcePath(packageName) + "/" + DEFAULT_RESOURCE_PATTERN;
         try {

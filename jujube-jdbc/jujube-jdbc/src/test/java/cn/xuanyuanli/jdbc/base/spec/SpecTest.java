@@ -2,7 +2,8 @@ package cn.xuanyuanli.jdbc.base.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import cn.xuanyuanli.jdbc.exception.DaoQueryException;
 import cn.xuanyuanli.jdbc.base.util.Sqls;
@@ -135,7 +136,7 @@ public class SpecTest {
 
     @Test
     public void testIn() {
-        List<Long> list = Lists.newArrayList(1L, 2L, 3L);
+        List<Long> list = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
         Spec spec = new Spec().in("name", list);
         System.out.println(spec.getFilterSql());
         assertThat(spec.getSpecMap()).hasSize(1);
@@ -147,7 +148,7 @@ public class SpecTest {
 
     @Test
     public void testNotin() {
-        List<Long> list = Lists.newArrayList(1L, 2L, 3L);
+        List<Long> list = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
         Spec spec = new Spec().notin("name", list);
         assertThat(spec.getSpecMap()).hasSize(1);
         assertThat(spec.getFilterSql()).isEqualTo("`name` not in(?,?,?)");

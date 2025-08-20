@@ -1,6 +1,5 @@
 package cn.xuanyuanli.core.util.web;
 
-import com.google.common.net.HttpHeaders;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -70,9 +69,9 @@ public class Servlets {
         // 兼容一下safari浏览器
         if (agent.contains("Safari")) {
             filename = new String(filename.getBytes(StandardCharsets.UTF_8), "ISO8859-1");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
         } else {
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=utf-8'zh_cn'" + Urls.encodeURIComponent(filename));
+            response.setHeader("Content-Disposition", "attachment; filename*=utf-8'zh_cn'" + Urls.encodeURIComponent(filename));
         }
         // 中文文件名支持
         response.setContentType("application/octet-stream");

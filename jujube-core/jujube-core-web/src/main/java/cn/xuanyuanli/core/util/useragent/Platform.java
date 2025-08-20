@@ -1,8 +1,8 @@
 package cn.xuanyuanli.core.util.useragent;
 
-import com.google.common.collect.Lists;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,7 +50,7 @@ public class Platform extends UserAgentInfo {
 	/**
 	 * 支持的移动平台类型
 	 */
-	public static final List<Platform> MOBILE_PLATFORMS = Lists.newArrayList(
+	public static final List<Platform> MOBILE_PLATFORMS = new ArrayList<>(Arrays.asList(
 			//
 			WINDOWS_PHONE,
 			//
@@ -69,12 +69,12 @@ public class Platform extends UserAgentInfo {
 			new Platform("Symbian", "symbian(os)?"),
 			//
 			new Platform("Blackberry", "blackberry")
-	);
+	));
 
 	/**
 	 * 支持的桌面平台类型
 	 */
-	public static final List<Platform> DESKTOP_PLATFORMS = Lists.newArrayList(
+	public static final List<Platform> DESKTOP_PLATFORMS = new ArrayList<>(Arrays.asList(
 			//
 			new Platform("Windows", "windows"),
 			//
@@ -87,7 +87,7 @@ public class Platform extends UserAgentInfo {
 			new Platform("Playstation", "playstation"),
 			//
 			new Platform("Java", "java")
-	);
+	));
 
 	/**
 	 * 支持的平台类型

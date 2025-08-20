@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +20,6 @@ import cn.xuanyuanli.core.util.Ftls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -49,8 +49,8 @@ public class EntityGenerator {
     public static void generateEntity(Config config) {
         Validate.notBlank(config.getTableName());
 
-        List<String> imports = Lists.newArrayList();
-        Map<String, Object> root = Maps.newHashMap();
+        List<String> imports = new ArrayList<>();
+        Map<String, Object> root = new HashMap<>();
 
         Connection conn = null;
         try {
@@ -118,7 +118,7 @@ public class EntityGenerator {
      * 创建Dao文件
      */
     private static void createDaoFile(String entityName, String tableComment, Config config, Column pk) {
-        Map<String, Object> root = Maps.newHashMap();
+        Map<String, Object> root = new HashMap<>();
         root.put("basePackage", config.getDaoPackageName());
         root.put("entityPackage", config.getEntityPackageName());
         root.put("className", entityName);

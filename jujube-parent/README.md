@@ -29,7 +29,6 @@ Jujube Parent 是 Jujube 系列项目的 Maven 父 POM，为所有子模块提�
 - **Apache Commons** - 通用工具集合
   - commons-lang3, commons-text, commons-io
   - commons-csv, commons-compress, commons-collections4
-- **Google Guava 33.3.1** - Google 核心库
 - **Javassist 3.30.0** - 字节码操作
 - **CGLib 3.3.0** - 代码生成库
 
@@ -117,9 +116,11 @@ Jujube Parent 是 Jujube 系列项目的 Maven 父 POM，为所有子模块提�
 如需使用特定版本，可在子项目中覆盖：
 
 ```xml
-<properties>
-    <guava.version>32.1.0-jre</guava.version>
-</properties>
+<dependency>
+  <groupId>com.google.guava</groupId>
+  <artifactId>guava</artifactId>
+  <version>33.3.1-jre</version>
+</dependency>
 ```
 
 ## ⚙️ 配置说明

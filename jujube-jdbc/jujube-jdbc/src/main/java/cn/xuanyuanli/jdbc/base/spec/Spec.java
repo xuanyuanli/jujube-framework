@@ -1,13 +1,14 @@
 package cn.xuanyuanli.jdbc.base.spec;
 
-import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import cn.xuanyuanli.jdbc.exception.DaoQueryException;
@@ -25,13 +26,14 @@ import cn.xuanyuanli.core.util.Texts;
 public final class Spec implements Cloneable {
 
     /**
-     * 条件
+     *  获得查询条件
      */
+    @Getter
     private final List<QueryCondition> conditions = new ArrayList<>();
     /**
      * 规范map
      */
-    private Map<String, Object> specMap = Maps.newLinkedHashMap();
+    private Map<String, Object> specMap = new LinkedHashMap<>();
     /**
      * 排序
      */
@@ -39,19 +41,23 @@ public final class Spec implements Cloneable {
     /**
      * 分组
      */
+    @Getter
     private String groupBy;
     /**
      * having
      */
+    @Getter
     private String having;
 
     /**
      * 限制
      */
+    @Getter
     private int limit;
     /**
      * 限制开始
      */
+    @Getter
     private int limitBegin;
 
     /**
@@ -90,7 +96,7 @@ public final class Spec implements Cloneable {
         if (value == null) {
             return false;
         }
-        return (!(value instanceof String) || ((String) value).length() != 0);
+        return (!(value instanceof String) || !((String) value).isEmpty());
     }
 
     /**
@@ -370,24 +376,6 @@ public final class Spec implements Cloneable {
     }
 
     /**
-     * 获得集团通过
-     *
-     * @return {@link String}
-     */
-    public String getGroupBy() {
-        return groupBy;
-    }
-
-    /**
-     * 获得有
-     *
-     * @return {@link String}
-     */
-    public String getHaving() {
-        return having;
-    }
-
-    /**
      * 查询条数限制
      *
      * @param size 大小
@@ -407,24 +395,6 @@ public final class Spec implements Cloneable {
     public Spec limitBegin(int end) {
         limitBegin = end;
         return this;
-    }
-
-    /**
-     * 获得限制开始
-     *
-     * @return int
-     */
-    public int getLimitBegin() {
-        return limitBegin;
-    }
-
-    /**
-     * 获得限制
-     *
-     * @return int
-     */
-    public int getLimit() {
-        return limit;
     }
 
     /**
@@ -481,15 +451,6 @@ public final class Spec implements Cloneable {
      */
     public Object[] getFilterParams() {
         return getConditions().stream().flatMap(e -> Arrays.stream(e.getValues())).toArray();
-    }
-
-    /**
-     * 获得查询条件
-     *
-     * @return {@link List}<{@link QueryCondition}>
-     */
-    public List<QueryCondition> getConditions() {
-        return conditions;
     }
 
     /**
@@ -622,18 +583,19 @@ public final class Spec implements Cloneable {
      */
     static String getInPattern(Object obj) {
         StringBuilder sb = new StringBuilder();
-        if (obj instanceof @SuppressWarnings("rawtypes")Iterable coll) {
-            for (Object ignored : coll) {
-                sb.append("?").append(",");
+        switch (obj) {
+            case @SuppressWarnings("rawtypes")Iterable coll -> {
+                for (Object ignored : coll) {
+                    sb.append("?").append(",");
+                }
             }
-        } else if (obj instanceof String) {
-            sb.append("?").append(",");
-        } else if (obj instanceof Object[] objects) {
-            for (Object ignored : objects) {
-                sb.append("?").append(",");
+            case String ignored1 -> sb.append("?").append(",");
+            case Object[] objects -> {
+                for (Object ignored : objects) {
+                    sb.append("?").append(",");
+                }
             }
-        } else {
-            throw new RuntimeException("in的值格式不正确。可以为String，Object[]，Iterable");
+            case null, default -> throw new RuntimeException("in的值格式不正确。可以为String，Object[]，Iterable");
         }
         return sb.substring(0, sb.length() - 1);
     }
@@ -713,7 +675,7 @@ public final class Spec implements Cloneable {
         } catch (CloneNotSupportedException ignored) {
         }
         Spec spec = new Spec();
-        spec.specMap = Maps.newLinkedHashMap(this.specMap);
+        spec.specMap = new LinkedHashMap<>(this.specMap);
         spec.sort = this.sort.clone(spec);
         spec.groupBy = this.groupBy;
         spec.having = this.having;

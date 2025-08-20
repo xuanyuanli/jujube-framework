@@ -109,8 +109,7 @@ Maven 父 POM，为整个框架提供统一的依赖管理和构建规范。
 
 **🛠️ 主要依赖管理：**
 - Spring Boot 3.4.5
-- Apache Commons 全系列
-- Google Guava 33.3.1
+- Apache Commons 系列
 - Apache POI 5.3.0
 - Jackson、Lombok 等主流库
 
@@ -344,7 +343,6 @@ public class UserService {
 
 - Spring Framework & Spring Boot
 - Apache Commons 系列
-- Google Guava
 - Jackson JSON 处理器
 - Apache POI
 - 以及其他众多优秀的开源项目

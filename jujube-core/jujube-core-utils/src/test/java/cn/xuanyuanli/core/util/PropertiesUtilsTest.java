@@ -1,9 +1,11 @@
 package cn.xuanyuanli.core.util;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.TreeMap;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
@@ -16,7 +18,7 @@ class PropertiesUtilsTest {
     @Test
     void saveProperties() throws IOException {
         String filename = SystemProperties.TMPDIR + "propertiesutilstest" + File.separator + SnowFlakes.nextId() + ".properties";
-        PropertiesUtils.saveProperties(filename, Lists.newArrayList("name=中国"), true);
+        PropertiesUtils.saveProperties(filename, new ArrayList<>(List.of("name=中国")), true);
         File file = new File(filename);
         Assertions.assertThat(FileUtils.readFileToString(file, StandardCharsets.UTF_8).replace("\r", "")).isEqualTo("name=\\u4E2D\\u56FD\n");
         TreeMap<String, String> map = PropertiesUtils.loadTreeMapFromFile(filename);

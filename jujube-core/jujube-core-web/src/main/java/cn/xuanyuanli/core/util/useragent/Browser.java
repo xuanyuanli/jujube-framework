@@ -1,7 +1,8 @@
 package cn.xuanyuanli.core.util.useragent;
 
-import com.google.common.collect.Lists;
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import cn.xuanyuanli.core.util.Texts;
 
@@ -28,7 +29,7 @@ public class Browser extends UserAgentInfo {
     /**
      * 支持的浏览器类型
      */
-    public static final List<Browser> BROWSERS = Lists.newArrayList(
+    public static final List<Browser> BROWSERS = new ArrayList<>(Arrays.asList(
             // 部分特殊浏览器是基于安卓、Iphone等的，需要优先判断
             // 企业微信 企业微信使用微信浏览器内核,会包含 MicroMessenger 所以要放在前面
             new Browser("wxwork", "wxwork", "wxwork\\/([\\d\\w\\.\\-]+)"),
@@ -72,7 +73,7 @@ public class Browser extends UserAgentInfo {
             new Browser("Yammer Mobile", "Yammer[\\s]+([\\d\\w\\.\\-]+)", "Yammer[\\s]+([\\d\\w\\.\\-]+)"),
             new Browser("Apache HTTP Client", "Apache\\\\-HttpClient", "Apache\\-HttpClient\\/([\\d\\w\\.\\-]+)"),
             new Browser("BlackBerry", "BlackBerry", "BlackBerry[\\d]+\\/([\\d\\w\\.\\-]+)")
-    );
+    ));
 
     /**
      * 添加自定义的浏览器类型

@@ -1,7 +1,8 @@
 package cn.xuanyuanli.core.util.useragent;
 
-import com.google.common.collect.Lists;
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import cn.xuanyuanli.core.util.Texts;
 
@@ -21,7 +22,7 @@ public class Engine extends UserAgentInfo {
 	/**
 	 * 支持的引擎类型
 	 */
-	public static final List<Engine> ENGINES = Lists.newArrayList(
+	public static final List<Engine> ENGINES = new ArrayList<>(Arrays.asList(
 			new Engine("Trident", "trident"),
 			new Engine("Webkit", "webkit"),
 			new Engine("Chrome", "chrome"),
@@ -31,7 +32,7 @@ public class Engine extends UserAgentInfo {
 			new Engine("KHTML", "khtml"),
 			new Engine("Konqueror", "konqueror"),
 			new Engine("MIDP", "MIDP")
-	);
+	));
 
 	private final String versionPattern;
 
