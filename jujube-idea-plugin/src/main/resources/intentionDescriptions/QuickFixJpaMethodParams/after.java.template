@@ -1,0 +1,1 @@
+findByAgetAndType(Integer aget, Integer type)

@@ -37,7 +37,7 @@
         <!-- 依赖工具模块 -->
         <dependency>
             <groupId>cn.xuanyuanli</groupId>
-            <artifactId>jujube-core-json</artifactId>
+            <artifactId>jujube-core-utils</artifactId>
         </dependency>
         
         <!-- SPRING basic -->

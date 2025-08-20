@@ -3,7 +3,6 @@ package cn.xuanyuanli.core.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
