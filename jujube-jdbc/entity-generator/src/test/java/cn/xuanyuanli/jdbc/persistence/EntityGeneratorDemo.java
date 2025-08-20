@@ -4,18 +4,12 @@ import java.util.List;
 import cn.xuanyuanli.jdbc.client.local.LocalJdbcTemplate;
 import cn.xuanyuanli.jdbc.generator.EntityGenerator;
 import cn.xuanyuanli.jdbc.generator.GeneratorConstants;
-import cn.xuanyuanli.core.util.Jsons;
 import cn.xuanyuanli.core.util.Resources;
 
 public class EntityGeneratorDemo {
 
     public static void main(String[] args) {
         generateOneEntity();
-    }
-
-    public static void getTables() {
-        List<String> db = LocalJdbcTemplate.getTables("main");
-        System.out.println(Jsons.toJson(db));
     }
 
     public static void generateEntity() {

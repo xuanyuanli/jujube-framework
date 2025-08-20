@@ -110,6 +110,7 @@ public class JsonsTest {
 
     @Test
     void parseJsonTypeReference() {
+        @SuppressWarnings("Convert2Diamond")
         List<Long> ids = Jsons.parseJson("[1,2,3]", new TypeReference<List<Long>>() {
         });
         assertThat(ids).containsSequence(1L, 2L, 3L);

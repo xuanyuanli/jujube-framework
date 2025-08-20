@@ -21,7 +21,7 @@ class FtlsTest {
         File file = new File(filename);
         Map<String, Object> root = new HashMap<>();
         //noinspection ResultOfMethodCallIgnored
-        Assertions.catchThrowableOfType(() -> Ftls.processFileTemplateToFile("1.ftl", filename, root), RuntimeException.class);
+        Assertions.catchThrowableOfType(RuntimeException.class, () -> Ftls.processFileTemplateToFile("1.ftl", filename, root));
         root.put("test", true);
         Ftls.processFileTemplateToFile("1.ftl", filename, root);
         Assertions.assertThat(FileUtils.readFileToString(file, StandardCharsets.UTF_8)).isEqualTo("    Who am i?\r\n");
@@ -46,10 +46,11 @@ class FtlsTest {
     void processStringTemplateToString() {
         Map<String, Object> root = new HashMap<>();
         root.put("test", true);
-        root.put("ids", List.of(2,3,4));
-        Assertions.assertThat(Ftls.processStringTemplateToString("<#if test>\n"
-                + "    Who am i?\n"
-                + "</#if>${ids?join(',')}", root)).isEqualTo("    Who am i?\n2,3,4");
+        root.put("ids", List.of(2, 3, 4));
+        Assertions.assertThat(Ftls.processStringTemplateToString("""
+                <#if test>
+                    Who am i?
+                </#if>${ids?join(',')}""", root)).isEqualTo("    Who am i?\n2,3,4");
     }
 
     @Test

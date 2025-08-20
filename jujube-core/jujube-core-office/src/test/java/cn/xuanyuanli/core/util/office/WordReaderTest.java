@@ -13,8 +13,10 @@ class WordReaderTest {
     @Test
     void getWordContent() throws IOException {
         Resource resource = Resources.getClassPathResources("META-INF/office/testWord.docx");
-        assertEquals(WordReader.getWordContent(Objects.requireNonNull(resource).getFile().getAbsolutePath()), "hello\n"
-                                                                                                              + "world\n"
-                                                                                                              + "123\n");
+        assertEquals("""
+                hello
+                world
+                123
+                """, WordReader.getWordContent(Objects.requireNonNull(resource).getFile().getAbsolutePath()));
     }
 }

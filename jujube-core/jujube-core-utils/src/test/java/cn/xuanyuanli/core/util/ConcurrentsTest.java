@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+import lombok.Cleanup;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StopWatch;
@@ -54,7 +55,7 @@ public class ConcurrentsTest {
         thread2.start();
         thread1.join();
         thread2.join();
-        assertThat(System.currentTimeMillis() - begin).isGreaterThanOrEqualTo(millis).isLessThan(millis*3);
+        assertThat(System.currentTimeMillis() - begin).isGreaterThanOrEqualTo(millis).isLessThan(millis * 3);
     }
 
     @Test
@@ -88,7 +89,7 @@ public class ConcurrentsTest {
         while (true) {
             if (threadPoolExecutor.isTerminated()) {
                 stopWatch.stop();
-                System.out.println(stopWatch.getLastTaskTimeMillis() / 1000.0);
+                System.out.println(stopWatch.lastTaskInfo().getTimeMillis() / 1000.0);
                 break;
             }
         }
@@ -97,7 +98,7 @@ public class ConcurrentsTest {
     @Test
     @Disabled
     void createThreadPoolExecutor2() {
-        ThreadPoolExecutor threadPoolExecutor = Concurrents.createThreadPoolExecutor(1, 1, 30, TimeUnit.DAYS, 3, "test-");
+        @Cleanup ThreadPoolExecutor threadPoolExecutor = Concurrents.createThreadPoolExecutor(1, 1, 30, TimeUnit.DAYS, 3, "test-");
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         threadPoolExecutor.submit(() -> Runtimes.sleep(2000));
@@ -106,7 +107,7 @@ public class ConcurrentsTest {
         while (true) {
             if (threadPoolExecutor.isTerminated()) {
                 stopWatch.stop();
-                System.out.println(stopWatch.getLastTaskTimeMillis() / 1000.0);
+                System.out.println(stopWatch.lastTaskInfo().getTimeMillis() / 1000.0);
                 break;
             }
         }
@@ -125,6 +126,6 @@ public class ConcurrentsTest {
         //noinspection ResultOfMethodCallIgnored
         threadPoolExecutor.awaitTermination(3, TimeUnit.SECONDS);
         stopWatch.stop();
-        System.out.println(stopWatch.getLastTaskTimeMillis() / 1000.0);
+        System.out.println(stopWatch.lastTaskInfo().getTimeMillis() / 1000.0);
     }
 }

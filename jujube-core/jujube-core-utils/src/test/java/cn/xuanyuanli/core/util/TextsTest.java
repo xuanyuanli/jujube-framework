@@ -337,6 +337,7 @@ class TextsTest {
     @Nested
     class RegQuery {
 
+        @SuppressWarnings("AssertBetweenInconvertibleTypes")
         @ParameterizedTest(name = "正则表达式查询: 输入 \"{0}\" 应返回 \"{1}\"")
         @MethodSource("provideRegQueryOneArguments")
         void testRegQueryOne(String regex, String input, List<String> expected) {

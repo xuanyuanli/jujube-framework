@@ -25,13 +25,15 @@ class JavassistBeanCopyFactoryTest {
         items.add(item2);
 
         String methodBody = new JavassistBeanCopierFactory().getCopyBeanMethodBody(sourceClass, targetClass, items, true);
-        org.assertj.core.api.Assertions.assertThat(methodBody).isEqualTo("{\n"
-                + "cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$SourceBean source = (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$SourceBean) $1;\n"
-                + "cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean target = $3 ? new cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean() : (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean) $2;\n"
-                + "target.setName((java.lang.String)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.getName(),java.lang.String.class));\n"
-                + "target.setAge((java.lang.Integer)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.getAge(),java.lang.Integer.class));\n"
-                + "return target;\n"
-                + "}\n");
+        org.assertj.core.api.Assertions.assertThat(methodBody).isEqualTo("""
+                {
+                cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$SourceBean source = (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$SourceBean) $1;
+                cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean target = $3 ? new cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean() : (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean) $2;
+                target.setName((java.lang.String)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.getName(),java.lang.String.class));
+                target.setAge((java.lang.Integer)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.getAge(),java.lang.Integer.class));
+                return target;
+                }
+                """);
     }
 
     @Test
@@ -51,13 +53,15 @@ class JavassistBeanCopyFactoryTest {
         items.add(item2);
 
         String methodBody = new JavassistBeanCopierFactory().getCopyBeanMethodBody(sourceClass, targetClass, items, true);
-        org.assertj.core.api.Assertions.assertThat(methodBody).isEqualTo("{\n"
-                + "java.util.Map source = (java.util.Map) $1;\n"
-                + "cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean target = $3 ? new cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean() : (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean) $2;\n"
-                + "target.setName((java.lang.String)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.get(\"name\"),java.lang.String.class));\n"
-                + "target.setAge((java.lang.Integer)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.get(\"age\"),java.lang.Integer.class));\n"
-                + "return target;\n"
-                + "}\n");
+        org.assertj.core.api.Assertions.assertThat(methodBody).isEqualTo("""
+                {
+                java.util.Map source = (java.util.Map) $1;
+                cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean target = $3 ? new cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean() : (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBean) $2;
+                target.setName((java.lang.String)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.get("name"),java.lang.String.class));
+                target.setAge((java.lang.Integer)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.get("age"),java.lang.Integer.class));
+                return target;
+                }
+                """);
     }
 
     @Test
@@ -75,13 +79,15 @@ class JavassistBeanCopyFactoryTest {
         items.add(item2);
 
         String methodBody = new JavassistBeanCopierFactory().getCopyBeanMethodBody(sourceClass, targetClass, items, true);
-        org.assertj.core.api.Assertions.assertThat(methodBody).isEqualTo("{\n"
-                + "cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$SourceBean source = (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$SourceBean) $1;\n"
-                + "cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBeanPrimitive target = $3 ? new cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBeanPrimitive() : (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBeanPrimitive) $2;\n"
-                + "target.setName((java.lang.String)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.getName(),java.lang.String.class));\n"
-                + "target.setAge(cn.xuanyuanli.core.util.beancopy.BeanCopier.getInt(source.getAge()));\n"
-                + "return target;\n"
-                + "}\n");
+        org.assertj.core.api.Assertions.assertThat(methodBody).isEqualTo("""
+                {
+                cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$SourceBean source = (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$SourceBean) $1;
+                cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBeanPrimitive target = $3 ? new cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBeanPrimitive() : (cn.xuanyuanli.core.util.beancopy.JavassistBeanCopyFactoryTest$TargetBeanPrimitive) $2;
+                target.setName((java.lang.String)cn.xuanyuanli.core.util.Beans.getExpectTypeValue(source.getName(),java.lang.String.class));
+                target.setAge(cn.xuanyuanli.core.util.beancopy.BeanCopier.getInt(source.getAge()));
+                return target;
+                }
+                """);
     }
 
     @Data
