@@ -73,6 +73,8 @@ Jujube Framework 的官方 IntelliJ IDEA 插件，为基于 Jujube Framework 的
                                  implementation="cn.xuanyuanli.ideaplugin.SqlClassSearch"/>
         <!-- Ctrl+Alt+B，定位实现的跳转，使用稳定的gotoRelatedProvider API -->
         <gotoRelatedProvider implementation="cn.xuanyuanli.ideaplugin.provider.GotoSqlRelatedProvider"/>
+        <!-- Ctrl+Alt+B，从SQL方法定位到Java方法 -->
+        <gotoRelatedProvider implementation="cn.xuanyuanli.ideaplugin.provider.SqlToJavaRelatedProvider"/>
 
         <!-- 实现Dao.方法跳转到Sql -->
         <codeInsight.lineMarkerProvider id="jujube.java2sql"
