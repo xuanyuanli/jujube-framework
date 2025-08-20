@@ -18,18 +18,17 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 import cn.xuanyuanli.ideaplugin.support.Consoles;
-import cn.xuanyuanli.ideaplugin.support.Constants;
 import cn.xuanyuanli.ideaplugin.support.Utils;
-import cn.xuanyuanli.util.Texts;
+import cn.xuanyuanli.core.util.Texts;
 
 /**
  * @author John Li
  */
 public class DaoMethodCompletionContributor extends CompletionContributor {
-
-    public static final List<String> KEYWORDS = List.of(Constants.AND, Constants.ORDER_BY, Constants.BY, Constants.GROUP_BY);
 
     public DaoMethodCompletionContributor() {
         // 为方法名提供自动补全建议
@@ -46,12 +45,12 @@ public class DaoMethodCompletionContributor extends CompletionContributor {
                     return;
                 }
                 PsiClass daoClass = PsiTreeUtil.getParentOfType(originalPosition, PsiClass.class);
-                PsiClass genericClass = Utils.getFirstGenericTypeOfBaseDao(daoClass);
+                PsiClass genericClass = Utils.getFirstGenericTypeOfBaseDao(Objects.requireNonNull(daoClass));
                 String prefix = originalPosition.getText();
                 resultSet = resultSet.withPrefixMatcher("");
                 Consoles.info("prefix:{}", prefix);
                 // 实体类字段名
-                List<String> fieldNames = Utils.getAllFieldsFilterStaticAndFinal(genericClass).stream().map(PsiField::getName).toList();
+                List<String> fieldNames = Utils.getAllFieldsFilterStaticAndFinal(Objects.requireNonNull(genericClass)).stream().map(PsiField::getName).toList();
                 List<String> suggestions = new ArrayList<>();
                 for (String field : fieldNames) {
                     String capitalizedField = Texts.capitalize(field);

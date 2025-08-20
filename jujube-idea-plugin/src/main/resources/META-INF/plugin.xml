@@ -52,6 +52,9 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="xuanyuanli999@gmail.com" url="https://xuanyuanli.cn">xuanyuanli</vendor>
 
+    <!-- Resource bundle for internationalization -->
+    <resource-bundle>messages</resource-bundle>
+
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <!--    声明你的插件依赖于哪些插件。这告诉 IntelliJ IDEA 在加载你的插件之前，必须先加载这些依赖的插件。但depends声明的插件并不会被打包到你的插件中。-->
@@ -81,14 +84,14 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
         <!-- Map2BO之后get/set方法的快速修复-->
         <intentionAction id="jujube.quickfixmethodcall">
             <language>JAVA</language>
-            <category>修复Map方法调用</category>
+            <categoryKey>quick.fix.map.method.call</categoryKey>
             <className>cn.xuanyuanli.ideaplugin.QuickFixMethodCall</className>
         </intentionAction>
 
         <!-- JPA方法参数的快速修复-->
         <intentionAction id="jujube.quickfixjpaparams">
             <language>JAVA</language>
-            <category>填充JPA方法参数</category>
+            <categoryKey>quick.fix.jpa.method.params</categoryKey>
             <className>cn.xuanyuanli.ideaplugin.QuickFixJpaMethodParams</className>
         </intentionAction>
 
@@ -128,19 +131,19 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
         <!--  编辑-右键菜单，添加Sql2BO功能 -->
         <group id="Jujube.GeneratePO">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-            <action id="Jujube.SqlToPo" class="cn.xuanyuanli.ideaplugin.action.SqlToPoAction" icon="/icons/jujube.png" text="根据SQL生成PO"/>
+            <action id="Jujube.SqlToPo" class="cn.xuanyuanli.ideaplugin.action.SqlToPoAction" icon="/icons/jujube.png" key="action.sql.to.po"/>
         </group>
         <!--  编辑-右键菜单，添加MapToBean功能 -->
         <action id="Jujube.MapToBean"
                 class="cn.xuanyuanli.ideaplugin.action.ConvertMapToBeanAction"
-                text="转换Map为Bean"
+                key="action.map.to.bean"
                 icon="/icons/jujube.png">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
         <!--  编辑-右键菜单，快捷添加Jpa方法注释功能 -->
         <action id="Jujube.JpaMethodQuickDoc"
                 class="cn.xuanyuanli.ideaplugin.action.JpaMethodQuickDocAction"
-                text="快捷添加Jpa方法注释"
+                key="action.jpa.method.quick.doc"
                 icon="/icons/jujube.png">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
@@ -148,7 +151,7 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
         <!--  编辑-右键菜单，优化md文件目录编号功能 -->
         <action id="Jujube.OptimizeMdToc"
                 class="cn.xuanyuanli.ideaplugin.action.OptimizeMarkdownTocAction"
-                text="优化md文件目录编号"
+                key="action.optimize.md.toc"
                 icon="/icons/jujube.png">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>

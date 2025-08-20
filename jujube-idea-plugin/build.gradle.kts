@@ -7,15 +7,15 @@ group = "cn.xuanyuanli.ideaplugin"
 version = "2025.1.0"
 
 repositories {
+    mavenCentral()
     maven {
         url = uri("https://maven.aliyun.com/repository/public")
     }
-    mavenCentral()
 }
 
 dependencies {
     implementation("cn.xuanyuanli:jujube-jdbc:3.1.1") {
-        exclude(group = "cn.xuanyuanli", module = "jujube-core-json")
+        exclude(group = "org.slf4j")
     }
 }
 

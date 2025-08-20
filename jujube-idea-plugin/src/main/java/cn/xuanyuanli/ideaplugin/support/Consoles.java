@@ -4,7 +4,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import cn.xuanyuanli.ideaplugin.ConsoleToolWindow;
-import cn.xuanyuanli.util.Texts;
+import cn.xuanyuanli.core.util.Texts;
 
 /**
  * 控制台日志输出工具

@@ -9,7 +9,7 @@ import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
 import cn.xuanyuanli.ideaplugin.support.Consoles;
 import cn.xuanyuanli.ideaplugin.support.Utils;
-import cn.xuanyuanli.util.Texts;
+import cn.xuanyuanli.core.util.Texts;
 
 /**
  * @author John Li

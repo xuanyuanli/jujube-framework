@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import cn.xuanyuanli.ideaplugin.action.ConvertMapToBeanAction;
 import cn.xuanyuanli.ideaplugin.support.Column;
 import cn.xuanyuanli.ideaplugin.support.Utils;
-import cn.xuanyuanli.util.CamelCase;
-import cn.xuanyuanli.util.Texts;
+import cn.xuanyuanli.core.util.CamelCase;
+import cn.xuanyuanli.core.util.Texts;
 
 /**
  * @author John Li
@@ -95,13 +95,13 @@ public class QuickFixMethodCall implements IntentionAction {
     @NotNull
     @Override
     public String getText() {
-        return "修复Map方法调用";
+        return JujubeBundle.getText("quick.fix.map.method.call");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "修复Map方法调用";
+        return JujubeBundle.getText("quick.fix.map.method.call");
     }
 
     @Override

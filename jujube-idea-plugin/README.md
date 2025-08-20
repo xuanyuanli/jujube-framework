@@ -114,39 +114,8 @@ set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m" "-Dfile.encoding=UTF-8"
 
 ## 更新日志
 
-### v2025.1.2
+### v2025.1.0
 - 支持 IntelliJ IDEA 2024.1.7+
 - 优化代码跳转性能
 - 增强 SQL 变量检验功能
 - 修复已知问题
-
----
-
-## 开发者文档
-
-### TreeClassChooser 和 ChooseByNamePopup 的区别
-
-**ChooseByNamePopup** 和 **TreeClassChooser** 都可以在 IntelliJ IDEA 插件开发中实现用户选择 Java 类的功能，但它们的交互方式和显示风格有所不同：
-
-#### ChooseByNamePopup
-基于字符串匹配的搜索框，用户可以通过输入类名的全名或部分名字来查找类。
-- **优点**: 查找速度快，界面简洁
-- **缺点**: 用户必须对所需类的名称有一定了解
-- **适用场景**: 用户知道类名或部分名称时的快速查找
-
-#### TreeClassChooser
-基于树形结构的类选择器，按照项目结构和包层级展示所有的 Java 类。
-- **优点**: 提供详细的项目结构信息，有助于用户了解项目
-- **缺点**: 查找速度相对较慢，界面稍显复杂
-- **适用场景**: 用户不太了解类名或想要浏览整个项目结构时
-
-### ProjectService 说明
-
-`projectService` 用于定义插件提供的服务，服务是插件的一种组件，用于实现插件的具体功能。服务可以是全局的（applicationService），也可以是针对某个项目的（projectService）。
-
-在插件的 `plugin.xml` 文件中，通过 `<projectService>` 标签来定义这些服务，需要指定一个唯一的 id 和一个实现类（serviceImplementation）。
-
-使用示例：
-```java
-JavaService javaService = project.getService(JavaService.class);
-```

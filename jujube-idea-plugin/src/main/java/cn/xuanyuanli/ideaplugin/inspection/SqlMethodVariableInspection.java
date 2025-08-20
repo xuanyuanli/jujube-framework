@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import cn.xuanyuanli.ideaplugin.JujubeBundle;
 
 /**
  * @author John Li
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public class SqlMethodVariableInspection extends LocalInspectionTool {
 
     @Override
-    public PsiElementVisitor buildVisitor(final ProblemsHolder holder, boolean isOnTheFly) {
+    public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
         return new FreemarkerVariableVisitor(holder);
     }
 
@@ -62,11 +63,11 @@ public class SqlMethodVariableInspection extends LocalInspectionTool {
             // 检查变量名是否符合指定规则
             if (!isVariableNameValid(variableName)) {
                 // 如果变量名无效，将问题添加到ProblemsHolder
-                holder.registerProblem(variable, "无效的变量名: " + variableName);
+                holder.registerProblem(variable, JujubeBundle.message("inspection.sqlvariable.invalid.name", variableName));
             }
         }
 
-        private boolean isVariableNameValid(String variableName) {
+        private boolean isVariableNameValid(String ignoredVariableName) {
             // 在这里实现你的变量名检查规则
             // 例如，你可以要求变量名遵循某种命名规范
             return true; // 默认返回true，表示变量名有效

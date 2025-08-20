@@ -77,9 +77,7 @@ public class OptimizeMarkdownTocAction extends AnAction {
         normalizeTocEntries(toc);
 
         // 3. 替换旧编号并更新文档
-        WriteCommandAction.runWriteCommandAction(project, () -> {
-            updateDocument(toc, project);
-        });
+        WriteCommandAction.runWriteCommandAction(project, () -> updateDocument(toc, project));
     }
 
     private void updateDocument(List<TocEntry> tocEntries, Project project) {
@@ -98,7 +96,7 @@ public class OptimizeMarkdownTocAction extends AnAction {
         normalizeTocEntries(tocEntries, new int[6], 0);
     }
 
-    private List<TocEntry> getToc(MarkdownFile markdownFile, Document document) {
+    private List<TocEntry> getToc(MarkdownFile markdownFile, Document ignoredDocument) {
         List<TocEntry> tocEntries = new ArrayList<>();
         MarkdownRecursiveElementVisitor visitor = new MarkdownRecursiveElementVisitor() {
             // 上一个处理的 TocEntry
@@ -214,7 +212,7 @@ public class OptimizeMarkdownTocAction extends AnAction {
         }
 
         // 移除原标题中可能存在的旧编号
-        String cleanTitle = originalTitle.replaceFirst("^\\s*([\\d\\.]+|[a-zA-Z]+|[IVXLCDM]+|[一二三四五六七八九十]+)[、.\\s]\\s*", "").trim();
+        String cleanTitle = originalTitle.replaceFirst("^\\s*([\\d.]+|[a-zA-Z]+|[IVXLCDM]+|[一二三四五六七八九十]+)[、.\\s]\\s*", "").trim();
 
         sb.append(cleanTitle);
         return sb.toString();

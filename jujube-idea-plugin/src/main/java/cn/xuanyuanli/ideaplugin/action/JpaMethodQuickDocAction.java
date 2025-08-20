@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -18,10 +17,9 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.util.PsiTreeUtil;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
+
 import org.jetbrains.annotations.NotNull;
 import cn.xuanyuanli.ideaplugin.inspection.DaoJpaMethodInspection;
 import cn.xuanyuanli.ideaplugin.inspection.DaoJpaMethodInspection.PsiDaoMethod;
@@ -37,7 +35,8 @@ import cn.xuanyuanli.jdbc.base.spec.QueryCondition;
 import cn.xuanyuanli.jdbc.base.spec.Spec;
 import cn.xuanyuanli.jdbc.base.util.JdbcPojos;
 import cn.xuanyuanli.jdbc.base.util.JdbcPojos.FieldColumn;
-import cn.xuanyuanli.util.Texts;
+import cn.xuanyuanli.core.util.Texts;
+import cn.xuanyuanli.ideaplugin.JujubeBundle;
 
 /**
  * @author John Li
@@ -47,11 +46,11 @@ public class JpaMethodQuickDocAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
+        //noinspection DuplicatedCode
         if (isDisabled(e)) {
             return;
         }
         // 获取当前活动的项目、编辑器和文件
-        Project project = e.getProject();
         Editor editor = e.getRequiredData(CommonDataKeys.EDITOR);
         PsiFile psiFile = e.getRequiredData(CommonDataKeys.PSI_FILE);
         PsiJavaFile psiJavaFile = (PsiJavaFile) psiFile;
@@ -76,7 +75,7 @@ public class JpaMethodQuickDocAction extends AnAction {
         PsiEntityClass entityClass = (PsiEntityClass) daoMethod.getEntityClass();
         String entityName = entityClass.getOriginClass().getName();
         PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(psiMethod.getProject());
-        String returnCanonicalText = psiMethod.getReturnType().getCanonicalText();
+        String returnCanonicalText = Objects.requireNonNull(psiMethod.getReturnType()).getCanonicalText();
         boolean returnEntity = returnCanonicalText.equals(entityName);
         BaseQueryStrategy strategy = DaoJpaMethodInspection.getQueryStrategy(psiMethod);
         if (strategy == null) {
@@ -84,15 +83,15 @@ public class JpaMethodQuickDocAction extends AnAction {
         }
         Query query = DaoJpaMethodInspection.getQuery(psiMethod, strategy);
 
-        String comment = "根据查询条件";
+        String comment = JujubeBundle.getText("jpa.comment.based.on.condition");
         String paramDoc = getParamDoc(strategy, query, psiMethod, entityName);
         String returnDoc;
         if (returnEntity) {
-            comment += "获得对象";
+            comment += JujubeBundle.getText("jpa.comment.get.object");
             returnDoc = Texts.format("* @return {@link {}}", entityName);
         } else if (returnCanonicalText.startsWith("java.util.List")) {
-            comment += "获得对象集合";
-            if (returnCanonicalText.contains(entityName)) {
+            comment += JujubeBundle.getText("jpa.comment.get.object.list");
+            if (returnCanonicalText.contains(Objects.requireNonNull(entityName))) {
                 returnDoc = Texts.format("* @return {@link List}<{@link {}}>", entityName);
             } else {
                 PsiType type = Utils.getFirstGenericTypeOfClass(psiMethod.getReturnType());
@@ -100,21 +99,21 @@ public class JpaMethodQuickDocAction extends AnAction {
             }
         } else if (daoMethod.hasSelectFieldAnnotation()) {
             if (Utils.isPaimitiveType(psiMethod.getReturnType())) {
-                comment += "获得字段";
+                comment += JujubeBundle.getText("jpa.comment.get.field");
                 returnDoc = Texts.format("* @return {}", returnCanonicalText);
             } else {
-                comment += "获得对象";
+                comment += JujubeBundle.getText("jpa.comment.get.object");
                 returnDoc = Texts.format("* @return {@link {}}", returnCanonicalText);
             }
         } else if (Utils.isPaimitiveType(psiMethod.getReturnType())) {
             comment += "获得 ";
             returnDoc = "* @return ";
             if (strategy instanceof GetCountByAnyQuery) {
-                comment += "总数";
-                returnDoc += "总数";
+                comment += JujubeBundle.getText("jpa.comment.get.total");
+                returnDoc += JujubeBundle.getText("jpa.comment.get.total");
             } else if (strategy instanceof GetSumOfByAnyQuery) {
                 String entityField = query.getSelectFields().get(0).getEntityField();
-                String common = Texts.format(" {@link {}#get{} {}}", entityName, entityField, Utils.firstCharToLowerCase(entityField)) + " 总和";
+                String common = Texts.format(" {@link {}#get{} {}}", entityName, entityField, Utils.firstCharToLowerCase(entityField)) + " " + JujubeBundle.getText("jpa.comment.get.sum");
                 comment += common;
                 returnDoc += common;
             } else {
@@ -125,7 +124,7 @@ public class JpaMethodQuickDocAction extends AnAction {
             }
         } else {
             String link = Texts.format("{@link {}}", psiMethod.getReturnType().getCanonicalText());
-            comment += "获得 " + link;
+            comment += JujubeBundle.getText("jpa.comment.get.object") + " " + link;
             returnDoc = "* @return " + link;
         }
 
@@ -156,7 +155,7 @@ public class JpaMethodQuickDocAction extends AnAction {
         Spec spec = query.getSpec();
         if (spec == null) {
             if (strategy instanceof FindAnyByIdQuery) {
-                String primaryKeyName = DaoJpaMethodInspection.getPrimaryKeyName(psiMethod.getContainingClass());
+                String primaryKeyName = DaoJpaMethodInspection.getPrimaryKeyName(Objects.requireNonNull(psiMethod.getContainingClass()));
                 docs.add(Texts.format("    * @param @@@    {@link {}#get{}() {}}", entityName, Texts.capitalize(primaryKeyName), primaryKeyName));
             }
         } else {
@@ -170,7 +169,7 @@ public class JpaMethodQuickDocAction extends AnAction {
                 rdocs.add(docs.get(i).replace("@@@", parameter.getName()));
             }
         } else {
-            Consoles.info("psiMethod:{}, spce:{}, conditions:{}", psiMethod, spec, spec.getConditions());
+            Consoles.info("psiMethod:{}, spce:{}, conditions:{}", psiMethod, spec, Objects.requireNonNull(spec).getConditions());
         }
         return String.join("\n", rdocs);
     }
@@ -187,7 +186,7 @@ public class JpaMethodQuickDocAction extends AnAction {
             }
         }
         if (psiMethod.getName().endsWith("Limit")) {
-            docs.add("    * @param @@@    条数限制");
+            docs.add("    * @param @@@    " + JujubeBundle.getText("jpa.comment.limit.param"));
         }
     }
 
@@ -207,8 +206,6 @@ public class JpaMethodQuickDocAction extends AnAction {
     private boolean isDisabled(AnActionEvent e) {
         try {
             // 获取当前活动的项目、编辑器和文件
-            Project project = e.getProject();
-            Editor editor = e.getRequiredData(CommonDataKeys.EDITOR);
             PsiFile psiFile = e.getRequiredData(CommonDataKeys.PSI_FILE);
             PsiJavaFile psiJavaFile = (PsiJavaFile) psiFile;
             PsiClass psiClass = psiJavaFile.getClasses()[0];

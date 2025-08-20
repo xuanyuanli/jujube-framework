@@ -24,12 +24,15 @@ import com.intellij.psi.util.PsiUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import cn.xuanyuanli.ideaplugin.support.Consoles;
 import cn.xuanyuanli.ideaplugin.support.Utils;
-import cn.xuanyuanli.util.Pojos.FieldMapping;
-import cn.xuanyuanli.util.Texts;
+import cn.xuanyuanli.ideaplugin.JujubeBundle;
+import cn.xuanyuanli.core.util.Pojos.FieldMapping;
+import cn.xuanyuanli.core.util.Texts;
 
 /**
  * @author John Li
@@ -38,10 +41,10 @@ public class PojosMappingInspection extends LocalInspectionTool {
 
 
     @Override
-    public PsiElementVisitor buildVisitor(final ProblemsHolder holder, boolean isOnTheFly) {
+    public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
         return new JavaElementVisitor() {
             @Override
-            public void visitMethodCallExpression(PsiMethodCallExpression expression) {
+            public void visitMethodCallExpression(@NotNull PsiMethodCallExpression expression) {
                 super.visitMethodCallExpression(expression);
 
                 PsiMethod method = expression.resolveMethod();
@@ -72,17 +75,19 @@ public class PojosMappingInspection extends LocalInspectionTool {
         String message = null;
         boolean hasSourceMis = !diffField.misFieldMappingOfSource().isEmpty();
         boolean hasTargetMis = !diffField.misFieldMappingOfTarget().isEmpty();
-        if (hasSourceMis || hasTargetMis) {
-            message = "Pojos 方法调用存在问题。第三个参数（FileMapping）定义的参数在源对象中不存在，";
-            if (hasSourceMis) {
-                message += "sourceClass：" + String.join(", ", diffField.misFieldMappingOfSource());
-            }
-            if (hasTargetMis) {
-                message += (hasSourceMis ? "; " : "") + "targetClass：" + String.join(", ", diffField.misFieldMappingOfTarget());
-            }
+        if (hasSourceMis && hasTargetMis) {
+            message = JujubeBundle.message("inspection.pojos.mapping.filemap.problem.source.target", 
+                String.join(", ", diffField.misFieldMappingOfSource()),
+                String.join(", ", diffField.misFieldMappingOfTarget()));
+        } else if (hasSourceMis) {
+            message = JujubeBundle.message("inspection.pojos.mapping.filemap.problem.source", 
+                String.join(", ", diffField.misFieldMappingOfSource()));
+        } else if (hasTargetMis) {
+            message = JujubeBundle.message("inspection.pojos.mapping.filemap.problem.target", 
+                String.join(", ", diffField.misFieldMappingOfTarget()));
         }
         if (!misFields.isEmpty()) {
-            message = "Pojos 方法调用存在问题。目标对象中的某些字段没有被复制或者set调用：" + String.join(", ", misFields);
+            message = JujubeBundle.message("inspection.pojos.mapping.missing.fields", String.join(", ", misFields));
         }
         if (message != null) {
             holder.registerProblem(expression, message, new PojosLocalQuickFix());
@@ -100,7 +105,7 @@ public class PojosMappingInspection extends LocalInspectionTool {
         List<PsiField> psiFields = diffField.misFieldsOfTarget();
         List<String> misFields = psiFields.stream().map(PsiField::getName).toList();
         if (!misFields.isEmpty()) {
-            String message = "BaseEntity.toBO 类型映射存在问题。目标对象中的某些字段没有被复制或者set调用：" + String.join(", ", misFields);
+            String message = JujubeBundle.message("inspection.baseentity.tobo.missing.fields", String.join(", ", misFields));
             holder.registerProblem(methodCall, message, new PojosLocalQuickFix());
         }
     }
@@ -117,7 +122,7 @@ public class PojosMappingInspection extends LocalInspectionTool {
         List<PsiField> psiFields = diffField.misFieldsOfTarget();
         List<String> misFields = psiFields.stream().map(PsiField::getName).toList();
         if (!misFields.isEmpty()) {
-            String message = "Pageable.toGenericType 类型映射存在问题。目标对象中的某些字段没有被复制或者set调用：" + String.join(", ", misFields);
+            String message = JujubeBundle.message("inspection.pageable.togeneric.missing.fields", String.join(", ", misFields));
             holder.registerProblem(methodCall, message, new PojosLocalQuickFix());
         }
     }
@@ -130,14 +135,14 @@ public class PojosMappingInspection extends LocalInspectionTool {
         PsiReferenceExpression methodExpression = methodCall.getMethodExpression();
         PsiExpression[] arguments = methodCall.getArgumentList().getExpressions();
         PsiExpression caller = methodExpression.getQualifierExpression();
-        if (caller == null || !"toGenericType".equals(method.getName()) || arguments.length != 1 || Utils.isNotClassType(arguments[0].getType())
+        if (caller == null || !"toGenericType".equals(method.getName()) || arguments.length != 1 || Utils.isNotClassType(Objects.requireNonNull(arguments[0].getType()))
                 || caller.getType() == null || !caller.getType().getCanonicalText().startsWith(Utils.PAGEABLE_NAME)) {
             return null;
         }
         PsiType callerType = caller.getType();
         PsiType originType = Utils.getClassOriginType(arguments[0].getType(), method.getProject());
         if (Utils.isMapType(originType) && holder != null) {
-            String message = "参数（目标类）不能为Record";
+            String message = JujubeBundle.getText("inspection.record.not.allowed.target");
             holder.registerProblem(methodCall, message);
             return null;
         }
@@ -155,14 +160,14 @@ public class PojosMappingInspection extends LocalInspectionTool {
         PsiReferenceExpression methodExpression = methodCall.getMethodExpression();
         PsiExpression[] arguments = methodCall.getArgumentList().getExpressions();
         PsiExpression caller = methodExpression.getQualifierExpression();
-        if (caller == null || !"toBO".equals(method.getName()) || arguments.length != 1 || Utils.isNotClassType(arguments[0].getType())
+        if (caller == null || !"toBO".equals(method.getName()) || arguments.length != 1 || Utils.isNotClassType(Objects.requireNonNull(arguments[0].getType()))
                 || caller.getType() == null || !Utils.isBaseEntity(caller.getType())) {
             return null;
         }
         PsiType callerType = caller.getType();
         PsiType originType = Utils.getClassOriginType(arguments[0].getType(), method.getProject());
         if (Utils.isMapType(originType) && holder != null) {
-            String message = "参数（目标类）不能为Record";
+            String message = JujubeBundle.getText("inspection.record.not.allowed.target");
             holder.registerProblem(methodCall, message);
             return null;
         }
@@ -173,7 +178,7 @@ public class PojosMappingInspection extends LocalInspectionTool {
 
     @Nullable
     private static DiffField getDiffFieldOfPojos(PsiMethodCallExpression expression, PsiMethod method, ProblemsHolder holder) {
-        if (method == null || !"cn.xuanyuanli.util.Pojos".equals(method.getContainingClass().getQualifiedName())) {
+        if (method == null || !"cn.xuanyuanli.util.Pojos".equals(Objects.requireNonNull(method.getContainingClass()).getQualifiedName())) {
             return null;
         }
 
@@ -188,7 +193,7 @@ public class PojosMappingInspection extends LocalInspectionTool {
         }
         targetType = Utils.getClassOriginType(targetType, expression.getProject());
         if (Utils.isMapType(targetType) && holder != null) {
-            String message = "Pojos 方法第二个参数（目标类）不能为Record";
+            String message = JujubeBundle.getText("inspection.record.not.allowed.pojos");
             holder.registerProblem(expression, message);
             return null;
         }
@@ -259,7 +264,7 @@ public class PojosMappingInspection extends LocalInspectionTool {
                 if (Utils.getFieldFromClass(targetFieldName, sourceClass) == null) {
                     // 再看此字段有没有被set
                     PsiMethod[] methods = targetClass.findMethodsByName("set" + Texts.capitalize(targetFieldName), true);
-                    if (methods != null && methods.length == 1) {
+                    if (methods.length == 1) {
                         List<PsiReference> setCall = Utils.findMethodCall(methods[0]);
                         if (setCall.isEmpty()) {
                             misTargetFields.add(field);
@@ -343,8 +348,8 @@ public class PojosMappingInspection extends LocalInspectionTool {
 
         PsiExpression[] arguments = expression.getArgumentList().getExpressions();
         if (arguments.length == 2) {
-            String arg1 = ((PsiLiteralExpressionImpl) arguments[0]).getValue().toString();
-            String arg2 = ((PsiLiteralExpressionImpl) arguments[1]).getValue().toString();
+            String arg1 = Objects.requireNonNull(((PsiLiteralExpressionImpl) arguments[0]).getValue()).toString();
+            String arg2 = Objects.requireNonNull(((PsiLiteralExpressionImpl) arguments[1]).getValue()).toString();
             fieldMapping.field(arg1, arg2);
         }
 
@@ -386,7 +391,7 @@ public class PojosMappingInspection extends LocalInspectionTool {
 
         @Override
         public @IntentionFamilyName @NotNull String getFamilyName() {
-            return "在目标类添加对应字段";
+            return JujubeBundle.getText("quick.fix.pojos.mapping.add.fields");
         }
 
         @Override

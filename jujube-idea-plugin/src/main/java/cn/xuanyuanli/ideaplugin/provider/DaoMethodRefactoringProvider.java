@@ -10,6 +10,8 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.RefactoringElementListenerProvider;
 import java.util.Arrays;
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import cn.xuanyuanli.ideaplugin.support.Utils;
@@ -26,7 +28,7 @@ public class DaoMethodRefactoringProvider implements RefactoringElementListenerP
             return null;
         }
         String methodName = method.getName();
-        if (!Utils.isBaseDao(method.getContainingClass()) || Utils.isJpaMethod(methodName)) {
+        if (!Utils.isBaseDao(Objects.requireNonNull(method.getContainingClass())) || Utils.isJpaMethod(methodName)) {
             return null;
         }
         return new RefactoringElementListener() {
@@ -45,8 +47,8 @@ public class DaoMethodRefactoringProvider implements RefactoringElementListenerP
         if (newElement instanceof PsiMethod renamedMethod) {
             Project project = renamedMethod.getProject();
             String newName = renamedMethod.getName();
-            PsiFile sqlFile = Utils.getSqlFileFromDaoClass(renamedMethod.getContainingClass());
-            Arrays.stream(sqlFile.getChildren()[0].getChildren()).filter(element -> element instanceof FtlMacro macro
+            PsiFile sqlFile = Utils.getSqlFileFromDaoClass(Objects.requireNonNull(renamedMethod.getContainingClass()));
+            Arrays.stream(Objects.requireNonNull(sqlFile).getChildren()[0].getChildren()).filter(element -> element instanceof FtlMacro macro
                     && macro.getName().equals("@" + oldName)).findFirst().ifPresent(element -> {
                 @NotNull PsiElement[] children = element.getChildren();
                 WriteCommandAction.runWriteCommandAction(project, () -> {

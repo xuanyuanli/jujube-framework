@@ -1,32 +1,9 @@
 package cn.xuanyuanli.ideaplugin.inspection;
 
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiArrayType;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiCodeBlock;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiTypes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import cn.xuanyuanli.exception.DaoQueryException;
+import cn.xuanyuanli.jdbc.exception.DaoQueryException;
 import cn.xuanyuanli.ideaplugin.support.Consoles;
 import cn.xuanyuanli.ideaplugin.support.Utils;
+import cn.xuanyuanli.ideaplugin.JujubeBundle;
 import cn.xuanyuanli.jdbc.base.jpa.strategy.BaseQueryStrategy;
 import cn.xuanyuanli.jdbc.base.jpa.strategy.JpaQuerier;
 import cn.xuanyuanli.jdbc.base.jpa.strategy.query.DaoMethod;
@@ -34,6 +11,14 @@ import cn.xuanyuanli.jdbc.base.jpa.strategy.query.EntityClass;
 import cn.xuanyuanli.jdbc.base.jpa.strategy.query.EntityField;
 import cn.xuanyuanli.jdbc.base.jpa.strategy.query.Query;
 import cn.xuanyuanli.jdbc.binding.DaoSqlRegistry;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author John Li
@@ -41,20 +26,20 @@ import cn.xuanyuanli.jdbc.binding.DaoSqlRegistry;
 public class DaoJpaMethodInspection extends LocalInspectionTool {
 
     @Override
-    public PsiElementVisitor buildVisitor(final ProblemsHolder holder, boolean isOnTheFly) {
+    public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
         return new JavaElementVisitor() {
             @Override
-            public void visitMethod(PsiMethod method) {
+            public void visitMethod(@NotNull PsiMethod method) {
                 super.visitMethod(method);
 
-                if (method == null || Utils.isDefaultMethod(method)) {
+                if (Utils.isDefaultMethod(method)) {
                     return;
                 }
                 PsiClass daoClass = method.getContainingClass();
                 String methodName = method.getName();
                 PsiDaoMethod psiDaoMethod = new PsiDaoMethod(method);
-                if (!Utils.isBaseDao(daoClass) || !Utils.isJpaMethod(methodName) || !DaoSqlRegistry.isJpaMethod(methodName)
-                    || psiDaoMethod.hasSelectFieldAnnotation()) {
+                if (daoClass != null && (!Utils.isBaseDao(daoClass) || !Utils.isJpaMethod(methodName) || !DaoSqlRegistry.isJpaMethod(methodName)
+                        || psiDaoMethod.hasSelectFieldAnnotation())) {
                     return;
                 }
 
@@ -67,16 +52,16 @@ public class DaoJpaMethodInspection extends LocalInspectionTool {
                     String regex = "entityFieldName:";
                     if (e.getMessage().contains(regex)) {
                         String field = e.getMessage().split(regex)[1];
-                        String message = "JPA方法中存在错误字段：" + String.join(", ", field);
+                        String message = JujubeBundle.message("inspection.jpa.method.invalid.field", String.join(", ", field));
                         holder.registerProblem(method, message);
                     } else {
                         Consoles.info(e.getMessage());
                     }
                 } catch (IndexOutOfBoundsException e) {
-                    String message = "JPA方法缺少相关参数，请和查询参数一一对应";
+                    String message = JujubeBundle.getText("inspection.jpa.method.missing.params");
                     holder.registerProblem(method, message);
                 } catch (Exception e) {
-                    String message = "JPA方法出现未知错误：" + e.getMessage();
+                    String message = JujubeBundle.message("inspection.jpa.method.unknown.error", e.getMessage());
                     holder.registerProblem(method, message);
                 }
             }
@@ -94,7 +79,7 @@ public class DaoJpaMethodInspection extends LocalInspectionTool {
         PsiClass daoClass = method.getContainingClass();
         PsiDaoMethod psiDaoMethod = new PsiDaoMethod(method);
         List<Object> args = Arrays.stream(method.getParameterList().getParameters()).map(e -> getDefaultValue(e.getType())).toList();
-        return strategy.getQuery(getTableName(daoClass), psiDaoMethod, args.toArray());
+        return strategy.getQuery(getTableName(Objects.requireNonNull(daoClass)), psiDaoMethod, args.toArray());
     }
 
     /**
@@ -213,6 +198,20 @@ public class DaoJpaMethodInspection extends LocalInspectionTool {
 
     private static String getTableName(PsiClass psiClass) {
         PsiMethod[] methods = psiClass.findMethodsByName("getTableName", true);
+        return getPrimaryKeyName(methods);
+    }
+
+    public static String getPrimaryKeyName(PsiClass psiClass) {
+        PsiMethod[] methods = psiClass.findMethodsByName("getPrimaryKeyName", true);
+        String methodBody = getPrimaryKeyName(methods);
+        if (methodBody != null) {
+            return methodBody;
+        }
+        return "id";
+    }
+
+    @Nullable
+    private static String getPrimaryKeyName(PsiMethod[] methods) {
         if (methods.length > 0) {
             PsiMethod method = methods[0];
             PsiCodeBlock codeBlock = method.getBody();
@@ -222,19 +221,6 @@ public class DaoJpaMethodInspection extends LocalInspectionTool {
             }
         }
         return null;
-    }
-
-    public static String getPrimaryKeyName(PsiClass psiClass) {
-        PsiMethod[] methods = psiClass.findMethodsByName("getPrimaryKeyName", true);
-        if (methods.length > 0) {
-            PsiMethod method = methods[0];
-            PsiCodeBlock codeBlock = method.getBody();
-            if (codeBlock != null) {
-                String methodBody = codeBlock.getText();
-                return methodBody.substring(6).replace("\"", "").trim();
-            }
-        }
-        return "id";
     }
 
     public static class PsiDaoMethod implements DaoMethod {
@@ -247,7 +233,7 @@ public class DaoJpaMethodInspection extends LocalInspectionTool {
 
         @Override
         public EntityClass getEntityClass() {
-            return new PsiEntityClass(Utils.getFirstGenericTypeOfBaseDao(method.getContainingClass()));
+            return new PsiEntityClass(Utils.getFirstGenericTypeOfBaseDao(Objects.requireNonNull(method.getContainingClass())));
         }
 
         @Override

@@ -19,6 +19,7 @@ import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiTreeUtil;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +29,7 @@ import cn.xuanyuanli.ideaplugin.support.Sqls;
 import cn.xuanyuanli.ideaplugin.support.Utils;
 import cn.xuanyuanli.core.util.CamelCase;
 import cn.xuanyuanli.core.util.Exceptions;
+import cn.xuanyuanli.ideaplugin.JujubeBundle;
 
 /**
  * @author John Li
@@ -35,7 +37,7 @@ import cn.xuanyuanli.core.util.Exceptions;
 public class SqlToPoAction extends AnAction {
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         if (isDisable(e)) {
             return;
         }
@@ -43,11 +45,11 @@ public class SqlToPoAction extends AnAction {
         Project project = e.getProject();
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         Editor editor = e.getData(LangDataKeys.EDITOR);
-        Document document = editor.getDocument();
+        Document document = Objects.requireNonNull(editor).getDocument();
         SelectionModel selectionModel = editor.getSelectionModel();
-        String selectedText = getFilterSql(selectionModel.getSelectedText());
+        String selectedText = getFilterSql(Objects.requireNonNull(selectionModel.getSelectedText()));
         // 获取 Java 文件
-        PsiJavaFile javaFile = (PsiJavaFile) Utils.getJavaFileFromSqlFile(psiFile);
+        PsiJavaFile javaFile = (PsiJavaFile) Utils.getJavaFileFromSqlFile(Objects.requireNonNull(psiFile));
         if (javaFile == null) {
             return;
         }
@@ -57,11 +59,11 @@ public class SqlToPoAction extends AnAction {
             columns = Sqls.getColumns(selectedText, project);
         } catch (Exception ex) {
             Consoles.info(Exceptions.exceptionToString(ex));
-            Messages.showErrorDialog("解析Sql出错，请确认选择了正确的sql语句", "错误");
+            Messages.showErrorDialog(JujubeBundle.getText("error.parse.sql"), JujubeBundle.getText("dialog.error"));
             return;
         }
-        if (columns == null || columns.isEmpty()) {
-            Messages.showErrorDialog("未获取到任何字段，无法继续", "错误");
+        if (columns.isEmpty()) {
+            Messages.showErrorDialog(JujubeBundle.getText("error.no.fields"), JujubeBundle.getText("dialog.error"));
             return;
         }
 
@@ -70,7 +72,7 @@ public class SqlToPoAction extends AnAction {
             return;
         }
         // 显示输入对话框以获取类名
-        String className = Messages.showInputDialog(project, "请输入PO名称：", "生成PO",
+        String className = Messages.showInputDialog(project, JujubeBundle.getText("dialog.input.po.name"), JujubeBundle.getText("dialog.generate.po"),
                 Messages.getQuestionIcon(), CamelCase.toCapitalizeCamelCase(methodName) + "PO", null);
         // 如果用户取消输入或输入为空，则停止操作
         if (className == null || className.trim().isEmpty()) {
@@ -82,7 +84,7 @@ public class SqlToPoAction extends AnAction {
         // 在 PsiClass 中添加内部类
         PsiClass innerClass = Utils.addInnerClassToJavaFile(project, daoClass, className, columns);
         if (innerClass == null) {
-            Messages.showErrorDialog("生成内部类失败", "错误");
+            Messages.showErrorDialog(JujubeBundle.getText("dialog.generate.inner.class.failed"), JujubeBundle.getText("dialog.error"));
             return;
         }
         PsiMethod method = Utils.findMethodInJavaFile(javaFile, methodName);
@@ -92,16 +94,16 @@ public class SqlToPoAction extends AnAction {
         } else {
             // 否则，跳转到DO处
             PsiClass foundInnerClass = daoClass.findInnerClassByName(innerClass.getName(), false);
-            TextRange innerClassTextRange = foundInnerClass.getTextRange();
+            TextRange innerClassTextRange = Objects.requireNonNull(foundInnerClass).getTextRange();
             Utils.goLine(project, javaFile.getVirtualFile(), innerClassTextRange.getStartOffset());
         }
 
         Utils.findMethodCall(method).forEach(call -> {
             PsiElement element = call.getElement();
             PsiMethod callerMethod = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
-            if (callerMethod != null && !Utils.isBaseDao(callerMethod.getContainingClass())) {
+            if (callerMethod != null && !Utils.isBaseDao(Objects.requireNonNull(callerMethod.getContainingClass()))) {
                 PsiType returnType = callerMethod.getReturnType();
-                if (Utils.isMapType(returnType) || Utils.isListMapType(returnType) || Utils.isPageableMapType(returnType)) {
+                if (Utils.isMapType(Objects.requireNonNull(returnType)) || Utils.isListMapType(returnType) || Utils.isPageableMapType(returnType)) {
                     PsiClass targetClass = ConvertMapToBeanAction.getTargetClass(callerMethod.getContainingClass());
                     String boClassName = className.replace("PO", "BO");
                     PsiClass boInnerClass = Utils.addInnerClassToJavaFile(project, targetClass, boClassName, columns);
@@ -126,7 +128,7 @@ public class SqlToPoAction extends AnAction {
             }
         }
         if (index == -1) {
-            Messages.showErrorDialog("无法找到Sql所在的方法", "错误");
+            Messages.showErrorDialog(JujubeBundle.getText("dialog.cannot.find.sql.method"), JujubeBundle.getText("dialog.error"));
             return null;
         }
         String str = arr[index];
@@ -152,10 +154,9 @@ public class SqlToPoAction extends AnAction {
         Project project = e.getProject();
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         Editor editor = e.getData(LangDataKeys.EDITOR);
-        Document document = editor.getDocument();
-        SelectionModel selectionModel = editor.getSelectionModel();
+        SelectionModel selectionModel = Objects.requireNonNull(editor).getSelectionModel();
         String selectedText = selectionModel.getSelectedText();
-        return project == null || editor == null || !Utils.isSqlFile(psiFile) || selectedText == null || selectedText.isBlank();
+        return project == null || !Utils.isSqlFile(psiFile) || selectedText == null || selectedText.isBlank();
     }
 
     @Override

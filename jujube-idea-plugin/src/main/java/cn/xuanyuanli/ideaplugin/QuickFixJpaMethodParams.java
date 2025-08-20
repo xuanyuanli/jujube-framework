@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import cn.xuanyuanli.ideaplugin.support.Column;
 import cn.xuanyuanli.ideaplugin.support.Constants;
 import cn.xuanyuanli.ideaplugin.support.Utils;
-import cn.xuanyuanli.util.Texts;
+import cn.xuanyuanli.core.util.Texts;
 
 /**
  * @author John Li
@@ -38,12 +38,12 @@ public class QuickFixJpaMethodParams extends PsiElementBaseIntentionAction {
 
     @Override
     public @IntentionName @NotNull String getText() {
-        return "填充JPA方法参数";
+        return JujubeBundle.getText("quick.fix.jpa.method.params");
     }
 
     @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
-        return "填充JPA方法参数";
+        return JujubeBundle.getText("quick.fix.jpa.method.params");
     }
 
 
@@ -72,7 +72,7 @@ public class QuickFixJpaMethodParams extends PsiElementBaseIntentionAction {
         List<PsiField> fields = Utils.getAllFieldsFilterStaticAndFinal(entityClass);
         String text = statementElement.getText();
         if (!Utils.isJpaMethod(text)) {
-            Messages.showErrorDialog("不是JPA方法", "错误");
+            Messages.showErrorDialog(JujubeBundle.getText("error.invalid.jpa.method"), JujubeBundle.getText("dialog.error"));
             return;
         }
         FieldNamesAndReturnType fieldNamesAndReturnType = getFieldNamesAndReturnType(project, text, daoClass, entityClass, false);

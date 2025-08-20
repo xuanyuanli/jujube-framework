@@ -14,6 +14,8 @@ import com.intellij.psi.impl.JavaPsiFacadeEx;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
@@ -26,7 +28,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import org.apache.commons.lang3.StringUtils;
-import cn.xuanyuanli.util.CamelCase;
+import cn.xuanyuanli.core.util.CamelCase;
 
 /**
  * @author John Li
@@ -48,9 +50,9 @@ public class Sqls {
      */
     public static List<Column> getColumns(String sql, Project project) throws JSQLParserException {
         Select selectBody = (Select) CCJSqlParserUtil.parse(sql);
-        List<Column> list = new ArrayList();
+        List<Column> list = new ArrayList<>();
         if (selectBody instanceof PlainSelect plainSelect) {
-            for (SelectItem item : plainSelect.getSelectItems()) {
+            for (SelectItem<?> item : plainSelect.getSelectItems()) {
                 Expression expression = item.getExpression();
                 PsiType type = null;
                 if (expression instanceof net.sf.jsqlparser.schema.Column column) {
@@ -111,7 +113,7 @@ public class Sqls {
             String ccolumnName = columnName.replace("`", "").toLowerCase();
             for (DbDataSource dataSource : dataSources) {
                 DasTable first = DasUtil.getTables(dataSource).filter(dasTable -> dasTable.getName().equals(ctableName)).first();
-                return DasUtil.getColumns(first).filter(dasColumn -> dasColumn.getName().equals(ccolumnName)).first().getDasType().toDataType();
+                return Objects.requireNonNull(DasUtil.getColumns(first).filter(dasColumn -> dasColumn.getName().equals(ccolumnName)).first()).getDasType().toDataType();
             }
         }
         return null;

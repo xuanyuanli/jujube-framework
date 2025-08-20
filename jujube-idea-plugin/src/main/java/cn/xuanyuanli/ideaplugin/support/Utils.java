@@ -52,19 +52,16 @@ import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.sql.SqlFileType;
 import com.intellij.util.Query;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import cn.xuanyuanli.jdbc.binding.DaoSqlRegistry;
-import cn.xuanyuanli.util.CamelCase;
-import cn.xuanyuanli.util.Texts;
+import cn.xuanyuanli.core.util.CamelCase;
+import cn.xuanyuanli.core.util.Texts;
 
 /**
  * @author John Li
@@ -83,7 +80,7 @@ public class Utils {
      * 是否是默认方法
      */
     public static boolean isDefaultMethod(@NotNull PsiMethod method) {
-        return method.hasModifierProperty(PsiModifier.DEFAULT) && PsiUtil.getLanguageLevel(method.getContainingClass()).isAtLeast(LanguageLevel.JDK_1_8);
+        return method.hasModifierProperty(PsiModifier.DEFAULT) && PsiUtil.getLanguageLevel(Objects.requireNonNull(method.getContainingClass())).isAtLeast(LanguageLevel.JDK_1_8);
     }
 
     /**
@@ -94,13 +91,6 @@ public class Utils {
         return Arrays.stream(interfaces).anyMatch(i -> BASE_DAO_NAME.equals(i.getQualifiedName()));
     }
 
-
-    public static PsiClass fileToClass(PsiFile psiFile) {
-        if (psiFile instanceof PsiJavaFile psiJavaFile) {
-            return psiJavaFile.getClasses()[0];
-        }
-        return null;
-    }
 
     /**
      * 是否是覆盖方法
@@ -244,7 +234,7 @@ public class Utils {
         List<PsiMethodCallExpression> result = new ArrayList<>();
         psiMethod.accept(new JavaRecursiveElementWalkingVisitor() {
             @Override
-            public void visitMethodCallExpression(PsiMethodCallExpression expression) {
+            public void visitMethodCallExpression(@NotNull PsiMethodCallExpression expression) {
                 super.visitMethodCallExpression(expression);
 
                 PsiReferenceExpression methodExpression = expression.getMethodExpression();
@@ -275,9 +265,9 @@ public class Utils {
             reference.set(elementFactory.createClass(innerClassName));
             PsiClass innerClass = reference.get();
             if (target.isInterface()) {
-                innerClass.getModifierList().setModifierProperty(PsiModifier.PUBLIC, false);
+                Objects.requireNonNull(innerClass.getModifierList()).setModifierProperty(PsiModifier.PUBLIC, false);
             } else {
-                innerClass.getModifierList().setModifierProperty(PsiModifier.PUBLIC, true);
+                Objects.requireNonNull(innerClass.getModifierList()).setModifierProperty(PsiModifier.PUBLIC, true);
                 innerClass.getModifierList().setModifierProperty(PsiModifier.STATIC, true);
             }
             makeClassImpl(innerClass, "cn.xuanyuanli.jdbc.support.entity.BaseEntity");
@@ -298,19 +288,6 @@ public class Utils {
     }
 
     /**
-     * 使类扩展自指定类名
-     */
-    public static void makeClassExtend(PsiClass aClass, String extendClassName) {
-        Project project = aClass.getProject();
-        PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
-        PsiClass extendClass = JavaPsiFacade.getInstance(project).findClass(extendClassName, GlobalSearchScope.allScope(project));
-        // 创建一个新的继承关系
-        PsiJavaCodeReferenceElement superClassReference = elementFactory.createClassReferenceElement(extendClass);
-        // 添加继承关系到innerClass的extends列表中
-        aClass.getExtendsList().add(superClassReference);
-    }
-
-    /**
      * 使类实现自指定类名
      */
     public static void makeClassImpl(PsiClass aClass, String extendClassName) {
@@ -318,9 +295,9 @@ public class Utils {
         PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
         PsiClass extendClass = JavaPsiFacade.getInstance(project).findClass(extendClassName, GlobalSearchScope.allScope(project));
         // 创建一个新的继承关系
-        PsiJavaCodeReferenceElement superClassReference = elementFactory.createClassReferenceElement(extendClass);
+        PsiJavaCodeReferenceElement superClassReference = elementFactory.createClassReferenceElement(Objects.requireNonNull(extendClass));
         // 添加继承关系到innerClass的extends列表中
-        aClass.getImplementsList().add(superClassReference);
+        Objects.requireNonNull(aClass.getImplementsList()).add(superClassReference);
     }
 
 
@@ -331,7 +308,7 @@ public class Utils {
         if (type.equals(PsiTypes.nullType()) || type.equals(PsiTypes.voidType())) {
             return PsiType.getJavaLangString(psiClass.getManager(), psiClass.getResolveScope());
         } else if (type instanceof PsiPrimitiveType primitiveType) {
-            return PsiType.getTypeByName(primitiveType.getBoxedTypeName(), project, psiClass.getResolveScope());
+            return PsiType.getTypeByName(Objects.requireNonNull(primitiveType.getBoxedTypeName()), project, psiClass.getResolveScope());
         }
         return type;
     }
@@ -351,7 +328,7 @@ public class Utils {
             }
             if (checkVariableIsNew(psiVariable)) {
                 PsiNewExpression newConstructorCall = (PsiNewExpression) factory.createExpressionFromText("new " + newClass.getQualifiedName() + "()", null);
-                psiVariable.getInitializer().replace(newConstructorCall);
+                Objects.requireNonNull(psiVariable.getInitializer()).replace(newConstructorCall);
                 JavaCodeStyleManager.getInstance(project).shortenClassReferences(psiVariable);
             }
         });
@@ -379,8 +356,8 @@ public class Utils {
         WriteCommandAction.runWriteCommandAction(project, () -> {
             for (PsiMethodCallExpression putCall : putCalls) {
                 PsiExpression[] arguments = putCall.getArgumentList().getExpressions();
-                if (arguments.length == 2 && arguments[0] instanceof PsiLiteralExpression && arguments[1] instanceof PsiExpression) {
-                    String key = ((PsiLiteralExpression) arguments[0]).getValue().toString();
+                if (arguments.length == 2 && arguments[0] instanceof PsiLiteralExpression && arguments[1] != null) {
+                    String key = Objects.requireNonNull(((PsiLiteralExpression) arguments[0]).getValue()).toString();
                     String fieldName = CamelCase.toCapitalizeCamelCase(key);
                     String setterMethodCall = psiVariable.getName() + ".set" + fieldName + "(" + arguments[1].getText() + ")";
                     PsiExpression setterMethodCallExpression = JavaPsiFacade.getElementFactory(putCall.getProject())
@@ -401,15 +378,13 @@ public class Utils {
             WriteCommandAction.runWriteCommandAction(project, () -> {
                 PsiTypeElement newTypeElement = JavaPsiFacade.getElementFactory(method.getProject()).createTypeElement(psiType);
                 returnTypeElement.replace(newTypeElement);
-                JavaCodeStyleManager.getInstance(project).shortenClassReferences(method.getContainingClass());
+                JavaCodeStyleManager.getInstance(project).shortenClassReferences(Objects.requireNonNull(method.getContainingClass()));
             });
         }
 
         PsiMethod[] superMethods = method.findSuperMethods();
-        if (superMethods != null) {
-            for (PsiMethod superMethod : superMethods) {
-                replaceMethodReturnType(project, superMethod, psiType);
-            }
+        for (PsiMethod superMethod : superMethods) {
+            replaceMethodReturnType(project, superMethod, psiType);
         }
     }
 
@@ -443,20 +418,6 @@ public class Utils {
     public static PsiElement findSqlMethodInSqlFile(PsiFile sqlFile, String methodName) {
         String fileText = sqlFile.getText();
         Pattern pattern = Pattern.compile("<@" + methodName + ">");
-        Matcher matcher = pattern.matcher(fileText);
-        if (matcher.find()) {
-            int startOffset = matcher.start();
-            return sqlFile.getViewProvider().findElementAt(startOffset, sqlFile.getLanguage());
-        }
-        return null;
-    }
-
-    /**
-     * 在sql文件找到对应的sql方法的关闭符
-     */
-    public static PsiElement findSqlMethodEndInSqlFile(PsiFile sqlFile, String methodName) {
-        String fileText = sqlFile.getText();
-        Pattern pattern = Pattern.compile("</@" + methodName + ">");
         Matcher matcher = pattern.matcher(fileText);
         if (matcher.find()) {
             int startOffset = matcher.start();
@@ -513,7 +474,7 @@ public class Utils {
             for (PsiMethodCallExpression callExpression : callExpressions) {
                 PsiExpression[] arguments = callExpression.getArgumentList().getExpressions();
                 if (arguments.length == 1 && arguments[0] instanceof PsiLiteralExpression) {
-                    String key = ((PsiLiteralExpression) arguments[0]).getValue().toString();
+                    String key = Objects.requireNonNull(((PsiLiteralExpression) arguments[0]).getValue()).toString();
                     String fieldName = CamelCase.toCapitalizeCamelCase(key);
                     String getterMethodCall = psiVariable.getName() + ".get" + fieldName + "()";
                     PsiExpression setterMethodCallExpression = JavaPsiFacade.getElementFactory(callExpression.getProject())
@@ -606,7 +567,7 @@ public class Utils {
     public static boolean modifyMethodReturnTypeIfMap(PsiClass innerClass, PsiMethod method) {
         Project project = method.getProject();
         PsiType returnType = method.getReturnType();
-        boolean listMapType = isListMapType(returnType);
+        boolean listMapType = isListMapType(Objects.requireNonNull(returnType));
         boolean pageableMapType = isPageableMapType(returnType);
         boolean mapType = isMapType(returnType);
         JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
@@ -619,10 +580,10 @@ public class Utils {
             if (mapType) {
                 newReturnType = boType;
             } else if (listMapType) {
-                newReturnType = elementFactory.createType(javaPsiFacade.findClass(LIST_NAME, GlobalSearchScope.allScope(project)),
+                newReturnType = elementFactory.createType(Objects.requireNonNull(javaPsiFacade.findClass(LIST_NAME, GlobalSearchScope.allScope(project))),
                         new PsiType[]{boType});
             } else {
-                newReturnType = elementFactory.createType(javaPsiFacade.findClass(PAGEABLE_NAME, GlobalSearchScope.allScope(project)),
+                newReturnType = elementFactory.createType(Objects.requireNonNull(javaPsiFacade.findClass(PAGEABLE_NAME, GlobalSearchScope.allScope(project))),
                         new PsiType[]{boType});
             }
             PsiTypeElement returnTypeElement = method.getReturnTypeElement();
@@ -632,7 +593,7 @@ public class Utils {
 
                     PsiTypeElement newReturnTypeElement = elementFactory.createTypeElement(newReturnType);
                     returnTypeElement.replace(newReturnTypeElement);
-                    JavaCodeStyleManager.getInstance(project).shortenClassReferences(method.getContainingClass());
+                    JavaCodeStyleManager.getInstance(project).shortenClassReferences(Objects.requireNonNull(method.getContainingClass()));
                 });
                 return true;
             }
@@ -722,42 +683,13 @@ public class Utils {
     }
 
     /**
-     * 获得方法
-     *
-     * @param psiMethod psi方法
-     * @return {@link Method}
-     */
-    public static Method getMethod(PsiMethod psiMethod) {
-        String className = psiMethod.getContainingClass().getQualifiedName();
-
-        try {
-            // 加载类
-            Class<?> clazz = Class.forName(className);
-
-            // 获取方法的参数类型
-            PsiParameter[] psiParameters = psiMethod.getParameterList().getParameters();
-            Class<?>[] parameterTypes = new Class<?>[psiParameters.length];
-            for (int i = 0; i < psiParameters.length; i++) {
-                PsiParameter psiParameter = psiParameters[i];
-                PsiType psiType = psiParameter.getType();
-                parameterTypes[i] = Class.forName(psiType.getCanonicalText());
-            }
-
-            // 获取对应的 java.lang.reflect.Method 对象
-            return clazz.getMethod(psiMethod.getName(), parameterTypes);
-        } catch (ClassNotFoundException | NoSuchMethodException ignored) {
-        }
-        return null;
-    }
-
-    /**
      * 是paimitive类型
      *
      * @param type 类型
      * @return boolean
      */
     public static boolean isPaimitiveType(@Nullable PsiType type) {
-        if (type.equalsToText("java.lang.Integer")) {
+        if (Objects.requireNonNull(type).equalsToText("java.lang.Integer")) {
             return true;
         } else if (type.equalsToText("java.lang.Long")) {
             return true;

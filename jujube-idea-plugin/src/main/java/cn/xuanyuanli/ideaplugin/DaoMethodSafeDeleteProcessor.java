@@ -12,10 +12,9 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceUsageInf
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+
+import java.util.*;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import cn.xuanyuanli.ideaplugin.support.Utils;
@@ -31,8 +30,8 @@ public class DaoMethodSafeDeleteProcessor extends SafeDeleteProcessorDelegateBas
             @NotNull Collection<? extends PsiElement> allElementsToDelete) {
         PsiMethod method = (PsiMethod) element;
         List<PsiElement> elementsToSearch = new ArrayList<>();
-        PsiFile sqlFile = Utils.getSqlFileFromDaoClass(method.getContainingClass());
-        Arrays.stream(sqlFile.getChildren()[0].getChildren()).filter(e -> e instanceof FtlMacro macro
+        PsiFile sqlFile = Utils.getSqlFileFromDaoClass(Objects.requireNonNull(method.getContainingClass()));
+        Arrays.stream(Objects.requireNonNull(sqlFile).getChildren()[0].getChildren()).filter(e -> e instanceof FtlMacro macro
                 && macro.getName().equals("@" + method.getName())).findFirst().ifPresent(elementsToSearch::add);
         return elementsToSearch;
     }
@@ -40,11 +39,11 @@ public class DaoMethodSafeDeleteProcessor extends SafeDeleteProcessorDelegateBas
     @Override
     public boolean handlesElement(PsiElement element) {
         return element instanceof PsiMethod method && !Utils.isJpaMethod(method.getName())
-                && Utils.isBaseDao(method.getContainingClass()) && !Utils.isDefaultMethod(method);
+                && Utils.isBaseDao(Objects.requireNonNull(method.getContainingClass())) && !Utils.isDefaultMethod(method);
     }
 
     @Override
-    public @Nullable NonCodeUsageSearchInfo findUsages(@NotNull PsiElement element, PsiElement[] allElementsToDelete,
+    public @Nullable NonCodeUsageSearchInfo findUsages(@NotNull PsiElement element, PsiElement @NotNull [] allElementsToDelete,
             @NotNull List<? super UsageInfo> result) {
         return null;
     }
@@ -56,12 +55,12 @@ public class DaoMethodSafeDeleteProcessor extends SafeDeleteProcessorDelegateBas
     }
 
     @Override
-    public @Nullable Collection<String> findConflicts(@NotNull PsiElement element, PsiElement[] allElementsToDelete) {
+    public @Nullable Collection<String> findConflicts(@NotNull PsiElement element, PsiElement @NotNull [] allElementsToDelete) {
         return null;
     }
 
     @Override
-    public UsageInfo[] preprocessUsages(Project project, UsageInfo[] usages) {
+    public UsageInfo[] preprocessUsages(@NotNull Project project, UsageInfo[] usages) {
         if (usages.length > 0) {
             UsageInfo usage = usages[0];
             if (usage instanceof SafeDeleteUsageInfo srInfo) {
@@ -69,15 +68,15 @@ public class DaoMethodSafeDeleteProcessor extends SafeDeleteProcessorDelegateBas
                     if (!handlesElement(method)) {
                         return usages;
                     }
-                    PsiFile sqlFile = Utils.getSqlFileFromDaoClass(method.getContainingClass());
+                    PsiFile sqlFile = Utils.getSqlFileFromDaoClass(Objects.requireNonNull(method.getContainingClass()));
                     List<UsageInfo> usageInfos = new ArrayList<>(List.of(usages));
-                    Arrays.stream(sqlFile.getChildren()[0].getChildren()).filter(e -> e instanceof FtlMacro macro
+                    Arrays.stream(Objects.requireNonNull(sqlFile).getChildren()[0].getChildren()).filter(e -> e instanceof FtlMacro macro
                             && macro.getName().equals("@" + method.getName())).findFirst().ifPresent(e -> {
                         // 在这里实现删除逻辑
                         usageInfos.add(new SafeDeleteReferenceUsageInfo(e, e, true) {
                             @Override
                             public void deleteElement() throws IncorrectOperationException {
-                                super.getElement().delete();
+                                Objects.requireNonNull(super.getElement()).delete();
                             }
                         });
                     });
@@ -89,7 +88,7 @@ public class DaoMethodSafeDeleteProcessor extends SafeDeleteProcessorDelegateBas
     }
 
     @Override
-    public void prepareForDeletion(PsiElement element) throws IncorrectOperationException {
+    public void prepareForDeletion(@NotNull PsiElement element) throws IncorrectOperationException {
     }
 
     @Override
