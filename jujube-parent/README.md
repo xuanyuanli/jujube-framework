@@ -83,7 +83,7 @@ Jujube Parent 是 Jujube 系列项目的 Maven 父 POM，为所有子模块提�
 <parent>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-parent</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </parent>
 ```
 

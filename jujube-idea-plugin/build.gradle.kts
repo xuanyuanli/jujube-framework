@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("cn.xuanyuanli:jujube-jdbc:3.1.0") {
+    implementation("cn.xuanyuanli:jujube-jdbc:3.1.1") {
         exclude(group = "cn.xuanyuanli", module = "jujube-core-json")
     }
 }

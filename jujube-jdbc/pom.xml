@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>cn.xuanyuanli</groupId>
-		<artifactId>jujube-parent</artifactId>
-		<version>3.1.0</version>
+        <artifactId>jujube-parent</artifactId>
+        <version>3.1.1</version>
 		<relativePath/>
 	</parent>
 	<artifactId>jujube-jdbc-modules</artifactId>

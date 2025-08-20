@@ -62,7 +62,7 @@ Jujube Framework 由以下三个核心子项目组成：
 <dependency>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-core-all</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </dependency>
 ```
 
@@ -93,7 +93,7 @@ Pageable<User> pageForUserList(Map<String, Object> params, PageableRequest reque
 <dependency>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-jdbc-spring-boot-starter</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </dependency>
 ```
 
@@ -118,7 +118,7 @@ Maven 父 POM，为整个框架提供统一的依赖管理和构建规范。
 <parent>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-parent</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </parent>
 ```
 
@@ -137,7 +137,7 @@ Maven 父 POM，为整个框架提供统一的依赖管理和构建规范。
 <parent>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-parent</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </parent>
 
 <dependencies>
@@ -276,7 +276,7 @@ public class UserService {
 
 ## 📋 版本说明
 
-### 当前版本：3.1.0
+### 当前版本：3.1.1
 
 **🆕 新特性：**
 - 全面升级到 Java 21

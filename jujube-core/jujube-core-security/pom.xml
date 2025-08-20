@@ -5,11 +5,11 @@
     <parent>
         <groupId>cn.xuanyuanli</groupId>
         <artifactId>jujube-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
         <relativePath/>
     </parent>
     <artifactId>jujube-core-security</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
     <description>安全加密模块</description>
     <packaging>jar</packaging>
 

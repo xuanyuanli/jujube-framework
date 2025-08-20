@@ -4,11 +4,11 @@
     <parent>
         <groupId>cn.xuanyuanli</groupId>
         <artifactId>jujube-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
         <relativePath/>
     </parent>
     <artifactId>jujube-jdbc-sample</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
     <packaging>jar</packaging>
     <name>Jujube JDBC Example</name>
     <description>jujube-jdbc示例</description>

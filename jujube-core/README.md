@@ -43,7 +43,7 @@ Jujube Core 3.x 版本采用模块化设计，您可以根据需要选择引入�
 <dependency>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-core-all</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </dependency>
 ```
 
@@ -53,14 +53,14 @@ Jujube Core 3.x 版本采用模块化设计，您可以根据需要选择引入�
 <dependency>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-core-base</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </dependency>
 
 <!-- 通用工具模块 -->
 <dependency>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-core-utils</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </dependency>
 
 <!-- 其他模块按需引入... -->

@@ -31,7 +31,7 @@ Jujube JDBC 是一款基于 Spring JDBC 的轻量级 ORM 框架，旨在简化 J
 <dependency>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-jdbc-spring-boot-starter</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </dependency>
 ```
 
@@ -454,7 +454,7 @@ public interface UserDao extends BaseDao<User, Long> {
 <dependency>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-jdbc-spring-boot-starter</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </dependency>
 ```
 
@@ -475,7 +475,7 @@ jujube.jdbc.show-sql=true
 <dependency>
     <groupId>cn.xuanyuanli</groupId>
     <artifactId>jujube-jdbc</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </dependency>
 ```
 
