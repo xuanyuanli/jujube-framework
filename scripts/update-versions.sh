@@ -121,36 +121,53 @@ else
     
     # 创建当前版本的备份
     CURRENT_BACKUP_DIR="$BACKUP_DIR/$CURRENT_VERSION"
-    if [ ! -d "$CURRENT_BACKUP_DIR" ]; then
-        echo "正在备份当前版本 $CURRENT_VERSION..."
-        mkdir -p "$CURRENT_BACKUP_DIR"
-        
-        # 备份所有 pom.xml 文件
-        find "$PROJECT_ROOT" -name "pom.xml" -type f | while read file; do
-            REL_PATH=$(realpath --relative-to="$PROJECT_ROOT" "$file")
-            BACKUP_FILE="$CURRENT_BACKUP_DIR/$REL_PATH"
-            mkdir -p "$(dirname "$BACKUP_FILE")"
-            cp "$file" "$BACKUP_FILE"
-        done
-        
-        # 备份 gradle 文件
-        GRADLE_FILE="$PROJECT_ROOT/jujube-idea-plugin/build.gradle.kts"
-        if [ -f "$GRADLE_FILE" ]; then
-            BACKUP_GRADLE="$CURRENT_BACKUP_DIR/jujube-idea-plugin/build.gradle.kts"
-            mkdir -p "$(dirname "$BACKUP_GRADLE")"
-            cp "$GRADLE_FILE" "$BACKUP_GRADLE"
-        fi
-        
-        echo "✓ 备份完成: $CURRENT_BACKUP_DIR"
-        echo "备份位置: $CURRENT_BACKUP_DIR"
+    # 如果备份目录已存在则先删除，确保备份的完整性和安全性
+    if [ -d "$CURRENT_BACKUP_DIR" ]; then
+        echo "删除已存在的备份目录 $CURRENT_VERSION..."
+        rm -rf "$CURRENT_BACKUP_DIR"
     fi
+    
+    echo "正在备份当前版本 $CURRENT_VERSION..."
+    mkdir -p "$CURRENT_BACKUP_DIR"
+    
+    # 备份所有 pom.xml 文件
+    find "$PROJECT_ROOT" -name "pom.xml" -type f | while read file; do
+        REL_PATH=$(realpath --relative-to="$PROJECT_ROOT" "$file")
+        BACKUP_FILE="$CURRENT_BACKUP_DIR/$REL_PATH"
+        mkdir -p "$(dirname "$BACKUP_FILE")"
+        cp "$file" "$BACKUP_FILE"
+    done
+    
+    # 备份 gradle 文件
+    GRADLE_FILE="$PROJECT_ROOT/jujube-idea-plugin/build.gradle.kts"
+    if [ -f "$GRADLE_FILE" ]; then
+        BACKUP_GRADLE="$CURRENT_BACKUP_DIR/jujube-idea-plugin/build.gradle.kts"
+        mkdir -p "$(dirname "$BACKUP_GRADLE")"
+        cp "$GRADLE_FILE" "$BACKUP_GRADLE"
+    fi
+    
+    # 备份所有 README.md 文件
+    README_FILES=$(find "$PROJECT_ROOT" -name "README.md" -type f)
+    for readme_file in $README_FILES; do
+        REL_PATH=$(realpath --relative-to="$PROJECT_ROOT" "$readme_file" 2>/dev/null || echo "$readme_file")
+        BACKUP_README="$CURRENT_BACKUP_DIR/$REL_PATH"
+        mkdir -p "$(dirname "$BACKUP_README")"
+        cp "$readme_file" "$BACKUP_README"
+    done
+    
+    echo "✓ 备份完成: $CURRENT_BACKUP_DIR"
+    echo "备份位置: $CURRENT_BACKUP_DIR"
 fi
+
+# 转义版本号中的点号，避免正则表达式问题  
+ESCAPED_CURRENT_VERSION=$(echo "$CURRENT_VERSION" | sed 's/\./\\\./g')
 
 # 更新计数器
 UPDATED_FILES=0
 
 # 更新所有 pom.xml 文件
-find "$PROJECT_ROOT" -name "pom.xml" -type f | while read file; do
+POM_FILES=$(find "$PROJECT_ROOT" -name "pom.xml" -type f)
+for file in $POM_FILES; do
     # 创建临时文件
     TEMP_FILE="${file}.tmp"
     
@@ -158,16 +175,16 @@ find "$PROJECT_ROOT" -name "pom.xml" -type f | while read file; do
     cp "$file" "$TEMP_FILE"
     
     # 更新parent版本引用
-    sed -i "s|<groupId>cn\.xuanyuanli</groupId>[[:space:]]*<artifactId>jujube-parent</artifactId>[[:space:]]*<version>$CURRENT_VERSION</version>|<groupId>cn.xuanyuanli</groupId>\n        <artifactId>jujube-parent</artifactId>\n        <version>$NEW_VERSION</version>|g" "$TEMP_FILE"
+    sed -i "s|<groupId>cn\.xuanyuanli</groupId>[[:space:]]*<artifactId>jujube-parent</artifactId>[[:space:]]*<version>$ESCAPED_CURRENT_VERSION</version>|<groupId>cn.xuanyuanli</groupId>\n        <artifactId>jujube-parent</artifactId>\n        <version>$NEW_VERSION</version>|g" "$TEMP_FILE"
     
     # 更新parent段中的版本号
-    sed -i "/<parent>/,/<\/parent>/ { /<groupId>cn\.xuanyuanli<\/groupId>/{N;N; s|<groupId>cn\.xuanyuanli</groupId>[[:space:]]*<artifactId>jujube-parent</artifactId>[[:space:]]*<version>$CURRENT_VERSION</version>|<groupId>cn.xuanyuanli</groupId>\n        <artifactId>jujube-parent</artifactId>\n        <version>$NEW_VERSION</version>|g; } }" "$TEMP_FILE"
+    sed -i "/<parent>/,/<\/parent>/ { /<groupId>cn\.xuanyuanli<\/groupId>/{N;N; s|<groupId>cn\.xuanyuanli</groupId>[[:space:]]*<artifactId>jujube-parent</artifactId>[[:space:]]*<version>$ESCAPED_CURRENT_VERSION</version>|<groupId>cn.xuanyuanli</groupId>\n        <artifactId>jujube-parent</artifactId>\n        <version>$NEW_VERSION</version>|g; } }" "$TEMP_FILE"
     
     # 更新jujube相关依赖版本
-    sed -i "s|<groupId>cn\.xuanyuanli</groupId>[[:space:]]*<artifactId>jujube-\([^<]*\)</artifactId>[[:space:]]*<version>$CURRENT_VERSION</version>|<groupId>cn.xuanyuanli</groupId>\n                <artifactId>jujube-\1</artifactId>\n                <version>$NEW_VERSION</version>|g" "$TEMP_FILE"
+    sed -i "s|<groupId>cn\.xuanyuanli</groupId>[[:space:]]*<artifactId>jujube-\([^<]*\)</artifactId>[[:space:]]*<version>$ESCAPED_CURRENT_VERSION</version>|<groupId>cn.xuanyuanli</groupId>\n                <artifactId>jujube-\1</artifactId>\n                <version>$NEW_VERSION</version>|g" "$TEMP_FILE"
     
     # 更新当前项目版本（在parent后的version标签）
-    sed -i "/^[[:space:]]*<\/parent>/,/^[[:space:]]*<version>/ { s|<version>$CURRENT_VERSION</version>|<version>$NEW_VERSION</version>|g; }" "$TEMP_FILE"
+    sed -i "/^[[:space:]]*<\/parent>/,/^[[:space:]]*<version>/ { s|<version>$ESCAPED_CURRENT_VERSION</version>|<version>$NEW_VERSION</version>|g; }" "$TEMP_FILE"
     
     # 检查是否有变化
     if ! diff -q "$file" "$TEMP_FILE" > /dev/null 2>&1; then
@@ -187,7 +204,7 @@ if [ -f "$GRADLE_FILE" ]; then
     cp "$GRADLE_FILE" "$GRADLE_FILE.bak"
     
     # 更新gradle文件中的版本
-    sed -i "s|cn\.xuanyuanli:jujube-jdbc:$CURRENT_VERSION|cn.xuanyuanli:jujube-jdbc:$NEW_VERSION|g" "$GRADLE_FILE"
+    sed -i "s|cn\.xuanyuanli:jujube-jdbc:$ESCAPED_CURRENT_VERSION|cn.xuanyuanli:jujube-jdbc:$NEW_VERSION|g" "$GRADLE_FILE"
     
     # 检查是否有变化
     if ! diff -q "$GRADLE_FILE" "$GRADLE_FILE.bak" > /dev/null; then
@@ -198,6 +215,38 @@ if [ -f "$GRADLE_FILE" ]; then
         mv "$GRADLE_FILE.bak" "$GRADLE_FILE"
     fi
 fi
+
+# 更新所有 README.md 文件
+README_FILES=$(find "$PROJECT_ROOT" -name "README.md" -type f)
+for readme_file in $README_FILES; do
+    # 创建临时文件
+    TEMP_README="${readme_file}.tmp"
+    
+    # 复制原文件到临时文件
+    cp "$readme_file" "$TEMP_README"
+    
+    # 更新 README.md 中的版本号
+    # 更新所有 <version> 标签中的版本号
+    sed -i "s|<version>$ESCAPED_CURRENT_VERSION</version>|<version>$NEW_VERSION</version>|g" "$TEMP_README"
+    # 更新版本说明部分的当前版本号  
+    sed -i "s|### 当前版本：$ESCAPED_CURRENT_VERSION|### 当前版本：$NEW_VERSION|g" "$TEMP_README"
+    sed -i "s|当前版本：$ESCAPED_CURRENT_VERSION|当前版本：$NEW_VERSION|g" "$TEMP_README"
+    # 注意：不更新版本历史部分，因为那是记录过去版本的历史信息
+    
+    # 检查是否有变化
+    if ! diff -q "$readme_file" "$TEMP_README" > /dev/null 2>&1; then
+        mv "$TEMP_README" "$readme_file"
+        REL_PATH=$(realpath --relative-to="$PROJECT_ROOT" "$readme_file" 2>/dev/null || echo "$readme_file")
+        echo "✓ 已更新: $REL_PATH"
+        UPDATED_FILES=$((UPDATED_FILES + 1))
+    else
+        # 确保删除临时文件
+        rm -f "$TEMP_README"
+    fi
+done
+
+# 清理可能遗留的临时文件
+find "$PROJECT_ROOT" -name "*.tmp" -type f -delete 2>/dev/null || true
 
 echo
 echo "版本更新完成!"
