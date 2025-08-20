@@ -30,7 +30,7 @@ import cn.xuanyuanli.core.util.Texts;
 /**
  * 查询策略
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @Slf4j
 public abstract class BaseQueryStrategy {

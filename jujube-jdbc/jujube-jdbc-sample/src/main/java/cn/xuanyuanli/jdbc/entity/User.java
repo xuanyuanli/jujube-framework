@@ -6,7 +6,7 @@ import cn.xuanyuanli.jdbc.base.annotation.Column;
 import cn.xuanyuanli.core.lang.BaseEntity;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 @Data
 @Accessors(chain = true)

@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 @Component
 public class JpaQueryPreEventListener implements ApplicationListener<JpaQueryPreEvent> {

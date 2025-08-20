@@ -18,7 +18,7 @@ import cn.xuanyuanli.core.util.Texts;
 /**
  * 构建查询规格（Specification）
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2022/07/16
  */
 @EqualsAndHashCode

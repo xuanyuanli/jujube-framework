@@ -7,7 +7,7 @@ import cn.xuanyuanli.core.util.Resources;
 /**
  * 常量
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public interface GeneratorConstants {
 

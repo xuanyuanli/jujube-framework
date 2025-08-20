@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationEvent;
 /**
  * jpa 查询前事件
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class JpaQueryPreEvent extends ApplicationEvent {
 

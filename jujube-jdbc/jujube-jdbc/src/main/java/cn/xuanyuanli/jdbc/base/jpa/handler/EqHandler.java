@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * Eq Handler(因为是默认，所以在Chain中一定要是最后一个，且不再继续调用责任链)
  *
- * @author John Li
+ * @author xuanyuanli
  */
 
 public class EqHandler implements Handler {

@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * 编码常量定义
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @SuppressWarnings("unused")

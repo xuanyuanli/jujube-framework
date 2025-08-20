@@ -24,7 +24,7 @@ import cn.xuanyuanli.core.util.support.PatternHolder;
 /**
  * 文本字符工具
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01
  */
 @SuppressWarnings("unused")

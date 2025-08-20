@@ -8,7 +8,7 @@ import org.springframework.util.ClassUtils;
 /**
  * 为解决不能读取jar中目录的问题，拓展Freemarker的TemplateLoader
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 public class ClassloaderTemplateLoader extends URLTemplateLoader {

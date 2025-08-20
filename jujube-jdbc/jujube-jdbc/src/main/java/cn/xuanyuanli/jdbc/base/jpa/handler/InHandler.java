@@ -9,7 +9,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * In Handler
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class InHandler implements Handler {
 

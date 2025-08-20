@@ -47,7 +47,7 @@ import org.springframework.util.ClassUtils;
  *     类型转换使用了ConvertUtilsBean，可以考虑Spring的DefaultConversionService
  * </pre>
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

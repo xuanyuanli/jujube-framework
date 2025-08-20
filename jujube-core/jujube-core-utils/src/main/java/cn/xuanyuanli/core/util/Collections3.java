@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * 集合工具类。区别于jdk的Collections和guava的Collections2
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -66,7 +66,7 @@ public class Collections3 {
      * @param value     字段值
      * @param <T>       泛型
      * @return {@link List}<{@link T}>
-     * @author John Li Email：jujubeframework@163.com
+     * @author xuanyuanli Email：xuanyuanli999@gmail.com
      */
     public static <T> List<T> getPart(Collection<T> coll, String fieldName, Object value) {
         Objects.requireNonNull(coll);

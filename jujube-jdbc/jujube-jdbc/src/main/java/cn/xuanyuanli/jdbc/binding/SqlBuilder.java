@@ -22,7 +22,7 @@ import cn.xuanyuanli.core.util.Texts;
 /**
  * Sql构建器
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class SqlBuilder {
 

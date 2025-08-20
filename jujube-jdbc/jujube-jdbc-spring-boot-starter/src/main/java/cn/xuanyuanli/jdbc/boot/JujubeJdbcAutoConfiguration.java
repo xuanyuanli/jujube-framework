@@ -13,7 +13,7 @@ import org.springframework.core.env.Environment;
  * 这里不能用@EnableConfigurationProperties的方式来获得属性，因为JujubeJdbcConfiguration本身是一个BeanDefinitionRegistryPostProcessor。<br>
  * 而@EnableConfigurationProperties的逻辑是：把Properties类动态注入到容器，然后用BindBeanPostProcessor来绑定属性。这里有一个矛盾就是JujubeJdbcConfiguration会先执行，所以获得的Properties类中的属性为空，因为他们还没有被绑定
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @AutoConfiguration
 @Slf4j

@@ -9,7 +9,7 @@ import cn.xuanyuanli.core.lang.BaseEntity;
 /**
  * JPA Dao支持
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @Getter
 public class JpaBaseDaoSupport extends BaseDaoSupport<RecordEntity, Serializable> {

@@ -16,7 +16,7 @@ import cn.xuanyuanli.jdbc.base.util.Strings;
 /**
  * find*ById方法
  *
- * @author John Li
+ * @author xuanyuanli
  */
 
 public class FindAnyByIdQuery extends BaseQueryStrategy {

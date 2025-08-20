@@ -9,7 +9,7 @@ import org.springframework.core.env.Environment;
 /**
  * Spring Profiles
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 public class Profiles {

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 @SpringBootApplication(scanBasePackages = "cn.xuanyuanli.jdbc")
 @EnableAspectJAutoProxy(exposeProxy = true)

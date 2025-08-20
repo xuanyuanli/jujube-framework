@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
  *  CamelCaseUtils.toUnderScoreCase("helloWorld") = "hello_world"
  * </pre>
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01
  */
 public class CamelCase {

@@ -10,7 +10,7 @@ import cn.xuanyuanli.core.util.Texts;
  * <br>
  * 注意：此类仅适用于固定的regex缓存。对于动态的regex，请直接使用Pattern.compile，否则将出现OOM
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 public class PatternHolder {

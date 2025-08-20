@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 import cn.xuanyuanli.jdbc.base.util.Strings;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class LimitHandler implements Handler {
 

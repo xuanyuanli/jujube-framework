@@ -13,7 +13,7 @@ import cn.xuanyuanli.jdbc.base.util.Strings;
 import cn.xuanyuanli.core.util.Beans;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class GetSumOfByAnyQuery extends BaseQueryStrategy {
 

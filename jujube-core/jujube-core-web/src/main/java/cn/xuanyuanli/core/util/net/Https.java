@@ -16,7 +16,7 @@ import cn.xuanyuanli.core.util.Texts;
  *     独立的Unirest要使用Unirest.spawnInstance()，比如要定制化超时时间，并发数，代理，则推荐使用独立的Unirest。不要污染默认全局的Unirest
  * </pre>
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

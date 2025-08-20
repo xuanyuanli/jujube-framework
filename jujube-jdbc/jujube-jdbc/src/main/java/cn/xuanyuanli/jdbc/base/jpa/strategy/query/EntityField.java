@@ -1,7 +1,7 @@
 package cn.xuanyuanli.jdbc.base.jpa.strategy.query;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/20
  */
 public interface EntityField {

@@ -9,7 +9,7 @@ import cn.xuanyuanli.core.lang.Record;
 /**
  * 此类即是Record也是BaseEntity,只限用于JpaQuery中，其他地方禁止使用
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2022/07/16
  */
 @NoArgsConstructor

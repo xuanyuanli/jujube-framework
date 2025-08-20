@@ -10,7 +10,7 @@ import cn.xuanyuanli.core.util.Resources;
 /**
  * 本地application.properties配置文件映射（只适用于Windows本地环境）
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LocalConfig {
@@ -51,7 +51,7 @@ public class LocalConfig {
     /**
      * 配置文件中的name值
      *
-     * @author John Li
+     * @author xuanyuanli
      * @date 2022/07/16
      */
     @NoArgsConstructor(access = AccessLevel.PRIVATE)

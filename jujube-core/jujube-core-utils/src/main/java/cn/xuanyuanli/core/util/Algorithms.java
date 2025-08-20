@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 算法集合
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 public class Algorithms {

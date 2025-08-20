@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * Handler的责任链
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public interface HandlerChain {
 

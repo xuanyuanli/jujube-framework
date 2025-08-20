@@ -8,7 +8,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * 方法名到Spec的处理
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public interface Handler {
 

@@ -17,7 +17,7 @@ import org.springframework.web.util.UriComponents;
 /**
  * 测试 Urls 工具类
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 class UrlsTest {

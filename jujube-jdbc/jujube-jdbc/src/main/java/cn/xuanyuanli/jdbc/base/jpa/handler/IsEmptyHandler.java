@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * Is Empty Handler
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class IsEmptyHandler implements Handler {
 

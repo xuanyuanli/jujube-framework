@@ -3,7 +3,7 @@ package cn.xuanyuanli.core.exception;
 /**
  * 元素重复异常
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 public class RepeatException extends RuntimeException{

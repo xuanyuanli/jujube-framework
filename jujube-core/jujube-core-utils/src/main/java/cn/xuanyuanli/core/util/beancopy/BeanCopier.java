@@ -10,7 +10,7 @@ import cn.xuanyuanli.core.util.Beans;
  *     <li>copyBean()方法作用：把sourceObject的属性复制到targetObject中</li></li>
  * </ul>
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public interface BeanCopier {
 

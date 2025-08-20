@@ -8,7 +8,7 @@ import org.springframework.aop.framework.AopContext;
 /**
  * spring aop的辅助工具类<br> 对于Spring Boot来说，需要在配置文件中配置：spring.aop.auto=false<br> 还需要在启动类上加上注解：@EnableAspectJAutoProxy(exposeProxy = true, proxyTargetClass = true)
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @Slf4j

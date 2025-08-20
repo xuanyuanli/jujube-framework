@@ -3,7 +3,7 @@ package cn.xuanyuanli.jdbc.base.jpa.strategy.query;
 /**
  * 数据库实体对应的类。如果是Dao类中，则是Dao类的泛型类型
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/20
  */
 public interface EntityClass {

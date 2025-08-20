@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * ExcelReader的配置器
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01
  */
 @Data

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Json工具
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 类型判断,返回string、number
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class TypeOfMethod implements TemplateMethodModelEx {
 

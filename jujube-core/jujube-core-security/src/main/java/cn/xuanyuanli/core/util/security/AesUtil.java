@@ -11,7 +11,7 @@ import cn.xuanyuanli.core.util.Texts;
 /**
  * <a href="https://www.cnblogs.com/caizhaokai/p/10944667.html">AES算法（加密、解密工具类）</a>
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

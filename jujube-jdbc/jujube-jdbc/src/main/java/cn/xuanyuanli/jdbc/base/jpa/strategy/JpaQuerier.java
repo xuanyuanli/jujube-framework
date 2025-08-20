@@ -10,7 +10,7 @@ import cn.xuanyuanli.jdbc.spring.SpringContextHolder;
 /**
  * Query Context
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class JpaQuerier {
 

@@ -27,7 +27,7 @@ import cn.xuanyuanli.core.constant.Charsets;
 /**
  * 二维码工具
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @Slf4j

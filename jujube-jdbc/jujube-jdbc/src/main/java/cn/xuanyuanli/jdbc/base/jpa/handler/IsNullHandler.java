@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * Is Null Handler
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class IsNullHandler implements Handler {
 

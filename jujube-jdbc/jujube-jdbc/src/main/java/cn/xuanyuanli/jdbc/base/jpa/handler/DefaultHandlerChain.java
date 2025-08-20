@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.jpa.strategy.query.DaoMethod;
 import cn.xuanyuanli.jdbc.base.spec.Spec;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class DefaultHandlerChain implements HandlerChain {
 

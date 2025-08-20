@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 /**
  * MysqlDialect.
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class MysqlDialect implements Dialect {
 

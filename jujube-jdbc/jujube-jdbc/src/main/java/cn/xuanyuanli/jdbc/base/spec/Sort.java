@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * 排序规则<br> 排序的构建规则是：如果排序字段以“_D”结尾，则倒序；否则，就是正序
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2022/07/16
  */
 public class Sort {

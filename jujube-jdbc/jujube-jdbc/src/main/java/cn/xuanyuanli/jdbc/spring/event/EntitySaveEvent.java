@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationEvent;
 /**
  * Object source 是Entity对象
  * 
- * @author John Li
+ * @author xuanyuanli
  */
 public class EntitySaveEvent extends ApplicationEvent {
 

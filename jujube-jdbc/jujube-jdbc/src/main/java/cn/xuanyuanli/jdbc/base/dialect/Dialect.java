@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * jdbc方言
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2022/07/16
  */
 public interface Dialect {

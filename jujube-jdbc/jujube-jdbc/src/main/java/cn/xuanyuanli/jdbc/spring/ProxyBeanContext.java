@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.BaseDao;
 import org.springframework.lang.Nullable;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class ProxyBeanContext {
     private static final ConcurrentHashMap<Class<? extends BaseDao<?,?>>, Object> CURRENT_PROXY = new ConcurrentHashMap<>();

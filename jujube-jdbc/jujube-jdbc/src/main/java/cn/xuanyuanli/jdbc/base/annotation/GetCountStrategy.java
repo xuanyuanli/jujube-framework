@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * 获得分页总条数的自定义策略
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

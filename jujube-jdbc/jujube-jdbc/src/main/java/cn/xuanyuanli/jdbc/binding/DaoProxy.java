@@ -32,7 +32,7 @@ import org.springframework.util.StopWatch;
 /**
  * Dao接口代理类
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @Slf4j
 public class DaoProxy<T extends BaseDao<?, ?>> implements InvocationHandler {

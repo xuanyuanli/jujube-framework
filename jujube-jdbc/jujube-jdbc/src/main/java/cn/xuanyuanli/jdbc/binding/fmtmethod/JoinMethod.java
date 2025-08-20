@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class JoinMethod implements TemplateMethodModelEx {
 

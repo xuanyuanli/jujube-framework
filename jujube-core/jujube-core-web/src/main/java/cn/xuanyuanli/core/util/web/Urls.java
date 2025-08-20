@@ -14,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * <br>
  * 参考：UriComponentsBuilder
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @NoArgsConstructor

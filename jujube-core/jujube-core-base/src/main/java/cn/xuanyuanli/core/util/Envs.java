@@ -4,7 +4,7 @@ package cn.xuanyuanli.core.util;
 /**
  * 变量获取工具
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class Envs {
 

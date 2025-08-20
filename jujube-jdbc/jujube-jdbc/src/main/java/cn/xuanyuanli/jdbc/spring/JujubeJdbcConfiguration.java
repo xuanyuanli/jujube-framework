@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
 /**
  * JujubeJdbc配置类，也是一个Bean注册器后置处理器。会把{@link #basePackage}下所有的Dao注册到Spring容器中，并建立Dao与Sql文件间的对应信息
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @Setter
 public class JujubeJdbcConfiguration implements BeanDefinitionRegistryPostProcessor {

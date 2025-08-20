@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * Notin Handler
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class NotInHandler implements Handler {
 

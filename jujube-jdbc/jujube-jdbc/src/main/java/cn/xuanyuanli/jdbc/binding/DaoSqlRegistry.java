@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
 /**
  * Dao与Sql之间对应关系的注册器
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @Slf4j
 public class DaoSqlRegistry {

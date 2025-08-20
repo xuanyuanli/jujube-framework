@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * 标记字段为Excel列
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2022/04/29
  */
 @Target({ElementType.FIELD})

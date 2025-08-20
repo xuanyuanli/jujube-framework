@@ -14,7 +14,7 @@ import cn.xuanyuanli.core.util.Pojos;
 /**
  * 分页中间类
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2023/04/25
  */
 @Setter

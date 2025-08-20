@@ -3,7 +3,7 @@ package cn.xuanyuanli.core.util.snowflake;
 /**
  * 分布式唯一ID
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class SnowFlakes {
 

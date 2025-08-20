@@ -11,7 +11,7 @@ import cn.xuanyuanli.jdbc.base.jpa.strategy.query.impl.JavaDaoMethod;
 import cn.xuanyuanli.jdbc.base.spec.Spec;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class FindByAnyQuery extends BaseQueryStrategy {
 

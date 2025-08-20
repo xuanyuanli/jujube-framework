@@ -7,7 +7,7 @@ import cn.xuanyuanli.core.util.Texts;
 import java.util.Arrays;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class SqlQueryPostHandlerDemo implements SqlQueryPostHandler {
 

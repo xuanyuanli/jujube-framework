@@ -12,7 +12,7 @@
     <version>3.1.0</version>
     <description>核心聚合模块</description>
     <packaging>pom</packaging>
-    
+
     <modules>
         <module>jujube-core-base</module>
         <module>jujube-core-utils</module>
@@ -44,15 +44,4 @@
         <developerConnection>scm:git:git@github.com:xuanyuanli/jujube-framework.git</developerConnection>
         <url>git@github.com:xuanyuanli/jujube-framework.git</url>
     </scm>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

@@ -55,7 +55,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * 3、查询多行数据，永远不会返回null。判断时用isEmpty()方法即可
  * </pre>
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2022/07/16
  */
 @SuppressWarnings({"SqlSourceToSinkFlow", "LoggingSimilarMessage"})

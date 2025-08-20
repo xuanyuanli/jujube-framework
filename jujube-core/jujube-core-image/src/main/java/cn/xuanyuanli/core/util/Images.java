@@ -77,7 +77,7 @@ import org.xhtmlrenderer.util.FSImageWriter;
  * Thumbnailator(https://github.com/coobird/thumbnailator/wiki/Examples)
  * </pre>
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @Slf4j

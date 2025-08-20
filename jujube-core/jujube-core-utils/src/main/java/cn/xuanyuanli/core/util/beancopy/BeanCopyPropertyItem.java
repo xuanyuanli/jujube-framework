@@ -4,7 +4,7 @@ import java.beans.PropertyDescriptor;
 import lombok.Data;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 @Data
 public class BeanCopyPropertyItem {

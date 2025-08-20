@@ -16,7 +16,7 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 1)

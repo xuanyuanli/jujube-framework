@@ -7,7 +7,7 @@ import cn.xuanyuanli.core.lang.BaseEntity;
 /**
  * @param <T>  对应的实体类型
  * @param <PK> 对应的主键类型
- * @author John Li
+ * @author xuanyuanli
  */
 public interface BaseDao<T extends BaseEntity, PK extends Serializable> {
 

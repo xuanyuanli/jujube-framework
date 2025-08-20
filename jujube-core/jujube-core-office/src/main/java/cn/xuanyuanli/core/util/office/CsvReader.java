@@ -21,7 +21,7 @@ import cn.xuanyuanli.core.constant.Charsets;
 /**
  * Csv读取器
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @Slf4j

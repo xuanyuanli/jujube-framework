@@ -10,7 +10,7 @@ import cn.xuanyuanli.core.util.Texts;
 /**
  * 带有缓存的字符串处理方法集合
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2022/07/16
  */
 public class Strings {

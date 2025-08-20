@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 /**
  * 数据生成者
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

@@ -6,7 +6,7 @@ import cn.xuanyuanli.jdbc.base.BaseDao;
 import cn.xuanyuanli.jdbc.entity.Department;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public interface DepartmentDao extends BaseDao<Department, BigInteger> {
 

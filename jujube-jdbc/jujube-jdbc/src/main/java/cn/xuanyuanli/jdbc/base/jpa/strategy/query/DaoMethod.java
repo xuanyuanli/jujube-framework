@@ -3,7 +3,7 @@ package cn.xuanyuanli.jdbc.base.jpa.strategy.query;
 /**
  * Dao中的Method抽象
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/20
  */
 public interface DaoMethod {

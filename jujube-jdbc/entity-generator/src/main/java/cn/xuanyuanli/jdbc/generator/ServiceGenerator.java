@@ -1,7 +1,7 @@
 package cn.xuanyuanli.jdbc.generator;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class ServiceGenerator {
     

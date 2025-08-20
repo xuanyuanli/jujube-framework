@@ -3,7 +3,7 @@ package cn.xuanyuanli.core.util.beancopy;
 import java.util.List;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public interface BeanCopierFactory {
 

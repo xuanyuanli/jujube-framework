@@ -18,7 +18,7 @@ import cn.xuanyuanli.core.util.Pojos;
 /**
  * 一个进阶版的Map，一般作为数据库表的一行数据存在。注意他与Map的最大区别是：如果把Bean转换为Record，则默认驼峰命名变为下划线命名方式
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 public class Record extends HashMap<String, Object> {

@@ -5,7 +5,7 @@ import freemarker.template.TemplateMethodModelEx;
 import java.util.List;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class NotNullMethod implements TemplateMethodModelEx {
     @Override

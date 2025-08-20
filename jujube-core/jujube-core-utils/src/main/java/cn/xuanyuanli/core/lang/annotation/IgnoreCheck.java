@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * 忽略检查
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/27
  */
 @Target({ElementType.FIELD, ElementType.METHOD})

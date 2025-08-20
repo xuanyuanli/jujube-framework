@@ -21,7 +21,7 @@ import cn.xuanyuanli.core.util.Texts;
 /**
  * Sql解析工具
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2022/07/16
  */
 @SuppressWarnings("unused")

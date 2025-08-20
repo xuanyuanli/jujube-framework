@@ -8,7 +8,7 @@ import cn.xuanyuanli.jdbc.base.jpa.strategy.query.EntityClass;
 import cn.xuanyuanli.core.util.Beans;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/20
  */
 @AllArgsConstructor

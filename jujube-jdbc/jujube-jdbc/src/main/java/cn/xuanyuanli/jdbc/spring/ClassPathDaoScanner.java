@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * 类路径数据访问扫描仪
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2022/07/16
  * @see ClassPathBeanDefinitionScanner
  */
@@ -92,7 +92,7 @@ public class ClassPathDaoScanner extends ClassPathBeanDefinitionScanner {
      * @throws IllegalStateException 非法状态异常
      */
     @Override
-    protected boolean checkCandidate(@Nonnull String beanName, @Nonnull BeanDefinition beanDefinition) throws IllegalStateException {
+    protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) throws IllegalStateException {
         if (super.checkCandidate(beanName, beanDefinition)) {
             return true;
         } else {

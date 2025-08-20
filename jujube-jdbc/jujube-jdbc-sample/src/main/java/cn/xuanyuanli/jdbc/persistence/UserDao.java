@@ -13,7 +13,7 @@ import cn.xuanyuanli.jdbc.pagination.Pageable;
 import cn.xuanyuanli.jdbc.pagination.PageableRequest;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public interface UserDao extends BaseDao<User, Long> {
 
@@ -431,7 +431,7 @@ public interface UserDao extends BaseDao<User, Long> {
     }
 
     /**
-     * @author John Li
+     * @author xuanyuanli
      */
     @Data
     @Accessors(chain = true)

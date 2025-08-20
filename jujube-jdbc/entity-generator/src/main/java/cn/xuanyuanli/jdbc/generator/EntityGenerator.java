@@ -27,7 +27,7 @@ import lombok.experimental.Accessors;
 /**
  * Entity和Dao代码生成工具
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  */
 public class EntityGenerator {
 
@@ -269,7 +269,7 @@ public class EntityGenerator {
     /**
      * 首字母小写
      *
-     * @author John Li Email：jujubeframework@163.com
+     * @author xuanyuanli Email：xuanyuanli999@gmail.com
      */
     public static String initialToLowerCase(String source) {
         return source.substring(0, 1).toLowerCase() + source.substring(1);

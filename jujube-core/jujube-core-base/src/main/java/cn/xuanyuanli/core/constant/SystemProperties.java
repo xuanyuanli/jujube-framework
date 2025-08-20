@@ -8,7 +8,7 @@ import java.util.Collections;
 /**
  * 系统属性
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @SuppressWarnings("unused")
 public abstract class SystemProperties {

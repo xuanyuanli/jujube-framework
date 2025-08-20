@@ -18,7 +18,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/21
  */
 public class SqlTransfer {

@@ -9,7 +9,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * 查询信息（包含了查询字段和条件）
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/04/13
  */
 @Data

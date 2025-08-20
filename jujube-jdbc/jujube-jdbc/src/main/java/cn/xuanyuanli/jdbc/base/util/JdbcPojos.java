@@ -17,7 +17,7 @@ import cn.xuanyuanli.core.util.Pojos;
 /**
  * Jdbc专用的Pojos，添加了Entity与数据库表的字段对照关系处理逻辑
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class JdbcPojos {
 

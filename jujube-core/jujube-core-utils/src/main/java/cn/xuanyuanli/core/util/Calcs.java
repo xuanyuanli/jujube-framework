@@ -18,7 +18,7 @@ import org.apache.commons.lang3.math.NumberUtils;
  * <li>ceil:天花板，12.3 = 13.0</li>
  * </ul>
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 public class Calcs {

@@ -19,7 +19,7 @@ import cn.xuanyuanli.core.util.support.freemarker.ClassloaderTemplateLoader;
 /**
  * 项目的FreeMarker总体配置类。直接调用其中方法生成模板
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01
  */
 public class Ftls {
@@ -178,7 +178,7 @@ public class Ftls {
      * @param template 模板
      * @param root     根
      * @param out      出
-     * @author John Li Email：jujubeframework@163.com
+     * @author xuanyuanli Email：xuanyuanli999@gmail.com
      */
     private static void processTemplateTo(Template template, Map<String, Object> root, Writer out) {
         try {

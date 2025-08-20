@@ -13,7 +13,7 @@ import org.springframework.util.LinkedCaseInsensitiveMap;
 /**
  * h2数据库返回的字段名都为大写，跟mysql不兼容，此处做一下处理
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @Aspect
 public class H2JdbcTemplateAopSupport {

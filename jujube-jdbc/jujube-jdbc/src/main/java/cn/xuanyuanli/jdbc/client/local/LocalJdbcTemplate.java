@@ -32,7 +32,7 @@ import org.springframework.jdbc.support.KeyHolder;
  *     请在使用之前设置DataSource，对应的方法是：setDataSourceInfo()
  * </pre>
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2022/07/16
  */
 public class LocalJdbcTemplate {
@@ -198,7 +198,7 @@ public class LocalJdbcTemplate {
      * @param imports   进口
      * @return {@link List}<{@link Column}>
      * @throws SQLException sqlexception异常
-     * @author John Li Email：jujubeframework@163.com
+     * @author xuanyuanli Email：xuanyuanli999@gmail.com
      */
     public static List<Column> getTableStructure(Connection conn, String tableName, String schema, List<String> imports) throws SQLException {
         List<Column> columns = new ArrayList<>();

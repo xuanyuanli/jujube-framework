@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * Between Handler
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class BetweenHandler implements Handler {
 

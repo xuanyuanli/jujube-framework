@@ -17,7 +17,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 /**
  * 相关注解方法参数的正确性检测
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public abstract class BaseMethodParamCheckBeanPostProcessor implements BeanPostProcessor {
 

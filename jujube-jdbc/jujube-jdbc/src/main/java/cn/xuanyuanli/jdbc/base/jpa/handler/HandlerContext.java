@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Handler的一些集合
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class HandlerContext {
 

@@ -9,7 +9,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 import cn.xuanyuanli.core.util.Beans;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class GetCountByAnyQuery extends BaseQueryStrategy {
 

@@ -10,7 +10,7 @@ import org.springframework.core.env.Environment;
 /**
  * ApplicationContext持有者，可以静态获取到ApplicationContext
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2021/09/01
  */
 public class ApplicationContextHolder implements ApplicationContextAware {

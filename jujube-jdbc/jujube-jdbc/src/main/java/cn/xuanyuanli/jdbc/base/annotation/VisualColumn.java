@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * 虚拟列标记
  *
- * @author John Li
+ * @author xuanyuanli
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

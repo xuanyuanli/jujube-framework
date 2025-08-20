@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.binding.DaoProxy;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class DaoFactoryBean<T extends BaseDao<?,?>> implements FactoryBean<T> {
 

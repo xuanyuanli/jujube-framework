@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 @Data
 @Accessors(chain = true)

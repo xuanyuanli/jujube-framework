@@ -3,7 +3,7 @@ package cn.xuanyuanli.jdbc.base.annotation;
 import java.lang.annotation.*;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)

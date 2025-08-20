@@ -3,7 +3,7 @@ package cn.xuanyuanli.jdbc.boot;
 import lombok.Data;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 @Data
 public class JujubeJdbcProperties {

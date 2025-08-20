@@ -9,7 +9,7 @@ import cn.xuanyuanli.core.util.Pojos;
 /**
  * entity的基类，所有entity都要继承这个类
  *
- * @author John Li jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  */
 public interface BaseEntity extends Serializable {
 

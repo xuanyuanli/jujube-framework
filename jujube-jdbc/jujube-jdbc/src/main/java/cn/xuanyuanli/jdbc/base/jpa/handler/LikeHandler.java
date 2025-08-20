@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * Like Handler
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class LikeHandler implements Handler {
 

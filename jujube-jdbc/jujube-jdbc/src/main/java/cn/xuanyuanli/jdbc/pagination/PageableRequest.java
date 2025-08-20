@@ -8,7 +8,7 @@ import cn.xuanyuanli.core.lang.BaseEntity;
 /**
  * 分页请求
  *
- * @author John Li Email：jujubeframework@163.com
+ * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01
  */
 public class PageableRequest implements BaseEntity {
@@ -102,7 +102,7 @@ public class PageableRequest implements BaseEntity {
      *
      * @param pageableRequest 分页请求
      * @return {@link PageableRequest}
-     * @author John Li Email：jujubeframework@163.com
+     * @author xuanyuanli Email：xuanyuanli999@gmail.com
      */
     public static PageableRequest buildPageRequest(PageableRequest pageableRequest) {
         if (pageableRequest == null) {

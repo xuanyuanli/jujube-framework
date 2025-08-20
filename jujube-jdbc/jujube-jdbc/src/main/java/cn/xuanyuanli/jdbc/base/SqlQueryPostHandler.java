@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * sql查询后置处理器
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public interface SqlQueryPostHandler {
 

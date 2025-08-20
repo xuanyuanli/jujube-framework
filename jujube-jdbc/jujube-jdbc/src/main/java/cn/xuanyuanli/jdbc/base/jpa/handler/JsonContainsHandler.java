@@ -7,7 +7,7 @@ import cn.xuanyuanli.jdbc.base.spec.Spec;
 /**
  * JSON_CONTAINS() Handler
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class JsonContainsHandler implements Handler {
 
