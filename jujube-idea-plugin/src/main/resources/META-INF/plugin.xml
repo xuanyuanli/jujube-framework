@@ -71,9 +71,7 @@ Jujube Framework 的官方 IntelliJ IDEA 插件，为基于 Jujube Framework 的
         <!-- Ctrl+B, 定位类的跳转, 定位方法的跳转 -->
         <definitionsScopedSearch id="baomidou.MapperClassSearch"
                                  implementation="cn.xuanyuanli.ideaplugin.SqlClassSearch"/>
-        <!-- Ctrl+Alt+B，定位实现的跳转.gotoTargetPresentationProvider负责样式，gotoRelatedProvider负责逻辑 -->
-        <gotoTargetPresentationProvider order="first"
-                                        implementation="cn.xuanyuanli.ideaplugin.provider.GotoSqlPresentationProvider"/>
+        <!-- Ctrl+Alt+B，定位实现的跳转，使用稳定的gotoRelatedProvider API -->
         <gotoRelatedProvider implementation="cn.xuanyuanli.ideaplugin.provider.GotoSqlRelatedProvider"/>
 
         <!-- 实现Dao.方法跳转到Sql -->
