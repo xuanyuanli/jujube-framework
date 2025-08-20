@@ -17,6 +17,9 @@ dependencies {
     implementation("cn.xuanyuanli:jujube-jdbc:3.1.1") {
         exclude(group = "org.slf4j")
     }
+    
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
 }
 
 // Configure Gradle IntelliJ Plugin
@@ -48,6 +51,10 @@ tasks {
     patchPluginXml {
         sinceBuild.set("241")
         untilBuild.set("399.*")
+    }
+    
+    test {
+        useJUnitPlatform()
     }
 
     printBundledPlugins
