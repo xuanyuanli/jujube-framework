@@ -31,3 +31,4 @@ hs_err_pid*
 .classpath
 
 .claude/settings.local.json
+/jujube-idea-plugin/.claude/settings.local.json
