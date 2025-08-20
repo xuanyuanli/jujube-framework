@@ -21,8 +21,6 @@ import cn.xuanyuanli.core.util.beancopy.BeanCopierFactory;
 import cn.xuanyuanli.core.util.beancopy.BeanCopyPropertyItem;
 import cn.xuanyuanli.core.util.beancopy.JavassistBeanCopierFactory;
 
-import javax.annotation.Nonnull;
-
 /**
  * Java对象映射（属性复制）工具。
  *
