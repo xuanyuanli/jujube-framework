@@ -14,6 +14,7 @@ import com.intellij.psi.PsiManager;
 import java.util.ArrayList;
 import java.util.List;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
+import cn.xuanyuanli.ideaplugin.JujubeBundle;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElementFactory;
 import org.intellij.plugins.markdown.lang.psi.MarkdownRecursiveElementVisitor;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
@@ -235,6 +236,7 @@ public class OptimizeMarkdownTocAction extends AnAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         // ... (与之前相同的部分) ...
+        e.getPresentation().setText(JujubeBundle.getText("action.optimize.md.toc"));
         Project project = e.getProject();
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);

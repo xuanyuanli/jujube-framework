@@ -33,6 +33,10 @@ import cn.xuanyuanli.core.util.CamelCase;
  */
 public class ConvertMapToBeanAction extends AnAction {
 
+    public ConvertMapToBeanAction() {
+        super();
+    }
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         //noinspection DuplicatedCode
@@ -155,6 +159,7 @@ public class ConvertMapToBeanAction extends AnAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
+        e.getPresentation().setText(JujubeBundle.getText("action.map.to.bean"));
         e.getPresentation().setEnabled(!isDisabled(e));
     }
 

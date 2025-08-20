@@ -44,6 +44,10 @@ import cn.xuanyuanli.ideaplugin.JujubeBundle;
  */
 public class JpaMethodQuickDocAction extends AnAction {
 
+    public JpaMethodQuickDocAction() {
+        super();
+    }
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         //noinspection DuplicatedCode
@@ -200,6 +204,7 @@ public class JpaMethodQuickDocAction extends AnAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
+        e.getPresentation().setText(JujubeBundle.getText("action.jpa.method.quick.doc"));
         e.getPresentation().setEnabled(!isDisabled(e));
     }
 

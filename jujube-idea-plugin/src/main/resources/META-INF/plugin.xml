@@ -8,27 +8,6 @@
     <name>Jujube Support</name>
     <!-- Plugin description for the plugin page. -->
     <description><![CDATA[
-Jujube Framework 的官方 IntelliJ IDEA 插件，为基于 Jujube Framework 的项目开发提供智能代码辅助和导航功能。
-
-<h3>主要功能：</h3>
-<ul>
-  <li><strong>智能导航：</strong>DAO 方法与 SQL 文件之间的快速跳转 (Ctrl+B, Ctrl+Alt+B)</li>
-  <li><strong>代码生成：</strong>根据 SQL 查询生成 PO/BO 类，支持 Map 转 Bean 对象</li>
-  <li><strong>JPA 支持：</strong>JPA 方法名智能补全和参数建议</li>
-  <li><strong>快速修复：</strong>自动修复方法调用和 JPA 方法参数</li>
-  <li><strong>代码检查：</strong>内置 POJO 映射、DAO 方法和 SQL 变量验证</li>
-  <li><strong>重构支持：</strong>安全删除和重命名 DAO 方法，自动更新对应 SQL 文件</li>
-</ul>
-
-<h3>生产力工具：</h3>
-<ul>
-  <li>SQL 文件中的 FreeMarker 变量补全</li>
-  <li>Markdown 目录编号优化</li>
-  <li>集成控制台窗口</li>
-</ul>
-
----
-
 Official IntelliJ IDEA plugin for Jujube Framework development with intelligent code assistance and navigation.
 
 <h3>Key Features:</h3>
@@ -46,6 +25,27 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
   <li>FreeMarker variable completion in SQL files</li>
   <li>Markdown table of contents optimization</li>
   <li>Integrated console window for framework operations</li>
+</ul>
+
+---
+
+Jujube Framework 的官方 IntelliJ IDEA 插件，为基于 Jujube Framework 的项目开发提供智能代码辅助和导航功能。
+
+<h3>主要功能：</h3>
+<ul>
+  <li><strong>智能导航：</strong>DAO 方法与 SQL 文件之间的快速跳转 (Ctrl+B, Ctrl+Alt+B)</li>
+  <li><strong>代码生成：</strong>根据 SQL 查询生成 PO/BO 类，支持 Map 转 Bean 对象</li>
+  <li><strong>JPA 支持：</strong>JPA 方法名智能补全和参数建议</li>
+  <li><strong>快速修复：</strong>自动修复方法调用和 JPA 方法参数</li>
+  <li><strong>代码检查：</strong>内置 POJO 映射、DAO 方法和 SQL 变量验证</li>
+  <li><strong>重构支持：</strong>安全删除和重命名 DAO 方法，自动更新对应 SQL 文件</li>
+</ul>
+
+<h3>生产力工具：</h3>
+<ul>
+  <li>SQL 文件中的 FreeMarker 变量补全</li>
+  <li>Markdown 目录编号优化</li>
+  <li>集成控制台窗口</li>
 </ul>
     ]]></description>
 
@@ -70,17 +70,20 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Ctrl+B, 定位类的跳转, 定位方法的跳转 -->
         <definitionsScopedSearch id="baomidou.MapperClassSearch"
-                implementation="cn.xuanyuanli.ideaplugin.SqlClassSearch"/>
+                                 implementation="cn.xuanyuanli.ideaplugin.SqlClassSearch"/>
         <!-- Ctrl+Alt+B，定位实现的跳转.gotoTargetPresentationProvider负责样式，gotoRelatedProvider负责逻辑 -->
-        <gotoTargetPresentationProvider order="first" implementation="cn.xuanyuanli.ideaplugin.provider.GotoSqlPresentationProvider"/>
+        <gotoTargetPresentationProvider order="first"
+                                        implementation="cn.xuanyuanli.ideaplugin.provider.GotoSqlPresentationProvider"/>
         <gotoRelatedProvider implementation="cn.xuanyuanli.ideaplugin.provider.GotoSqlRelatedProvider"/>
 
         <!-- 实现Dao.方法跳转到Sql -->
         <codeInsight.lineMarkerProvider id="jujube.java2sql"
-                                        implementationClass="cn.xuanyuanli.ideaplugin.provider.JavaToSqlLineMarkerProvider" language="JAVA"/>
+                                        implementationClass="cn.xuanyuanli.ideaplugin.provider.JavaToSqlLineMarkerProvider"
+                                        language="JAVA"/>
         <!-- 实现Sql跳转到Dao.方法（注意，sql文件中不要有报错，否则会不准确） -->
         <codeInsight.lineMarkerProvider id="jujube.sql2java"
-                                        implementationClass="cn.xuanyuanli.ideaplugin.provider.SqlToJavaLineMarkerProvider" language="SQL"/>
+                                        implementationClass="cn.xuanyuanli.ideaplugin.provider.SqlToJavaLineMarkerProvider"
+                                        language="SQL"/>
         <!-- Map2BO之后get/set方法的快速修复-->
         <intentionAction id="jujube.quickfixmethodcall">
             <language>JAVA</language>
@@ -97,32 +100,34 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
 
         <!-- jpa规范提示, 在Dao类声明方法时智能提示 -->
         <completion.contributor id="jujube.DaoMethodCompletionContributor" language="JAVA"
-                implementationClass="cn.xuanyuanli.ideaplugin.DaoMethodCompletionContributor"/>
+                                implementationClass="cn.xuanyuanli.ideaplugin.DaoMethodCompletionContributor"/>
         <!-- sql中的方法, Freemarker变量智能提示 -->
-        <completion.contributor language="FTL" implementationClass="cn.xuanyuanli.ideaplugin.FreemarkerVariableCompletionContributor"/>
+        <completion.contributor language="FTL"
+                                implementationClass="cn.xuanyuanli.ideaplugin.FreemarkerVariableCompletionContributor"/>
 
         <!-- Pojos类方法检验 -->
-        <localInspection language="JAVA" groupPath="Java" groupName="Jujube" shortName="PojosMappingInspection"
-                displayName="Pojos inspection" level="WARNING" enabledByDefault="true"
-                implementationClass="cn.xuanyuanli.ideaplugin.inspection.PojosMappingInspection"/>
+        <localInspection language="JAVA" groupPath="Java" groupKey="inspection.group.name" shortName="PojosMappingInspection"
+                         key="inspection.pojos.mapping.display.name" level="WARNING" enabledByDefault="true"
+                         implementationClass="cn.xuanyuanli.ideaplugin.inspection.PojosMappingInspection"/>
         <!-- Dao JPA方法名检验 -->
-        <localInspection language="JAVA" groupPath="Java" groupName="Jujube" shortName="DaoJpaMethodInspection"
-                displayName="Dao JPA method inspection" level="ERROR" enabledByDefault="true"
-                implementationClass="cn.xuanyuanli.ideaplugin.inspection.DaoJpaMethodInspection"/>
+        <localInspection language="JAVA" groupPath="Java" groupKey="inspection.group.name" shortName="DaoJpaMethodInspection"
+                         key="inspection.dao.jpa.method.display.name" level="ERROR" enabledByDefault="true"
+                         implementationClass="cn.xuanyuanli.ideaplugin.inspection.DaoJpaMethodInspection"/>
         <!-- Sql 方法中的变量名检验 -->
-        <localInspection language="FTL" groupPath="Java" groupName="Jujube" shortName="SqlMethodVariableInspection"
-                displayName="Sql method variable inspection" level="ERROR" enabledByDefault="true"
-                implementationClass="cn.xuanyuanli.ideaplugin.inspection.SqlMethodVariableInspection"/>
+        <localInspection language="FTL" groupPath="Java" groupKey="inspection.group.name" shortName="SqlMethodVariableInspection"
+                         key="inspection.sql.method.variable.display.name" level="ERROR" enabledByDefault="true"
+                         implementationClass="cn.xuanyuanli.ideaplugin.inspection.SqlMethodVariableInspection"/>
 
         <!-- Dao方法 重命名（关联的sql文件方法改变） -->
         <refactoring.elementListenerProvider id="baomidou.MapperRefactoringProvider"
-                implementation="cn.xuanyuanli.ideaplugin.provider.DaoMethodRefactoringProvider"/>
+                                             implementation="cn.xuanyuanli.ideaplugin.provider.DaoMethodRefactoringProvider"/>
         <!-- 使用 Alt+Delete 删除方法时, 也删掉对应的Sql方法 -->
         <refactoring.safeDeleteProcessor id="MapperMethodSafeDeleteProcessor"
-                implementation="cn.xuanyuanli.ideaplugin.DaoMethodSafeDeleteProcessor"/>
+                                         implementation="cn.xuanyuanli.ideaplugin.DaoMethodSafeDeleteProcessor"/>
 
         <!-- 任务输出控制台 -->
-        <toolWindow id="Jujube" anchor="bottom" icon="/icons/jujube.png" factoryClass="cn.xuanyuanli.ideaplugin.ConsoleToolWindow"/>
+        <toolWindow id="Jujube" anchor="bottom" icon="/icons/jujube.png"
+                    factoryClass="cn.xuanyuanli.ideaplugin.ConsoleToolWindow"/>
 
     </extensions>
 
@@ -131,19 +136,17 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
         <!--  编辑-右键菜单，添加Sql2BO功能 -->
         <group id="Jujube.GeneratePO">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-            <action id="Jujube.SqlToPo" class="cn.xuanyuanli.ideaplugin.action.SqlToPoAction" icon="/icons/jujube.png" key="action.sql.to.po"/>
+            <action id="Jujube.SqlToPo" class="cn.xuanyuanli.ideaplugin.action.SqlToPoAction" icon="/icons/jujube.png"/>
         </group>
         <!--  编辑-右键菜单，添加MapToBean功能 -->
         <action id="Jujube.MapToBean"
                 class="cn.xuanyuanli.ideaplugin.action.ConvertMapToBeanAction"
-                key="action.map.to.bean"
                 icon="/icons/jujube.png">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
         <!--  编辑-右键菜单，快捷添加Jpa方法注释功能 -->
         <action id="Jujube.JpaMethodQuickDoc"
                 class="cn.xuanyuanli.ideaplugin.action.JpaMethodQuickDocAction"
-                key="action.jpa.method.quick.doc"
                 icon="/icons/jujube.png">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
@@ -151,7 +154,6 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
         <!--  编辑-右键菜单，优化md文件目录编号功能 -->
         <action id="Jujube.OptimizeMdToc"
                 class="cn.xuanyuanli.ideaplugin.action.OptimizeMarkdownTocAction"
-                key="action.optimize.md.toc"
                 icon="/icons/jujube.png">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>

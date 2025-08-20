@@ -36,6 +36,10 @@ import cn.xuanyuanli.ideaplugin.JujubeBundle;
  */
 public class SqlToPoAction extends AnAction {
 
+    public SqlToPoAction() {
+        super();
+    }
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         if (isDisable(e)) {
@@ -161,6 +165,7 @@ public class SqlToPoAction extends AnAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
+        e.getPresentation().setText(JujubeBundle.getText("action.sql.to.po"));
         if (isDisable(e)) {
             e.getPresentation().setEnabled(false);
             return;
