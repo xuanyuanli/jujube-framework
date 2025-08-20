@@ -7,6 +7,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import java.util.Collection;
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 import cn.xuanyuanli.ideaplugin.support.Consoles;
 import cn.xuanyuanli.ideaplugin.support.Utils;
@@ -24,7 +26,7 @@ public class JavaToSqlLineMarkerProvider extends RelatedItemLineMarkerProvider {
             String methodName = method.getName();
 
             PsiClass psiClass = method.getContainingClass();
-            if (!Utils.isBaseDao(psiClass)) {
+            if (!Utils.isBaseDao(Objects.requireNonNull(psiClass))) {
                 return;
             }
             if (Utils.isOverwriteMethod(method) || Utils.isDefaultMethod(method) || Utils.isJpaMethod(methodName)) {

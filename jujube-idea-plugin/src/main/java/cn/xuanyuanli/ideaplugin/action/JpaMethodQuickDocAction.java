@@ -50,7 +50,6 @@ public class JpaMethodQuickDocAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        //noinspection DuplicatedCode
         if (isDisabled(e)) {
             return;
         }

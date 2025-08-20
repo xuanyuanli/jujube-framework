@@ -19,11 +19,8 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import cn.xuanyuanli.ideaplugin.support.Column;
@@ -68,9 +65,9 @@ public class QuickFixJpaMethodParams extends PsiElementBaseIntentionAction {
             statementElement = PsiTreeUtil.getPrevSiblingOfType(element, PsiTypeElement.class);
         }
         PsiClass daoClass = PsiTreeUtil.getParentOfType(statementElement, PsiClass.class);
-        PsiClass entityClass = Utils.getFirstGenericTypeOfBaseDao(daoClass);
-        List<PsiField> fields = Utils.getAllFieldsFilterStaticAndFinal(entityClass);
-        String text = statementElement.getText();
+        PsiClass entityClass = Utils.getFirstGenericTypeOfBaseDao(Objects.requireNonNull(daoClass));
+        List<PsiField> fields = Utils.getAllFieldsFilterStaticAndFinal(Objects.requireNonNull(entityClass));
+        String text = Objects.requireNonNull(statementElement).getText();
         if (!Utils.isJpaMethod(text)) {
             Messages.showErrorDialog(JujubeBundle.getText("error.invalid.jpa.method"), JujubeBundle.getText("dialog.error"));
             return;

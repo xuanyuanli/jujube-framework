@@ -23,9 +23,6 @@ public class SqlToJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
             // 获取方法名
             String text = element.getText();
             String methodName = text.substring(2, text.length() - 1).trim();
-            if (methodName == null) {
-                return;
-            }
 
             // 从 SQL 文件获取对应的 Java 文件
             PsiFile javaFile = Utils.getJavaFileFromSqlFile(element.getContainingFile());

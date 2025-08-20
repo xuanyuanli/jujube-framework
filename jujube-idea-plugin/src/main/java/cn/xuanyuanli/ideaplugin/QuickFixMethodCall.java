@@ -1,30 +1,22 @@
 package cn.xuanyuanli.ideaplugin;
 
+import cn.xuanyuanli.core.util.CamelCase;
+import cn.xuanyuanli.core.util.Texts;
+import cn.xuanyuanli.ideaplugin.action.ConvertMapToBeanAction;
+import cn.xuanyuanli.ideaplugin.support.Column;
+import cn.xuanyuanli.ideaplugin.support.Utils;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementFactory;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiExpressionList;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiReferenceExpression;
-import com.intellij.psi.PsiVariable;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import cn.xuanyuanli.ideaplugin.action.ConvertMapToBeanAction;
-import cn.xuanyuanli.ideaplugin.support.Column;
-import cn.xuanyuanli.ideaplugin.support.Utils;
-import cn.xuanyuanli.core.util.CamelCase;
-import cn.xuanyuanli.core.util.Texts;
+
+import java.util.Objects;
 
 /**
  * @author John Li
@@ -43,14 +35,14 @@ public class QuickFixMethodCall implements IntentionAction {
             return;
         }
         String referenceName = referenceExpression.getReferenceName();
-        if (referenceName.startsWith("get")) {
+        if (Objects.requireNonNull(referenceName).startsWith("get")) {
             fixGetMethodCall(project, methodCallExpression, qualifierExpression);
         } else if (referenceName.startsWith("set") || referenceName.startsWith("put")) {
             fixSetMethodCall(project, methodCallExpression, qualifierExpression);
         }
     }
 
-    private void fixSetMethodCall(Project project, PsiMethodCallExpression methodCallExpression, PsiExpression qualifierExpression) {
+    private void fixSetMethodCall(Project project, PsiMethodCallExpression methodCallExpression, PsiExpression ignoredQualifierExpression) {
         PsiExpressionList argumentList = methodCallExpression.getArgumentList();
         PsiExpression[] arguments = argumentList.getExpressions();
         if (arguments.length != 2) {
@@ -58,11 +50,11 @@ public class QuickFixMethodCall implements IntentionAction {
         }
         Column column = ConvertMapToBeanAction.getColumn(methodCallExpression);
         PsiVariable psiVariable = Utils.getVariableFromMechodCall(methodCallExpression);
-        String variableName = psiVariable.getName();
+        String variableName = Objects.requireNonNull(psiVariable).getName();
 
         PsiClass containingClass = PsiUtil.resolveClassInType(psiVariable.getType());
         if (containingClass != null) {
-            PsiField psiField = Utils.addFieldToClass(containingClass, column);
+            Utils.addFieldToClass(containingClass, column);
             // 从 JavaPsiFacade 获取 PsiElementFactory
             PsiElementFactory elementFactory = JavaPsiFacade.getInstance(project).getElementFactory();
             // 创建新的 PsiExpression
@@ -79,7 +71,7 @@ public class QuickFixMethodCall implements IntentionAction {
         if (arguments.length != 1) {
             return;
         }
-        String getFieldName = ((PsiLiteralExpressionImpl) arguments[0]).getValue().toString();
+        String getFieldName = Objects.requireNonNull(((PsiLiteralExpressionImpl) arguments[0]).getValue()).toString();
         String variableName = qualifierExpression.getText();
 
         // 获取 JavaPsiFacade 实例
@@ -110,7 +102,7 @@ public class QuickFixMethodCall implements IntentionAction {
         if (methodCallExpression != null) {
             PsiReferenceExpression methodExpression = methodCallExpression.getMethodExpression();
             String referenceName = methodExpression.getReferenceName();
-            return referenceName.startsWith("get") || referenceName.startsWith("put") || referenceName.startsWith("set");
+            return Objects.requireNonNull(referenceName).startsWith("get") || referenceName.startsWith("put") || referenceName.startsWith("set");
         }
         return false;
     }

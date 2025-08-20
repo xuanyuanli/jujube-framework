@@ -9,6 +9,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.searches.DefinitionsScopedSearch.SearchParameters;
 import com.intellij.util.Processor;
+
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,9 +38,9 @@ public class SqlClassSearch extends QueryExecutorBase<PsiElement, SearchParamete
                 if (element instanceof final PsiMethod psiMethod) {
                     PsiClass psiClass = psiMethod.getContainingClass();
                     ReadAction.run(() -> {
-                        if (Utils.isBaseDao(psiClass)) {
+                        if (Utils.isBaseDao(Objects.requireNonNull(psiClass))) {
                             PsiFile sqlFile = Utils.getSqlFileFromDaoClass(psiClass);
-                            target.set(Utils.findSqlMethodInSqlFile(sqlFile, psiMethod.getName()));
+                            target.set(Utils.findSqlMethodInSqlFile(Objects.requireNonNull(sqlFile), psiMethod.getName()));
                         }
                     });
                 }

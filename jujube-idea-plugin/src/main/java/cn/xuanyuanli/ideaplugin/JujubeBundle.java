@@ -4,8 +4,6 @@ import com.intellij.AbstractBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
-import java.util.ResourceBundle;
-
 /**
  * Message bundle for Jujube plugin internationalization
  * 
