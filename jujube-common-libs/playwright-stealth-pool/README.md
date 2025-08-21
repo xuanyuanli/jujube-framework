@@ -1,0 +1,4 @@
+# 用法
+PlaywrightManager 是Playwright的管理器，用于管理Playwright的实例。
+
+PlaywrightBrowserManager是Playwright的浏览器管理器，用于管理Playwright的浏览器实例。
