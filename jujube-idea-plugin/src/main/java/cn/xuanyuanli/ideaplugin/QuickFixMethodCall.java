@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class QuickFixMethodCall implements IntentionAction {
 

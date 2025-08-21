@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class DaoJpaMethodInspection extends LocalInspectionTool {
 

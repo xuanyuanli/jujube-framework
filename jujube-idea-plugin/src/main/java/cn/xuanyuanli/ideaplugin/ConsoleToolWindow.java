@@ -12,7 +12,7 @@ import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class ConsoleToolWindow implements ToolWindowFactory {
 

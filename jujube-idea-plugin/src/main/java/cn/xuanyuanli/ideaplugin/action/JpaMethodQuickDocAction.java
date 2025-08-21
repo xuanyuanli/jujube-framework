@@ -39,7 +39,7 @@ import cn.xuanyuanli.core.util.Texts;
 import cn.xuanyuanli.ideaplugin.JujubeBundle;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/20
  */
 public class JpaMethodQuickDocAction extends AnAction {

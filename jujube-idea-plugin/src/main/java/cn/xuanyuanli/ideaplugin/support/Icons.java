@@ -4,7 +4,7 @@ import com.intellij.openapi.util.IconLoader;
 import javax.swing.Icon;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public interface Icons {
 

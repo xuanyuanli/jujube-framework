@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import cn.xuanyuanli.ideaplugin.support.Utils;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class SqlClassSearch extends QueryExecutorBase<PsiElement, SearchParameters> {
 

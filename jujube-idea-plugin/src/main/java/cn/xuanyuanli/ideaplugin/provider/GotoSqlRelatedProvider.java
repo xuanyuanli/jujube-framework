@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import cn.xuanyuanli.ideaplugin.SqlClassSearch;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class GotoSqlRelatedProvider extends GotoRelatedProvider {
 

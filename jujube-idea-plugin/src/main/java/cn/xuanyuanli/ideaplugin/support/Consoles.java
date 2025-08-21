@@ -9,7 +9,7 @@ import cn.xuanyuanli.core.util.Texts;
 /**
  * 控制台日志输出工具
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class Consoles {
 

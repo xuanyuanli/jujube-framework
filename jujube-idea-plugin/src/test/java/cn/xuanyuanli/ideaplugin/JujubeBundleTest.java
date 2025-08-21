@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test for JujubeBundle internationalization
  * 
- * @author John Li
+ * @author xuanyuanli
  */
 public class JujubeBundleTest {
 

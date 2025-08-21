@@ -32,7 +32,7 @@ import cn.xuanyuanli.core.util.Exceptions;
 import cn.xuanyuanli.ideaplugin.JujubeBundle;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class SqlToPoAction extends AnAction {
 

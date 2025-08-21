@@ -3,7 +3,7 @@ package cn.xuanyuanli.ideaplugin.support;
 /**
  * 常量
  *
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/04/11
  */
 public interface Constants {

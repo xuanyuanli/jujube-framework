@@ -3,7 +3,7 @@ package cn.xuanyuanli.ideaplugin.support;
 import com.intellij.psi.PsiType;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class Column {
 

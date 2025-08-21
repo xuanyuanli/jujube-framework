@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import cn.xuanyuanli.ideaplugin.support.Consoles;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class OptimizeMarkdownTocAction extends AnAction {
 

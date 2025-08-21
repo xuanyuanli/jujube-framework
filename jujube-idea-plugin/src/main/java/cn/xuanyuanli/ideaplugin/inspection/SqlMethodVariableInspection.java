@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/21
  */
 public class SqlMethodVariableInspection extends LocalInspectionTool {

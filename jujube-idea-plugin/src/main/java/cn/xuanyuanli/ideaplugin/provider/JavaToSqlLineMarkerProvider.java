@@ -16,7 +16,7 @@ import cn.xuanyuanli.ideaplugin.support.Utils;
 /**
  * 实现Dao方法调整到Sql对应位置
  *
- * @author John Li
+ * @author xuanyuanli
  */
 public class JavaToSqlLineMarkerProvider extends RelatedItemLineMarkerProvider {
 

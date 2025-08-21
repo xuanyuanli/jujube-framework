@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import cn.xuanyuanli.core.util.CamelCase;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class Sqls {
 

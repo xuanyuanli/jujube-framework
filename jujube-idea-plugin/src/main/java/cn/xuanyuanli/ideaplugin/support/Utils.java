@@ -38,7 +38,7 @@ import cn.xuanyuanli.core.util.CamelCase;
 import cn.xuanyuanli.core.util.Texts;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class Utils {
 

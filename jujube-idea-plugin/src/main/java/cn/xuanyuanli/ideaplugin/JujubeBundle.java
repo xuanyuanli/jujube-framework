@@ -7,7 +7,7 @@ import org.jetbrains.annotations.PropertyKey;
 /**
  * Message bundle for Jujube plugin internationalization
  * 
- * @author John Li
+ * @author xuanyuanli
  */
 public final class JujubeBundle extends AbstractBundle {
     

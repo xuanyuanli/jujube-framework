@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import cn.xuanyuanli.ideaplugin.support.Utils;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/23
  */
 public class DaoMethodRefactoringProvider implements RefactoringElementListenerProvider {

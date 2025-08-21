@@ -26,7 +26,7 @@ import cn.xuanyuanli.ideaplugin.support.Utils;
 import cn.xuanyuanli.core.util.Texts;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class DaoMethodCompletionContributor extends CompletionContributor {
 

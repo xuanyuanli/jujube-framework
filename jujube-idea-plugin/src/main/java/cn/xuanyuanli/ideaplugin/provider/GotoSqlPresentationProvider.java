@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import cn.xuanyuanli.ideaplugin.support.Icons;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 @SuppressWarnings("UnstableApiUsage")
 public class GotoSqlPresentationProvider implements GotoTargetPresentationProvider {

@@ -29,7 +29,7 @@ import cn.xuanyuanli.ideaplugin.JujubeBundle;
 import cn.xuanyuanli.core.util.CamelCase;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  */
 public class ConvertMapToBeanAction extends AnAction {
 

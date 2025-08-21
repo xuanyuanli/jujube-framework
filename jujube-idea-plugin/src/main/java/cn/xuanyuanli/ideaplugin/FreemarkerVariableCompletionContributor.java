@@ -12,7 +12,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author John Li
+ * @author xuanyuanli
  * @date 2023/4/21
  */
 public class FreemarkerVariableCompletionContributor extends CompletionContributor {
