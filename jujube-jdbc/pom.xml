@@ -10,7 +10,7 @@
 	<artifactId>jujube-jdbc-modules</artifactId>
 	<packaging>pom</packaging>
 	<name>Jujube JDBC Modules</name>
-	<description>简洁的ORM Modules</description>
+	<description>Jujube JDBC Modules</description>
 	<url>https://github.com/xuanyuanli/jujube-framework/</url>
 	<licenses>
 		<license>

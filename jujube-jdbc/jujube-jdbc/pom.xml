@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <name>Jujube JDBC</name>
-    <description>简洁的ORM</description>
+    <description>Jujube JDBC -- 简洁的ORM库</description>
     <url>https://github.com/xuanyuanli/jujube-framework/</url>
     <licenses>
         <license>

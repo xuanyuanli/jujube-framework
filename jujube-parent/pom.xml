@@ -46,6 +46,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <spring-boot.version>3.4.5</spring-boot.version>
+        <jujube.version>3.1.1</jujube.version>
         <poi.version>5.3.0</poi.version>
         <elasticsearch.version>7.10.0</elasticsearch.version>
         <!--suppress UnresolvedMavenProperty -->
@@ -69,57 +70,57 @@
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-core-base</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-core-utils</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-core-json</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-core-image</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-core-office</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-core-security</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-core-web</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-core-spring</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-core-all</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-jdbc</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
                 <artifactId>jujube-jdbc-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>${jujube.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.xuanyuanli</groupId>
