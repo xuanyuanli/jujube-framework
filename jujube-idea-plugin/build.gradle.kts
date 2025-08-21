@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "cn.xuanyuanli.ideaplugin"
-version = "2025.1.0"
+version = "2025.1.1"
 
 repositories {
     mavenCentral()

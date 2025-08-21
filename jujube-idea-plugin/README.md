@@ -1,8 +1,8 @@
 # Jujube IDEA Plugin
 
-[![Version](https://img.shields.io/badge/version-2025.1.2-blue.svg)](https://github.com/jujube-framework/jujube-idea-plugin)
+[![Version](https://img.shields.io/badge/version-2025.1.1-blue.svg)](https://github.com/jujube-framework/jujube-idea-plugin)
 [![IntelliJ Platform](https://img.shields.io/badge/IntelliJ-2024.1.7+-orange.svg)](https://www.jetbrains.com/idea/)
-[![Java](https://img.shields.io/badge/Java-17+-green.svg)](https://openjdk.java.net/)
+[![Java](https://img.shields.io/badge/Java-21-green.svg)](https://openjdk.java.net/)
 
 Jujube Framework 的官方 IntelliJ IDEA 插件，为基于 Jujube Framework 的项目开发提供强大的智能提示、代码导航和快速修复功能。
 
@@ -74,7 +74,7 @@ Jujube Framework 的官方 IntelliJ IDEA 插件，为基于 Jujube Framework 的
 ## 开发构建
 
 ### 环境要求
-- Java 17+
+- Java 21
 - Gradle 8.0+
 
 ### 构建步骤
@@ -113,6 +113,8 @@ set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m" "-Dfile.encoding=UTF-8"
 本项目采用 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) 许可证。
 
 ## 更新日志
+### v2025.1.1
+- 多语言支持（中英文）
 
 ### v2025.1.0
 - 支持 IntelliJ IDEA 2024.1.7+
