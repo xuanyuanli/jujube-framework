@@ -12,36 +12,9 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.pom.java.LanguageLevel;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.JavaRecursiveElementWalkingVisitor;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementFactory;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaCodeReferenceElement;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiModifierList;
-import com.intellij.psi.PsiNewExpression;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiPrimitiveType;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceExpression;
-import com.intellij.psi.PsiSubstitutor;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiTypeElement;
-import com.intellij.psi.PsiTypes;
-import com.intellij.psi.PsiVariable;
+import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
@@ -57,6 +30,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import cn.xuanyuanli.jdbc.binding.DaoSqlRegistry;
@@ -392,24 +366,26 @@ public class Utils {
      * 从Dao类获取sql文件
      */
     public static PsiFile getSqlFileFromDaoClass(PsiClass psiClass) {
-        String sqlFileName = psiClass.getName() + ".sql";
-        Module module = ModuleUtil.findModuleForPsiElement(psiClass);
-        if (module != null) {
-            VirtualFile[] sourcesRoots = ModuleRootManager.getInstance(module).getSourceRoots(false);
-            for (VirtualFile root : sourcesRoots) {
-                VirtualFile resourcesRoot = root.findFileByRelativePath("dao-sql");
-                if (resourcesRoot != null) {
-                    PsiDirectory resourcesDir = PsiManager.getInstance(psiClass.getProject()).findDirectory(resourcesRoot);
-                    if (resourcesDir != null) {
-                        PsiFile sqlFile = resourcesDir.findFile(sqlFileName);
-                        if (sqlFile != null) {
-                            return sqlFile;
+        return ReadAction.compute(() -> {
+            String sqlFileName = psiClass.getName() + ".sql";
+            Module module = ModuleUtil.findModuleForPsiElement(psiClass);
+            if (module != null) {
+                VirtualFile[] sourcesRoots = ModuleRootManager.getInstance(module).getSourceRoots(false);
+                for (VirtualFile root : sourcesRoots) {
+                    VirtualFile resourcesRoot = root.findFileByRelativePath("dao-sql");
+                    if (resourcesRoot != null) {
+                        PsiDirectory resourcesDir = PsiManager.getInstance(psiClass.getProject()).findDirectory(resourcesRoot);
+                        if (resourcesDir != null) {
+                            PsiFile sqlFile = resourcesDir.findFile(sqlFileName);
+                            if (sqlFile != null) {
+                                return sqlFile;
+                            }
                         }
                     }
                 }
             }
-        }
-        return null;
+            return null;
+        });
     }
 
     /**
@@ -667,19 +643,16 @@ public class Utils {
      * @param psiClass psi类
      * @param column   列
      */
-    public static PsiField addFieldToClass(PsiClass psiClass, Column column) {
+    public static void addFieldToClass(PsiClass psiClass, Column column) {
         Project project = psiClass.getProject();
         PsiField psiField = getFieldFromClass(column.getField(), psiClass);
         if (psiField == null) {
-            final PsiField[] fields = new PsiField[1];
             WriteCommandAction.runWriteCommandAction(project, () -> {
                 PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
-                fields[0] = elementFactory.createField(column.getField(), toWrapperPsiType(column.getPsiType(), project, psiClass));
-                psiClass.add(fields[0]);
+                PsiField field = elementFactory.createField(column.getField(), toWrapperPsiType(column.getPsiType(), project, psiClass));
+                psiClass.add(field);
             });
-            psiField = fields[0];
         }
-        return psiField;
     }
 
     /**

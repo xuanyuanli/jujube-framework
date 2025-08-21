@@ -1,18 +1,16 @@
 package cn.xuanyuanli.ideaplugin.inspection;
 
+import cn.xuanyuanli.ideaplugin.JujubeBundle;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.freemarker.psi.FtlExpression;
-import com.intellij.freemarker.psi.FtlReferenceExpression;
-import com.intellij.freemarker.psi.directives.FtlDirective;
-import com.intellij.freemarker.psi.directives.FtlMacro;
 import com.intellij.freemarker.psi.variables.FtlVariable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
-import cn.xuanyuanli.ideaplugin.JujubeBundle;
+
+import java.util.List;
 
 /**
  * @author John Li
@@ -36,14 +34,14 @@ public class SqlMethodVariableInspection extends LocalInspectionTool {
 
         @Override
         public void visitElement(@NotNull PsiElement element) {
-            if (element instanceof FtlReferenceExpression
-                    || element instanceof FtlDirective) {
-                PsiElement parent = element.getParent();
-                System.out.println(element.getText() + "\t" + (parent instanceof FtlMacro ? "自定义标签" : parent.getText().replace("\n", "")));
-                System.out.println("------");
-                System.out.println(element.getClass() + "\t" + parent.getClass());
-                System.out.println("------------------------------------------------------------------------------------\n");
-            }
+//            if (element instanceof FtlReferenceExpression
+//                    || element instanceof FtlDirective) {
+//                PsiElement parent = element.getParent();
+//                System.out.println(element.getText() + "\t" + (parent instanceof FtlMacro ? "自定义标签" : parent.getText().replace("\n", "")));
+//                System.out.println("------");
+//                System.out.println(element.getClass() + "\t" + parent.getClass());
+//                System.out.println("------------------------------------------------------------------------------------\n");
+//            }
             if (element instanceof FtlExpression expression) {
                 checkExpressionVariable(expression);
             } else {

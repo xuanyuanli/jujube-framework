@@ -5,7 +5,11 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
+
 import java.util.Collection;
+
+import com.intellij.psi.templateLanguages.OuterLanguageElement;
+import com.intellij.sql.psi.impl.SqlTokenElement;
 import org.jetbrains.annotations.NotNull;
 import cn.xuanyuanli.ideaplugin.support.Consoles;
 import cn.xuanyuanli.ideaplugin.support.Utils;
@@ -16,13 +20,22 @@ import cn.xuanyuanli.core.util.Texts;
  */
 public class SqlToJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
+    public static final String REG_EX = "^<@(.*?)>$";
+
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
+        System.out.println(element.getClass().getName() + " : " + element.getText().length()
+                + " : " + Texts.truncate(element.getText(), 100).replace("\n", "\t"));
         // 检查元素是否是 SQL 文件中的方法定义
         if (Utils.isSqlFile(element.getContainingFile()) && isMethodDefinition(element)) {
             // 获取方法名
             String text = element.getText();
-            String methodName = text.substring(2, text.length() - 1).trim();
+            String methodName;
+            if (isLanguageEle(element)) {
+                methodName = Texts.getGroups(REG_EX, text)[1];
+            } else {
+                methodName = element.getNextSibling().getText();
+            }
 
             // 从 SQL 文件获取对应的 Java 文件
             PsiFile javaFile = Utils.getJavaFileFromSqlFile(element.getContainingFile());
@@ -41,10 +54,23 @@ public class SqlToJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         }
     }
 
-
     private boolean isMethodDefinition(PsiElement element) {
-        return Texts.find(element.getText(), "^<@(.*?)>$");
+        return isLanguageEle(element) || isSqlTokenEle(element);
     }
 
+    private static boolean isSqlTokenEle(PsiElement element) {
+        PsiElement prevSibling = element.getPrevSibling();
+        if (prevSibling == null){
+            prevSibling = element.getParent().getPrevSibling();
+        }
+        PsiElement nextSibling = element.getNextSibling();
+        return element instanceof SqlTokenElement && "@".equals(element.getText())
+                && prevSibling != null && "<".equals(prevSibling.getText())
+                && nextSibling != null;
+    }
+
+    private static boolean isLanguageEle(PsiElement element) {
+        return element instanceof OuterLanguageElement && Texts.find(element.getText(), REG_EX);
+    }
 
 }
