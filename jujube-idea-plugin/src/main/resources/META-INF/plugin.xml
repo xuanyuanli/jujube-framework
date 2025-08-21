@@ -27,7 +27,9 @@ Official IntelliJ IDEA plugin for Jujube Framework development with intelligent 
   <li>Integrated console window for framework operations</li>
 </ul>
 
----
+<br/>
+<hr/>
+<br/>
 
 Jujube Framework 的官方 IntelliJ IDEA 插件，为基于 Jujube Framework 的项目开发提供智能代码辅助和导航功能。
 
@@ -71,10 +73,10 @@ Jujube Framework 的官方 IntelliJ IDEA 插件，为基于 Jujube Framework 的
         <!-- Ctrl+B, 定位类的跳转, 定位方法的跳转 -->
         <definitionsScopedSearch id="baomidou.MapperClassSearch"
                                  implementation="cn.xuanyuanli.ideaplugin.SqlClassSearch"/>
-        <!-- Ctrl+Alt+B，定位实现的跳转，使用稳定的gotoRelatedProvider API -->
+        <!-- Ctrl+Alt+B，定位实现的跳转.gotoTargetPresentationProvider负责样式，gotoRelatedProvider负责逻辑 -->
+        <gotoTargetPresentationProvider order="first"
+                                        implementation="cn.xuanyuanli.ideaplugin.provider.GotoSqlPresentationProvider"/>
         <gotoRelatedProvider implementation="cn.xuanyuanli.ideaplugin.provider.GotoSqlRelatedProvider"/>
-        <!-- Ctrl+Alt+B，从SQL方法定位到Java方法 -->
-        <gotoRelatedProvider implementation="cn.xuanyuanli.ideaplugin.provider.SqlToJavaRelatedProvider"/>
 
         <!-- 实现Dao.方法跳转到Sql -->
         <codeInsight.lineMarkerProvider id="jujube.java2sql"

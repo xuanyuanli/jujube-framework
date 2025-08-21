@@ -19,7 +19,7 @@ public class GotoSqlRelatedProvider extends GotoRelatedProvider {
         PsiElement target = SqlClassSearch.getSqlElementFromJavaMethodOrClass(element);
         if (target != null) {
             ArrayList<GotoRelatedItem> gotoRelatedItems = new ArrayList<>();
-            gotoRelatedItems.add(new GotoRelatedItem(target, "SQL File"));
+            gotoRelatedItems.add(new GotoRelatedItem(target));
             return gotoRelatedItems;
         }
         return super.getItems(element);
