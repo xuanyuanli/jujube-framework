@@ -4,11 +4,11 @@
     <parent>
         <groupId>cn.xuanyuanli</groupId>
         <artifactId>jujube-parent</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.2</version>
         <relativePath/>
     </parent>
     <artifactId>playwright-stealth-pool</artifactId>
-    <version>3.1.1</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>Playwright Stealth Pool</name>
     <description>Playwright反检测连接池管理</description>
