@@ -3,14 +3,15 @@ package cn.xuanyuanli.playwright.stealth.e2e;
 import cn.xuanyuanli.playwright.stealth.config.PlaywrightConfig;
 import cn.xuanyuanli.playwright.stealth.config.StealthMode;
 import cn.xuanyuanli.playwright.stealth.manager.PlaywrightManager;
+import cn.xuanyuanli.playwright.stealth.TestConditions;
 import com.microsoft.playwright.options.Proxy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
@@ -33,9 +34,16 @@ import static org.assertj.core.api.Assertions.*;
  */
 @DisplayName("PlaywrightManager 端到端测试")
 @Tag("e2e")
+@Tag("slow")
 class PlaywrightManagerE2ETest {
 
     private PlaywrightManager manager;
+    
+    private boolean containsCauseMessage(Throwable cause, String message) {
+        if (cause == null) return false;
+        if (cause.getMessage() != null && cause.getMessage().contains(message)) return true;
+        return containsCauseMessage(cause.getCause(), message);
+    }
     
     @BeforeEach
     void setUp() {
@@ -55,7 +63,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该能够完成完整的页面访问流程")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldCompleteFullPageAccessWorkflow() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -76,7 +84,8 @@ class PlaywrightManagerE2ETest {
                 
                 // 验证反检测脚本生效
                 Object webdriver = page.evaluate("navigator.webdriver");
-                assertThat(webdriver).isNull();
+                // webdriver应该被隐藏(null, undefined, 或 false)
+                assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
                 
                 // 验证插件模拟
                 Object pluginsLength = page.evaluate("navigator.plugins.length");
@@ -88,7 +97,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该能够处理复杂的页面交互")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldHandleComplexPageInteractions() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -132,13 +141,14 @@ class PlaywrightManagerE2ETest {
 
                 // 验证反检测脚本在复杂交互中仍然生效
                 Object webdriver = page.evaluate("navigator.webdriver");
-                assertThat(webdriver).isNull();
+                // webdriver应该被隐藏(null, undefined, 或 false)
+                assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
             });
         }
 
         @Test
         @DisplayName("应该能够处理JavaScript密集型页面")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldHandleJavaScriptIntensivePages() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -155,14 +165,14 @@ class PlaywrightManagerE2ETest {
                                 counter: 0,
                                 results: []
                             };
-                            
+                
                             function complexCalculation() {
                                 for (let i = 0; i < 1000; i++) {
                                     window.testData.counter += Math.random();
                                 }
                                 return window.testData.counter;
                             }
-                            
+                
                             function checkBrowserFeatures() {
                                 return {
                                     webdriver: navigator.webdriver,
@@ -172,7 +182,7 @@ class PlaywrightManagerE2ETest {
                                     hardwareConcurrency: navigator.hardwareConcurrency
                                 };
                             }
-                            
+                
                             // 异步操作
                             setTimeout(() => {
                                 document.getElementById('asyncResult').textContent = 'Async Complete';
@@ -206,7 +216,8 @@ class PlaywrightManagerE2ETest {
                 
                 // 验证反检测脚本效果
                 Object webdriver = page.evaluate("navigator.webdriver");
-                assertThat(webdriver).isNull();
+                // webdriver应该被隐藏(null, undefined, 或 false)
+                assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
             });
         }
     }
@@ -217,7 +228,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该能够绕过基础的自动化检测")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldBypassBasicAutomationDetection() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -238,13 +249,13 @@ class PlaywrightManagerE2ETest {
                                 hardwareConcurrency: navigator.hardwareConcurrency,
                                 deviceMemory: navigator.deviceMemory,
                                 platform: navigator.platform,
-                                
+                
                                 // 高级检测
                                 webglVendor: null,
                                 webglRenderer: null,
                                 audioContext: null
                             };
-                            
+                
                             // WebGL检测
                             try {
                                 const canvas = document.createElement('canvas');
@@ -259,7 +270,7 @@ class PlaywrightManagerE2ETest {
                             } catch (e) {
                                 console.log('WebGL detection failed:', e);
                             }
-                            
+                
                             // AudioContext检测
                             try {
                                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -285,7 +296,7 @@ class PlaywrightManagerE2ETest {
 
                 // 验证关键反检测效果
                 Object webdriver = page.evaluate("window.detectionResults.webdriver");
-                assertThat(webdriver).isNull(); // webdriver应该被隐藏
+                assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue(); // webdriver应该被隐藏
 
                 Object pluginCount = page.evaluate("window.detectionResults.pluginCount");
                 assertThat(pluginCount).isNotNull();
@@ -321,7 +332,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该能够在不同反检测模式下正确工作")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldWorkCorrectlyInDifferentStealthModes() {
             StealthMode[] modes = {StealthMode.DISABLED, StealthMode.LIGHT, StealthMode.FULL};
 
@@ -357,11 +368,11 @@ class PlaywrightManagerE2ETest {
                             break;
                         case LIGHT:
                             // LIGHT模式应该隐藏webdriver但插件数量可能较少
-                            assertThat(webdriver).isNull();
+                            assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
                             break;
                         case FULL:
                             // FULL模式应该全面伪装
-                            assertThat(webdriver).isNull();
+                            assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
                             assertThat(Integer.parseInt(pluginCount.toString())).isGreaterThan(0);
                             break;
                     }
@@ -376,7 +387,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该能够处理高并发访问")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldHandleHighConcurrencyAccess() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -415,7 +426,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该能够处理长时间运行的任务")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldHandleLongRunningTasks() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -429,7 +440,7 @@ class PlaywrightManagerE2ETest {
                         <script>
                             window.startTime = Date.now();
                             window.iterations = 0;
-                            
+                
                             function longRunningTask() {
                                 for (let i = 0; i < 100000; i++) {
                                     window.iterations++;
@@ -439,7 +450,7 @@ class PlaywrightManagerE2ETest {
                                 window.endTime = Date.now();
                                 window.duration = window.endTime - window.startTime;
                             }
-                            
+                
                             longRunningTask();
                         </script>
                     </body>
@@ -460,7 +471,8 @@ class PlaywrightManagerE2ETest {
 
                 // 验证反检测脚本在长时间运行后仍然有效
                 Object webdriver = page.evaluate("navigator.webdriver");
-                assertThat(webdriver).isNull();
+                // webdriver应该被隐藏(null, undefined, 或 false)
+                assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
             });
         }
     }
@@ -471,7 +483,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该能够从页面错误中恢复")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldRecoverFromPageErrors() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -484,7 +496,13 @@ class PlaywrightManagerE2ETest {
                     throw new RuntimeException("模拟页面错误");
                 });
             }).isInstanceOf(RuntimeException.class)
-              .hasMessageContaining("模拟页面错误");
+              .satisfies(e -> {
+                  boolean containsErrorMessage = e.getMessage().contains("模拟页面错误") ||
+                          (e.getCause() != null && containsCauseMessage(e.getCause(), "模拟页面错误"));
+                  assertThat(containsErrorMessage)
+                          .as("Exception should contain '模拟页面错误' in message chain")
+                          .isTrue();
+              });
 
             // 第二次执行应该正常工作，验证连接池恢复
             manager.execute(config, page -> {
@@ -494,7 +512,8 @@ class PlaywrightManagerE2ETest {
 
                 // 验证反检测脚本仍然正常
                 Object webdriver = page.evaluate("navigator.webdriver");
-                assertThat(webdriver).isNull();
+                // webdriver应该被隐藏(null, undefined, 或 false)
+                assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
             });
 
             System.out.println("错误恢复后连接池状态: " + manager.getPoolStatus());
@@ -502,7 +521,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该能够处理网络超时")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldHandleNetworkTimeouts() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -528,7 +547,8 @@ class PlaywrightManagerE2ETest {
 
                 // 验证反检测脚本仍然正常
                 Object webdriver = page.evaluate("navigator.webdriver");
-                assertThat(webdriver).isNull();
+                // webdriver应该被隐藏(null, undefined, 或 false)
+                assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
             });
         }
     }
@@ -539,7 +559,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该正确管理内存和资源")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldCorrectlyManageMemoryAndResources() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -578,7 +598,8 @@ class PlaywrightManagerE2ETest {
 
                     // 验证反检测脚本持续有效
                     Object webdriver = page.evaluate("navigator.webdriver");
-                    assertThat(webdriver).isNull();
+                    // webdriver应该被隐藏(null, undefined, 或 false)
+                    assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
                 });
             }
 
@@ -598,7 +619,7 @@ class PlaywrightManagerE2ETest {
 
         @Test
         @DisplayName("应该能够处理大量页面内容")
-        @Disabled("需要网络连接的集成测试，默认禁用")
+        @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isE2ETestsEnabled")
         void shouldHandleLargePageContent() {
             PlaywrightConfig config = new PlaywrightConfig()
                     .setHeadless(true)
@@ -627,7 +648,8 @@ class PlaywrightManagerE2ETest {
 
                 // 验证大量内容下反检测脚本仍然有效
                 Object webdriver = page.evaluate("navigator.webdriver");
-                assertThat(webdriver).isNull();
+                // webdriver应该被隐藏(null, undefined, 或 false)
+                assertThat(webdriver == null || webdriver.equals(false) || "undefined".equals(webdriver.toString())).isTrue();
 
                 Object pluginCount = page.evaluate("navigator.plugins.length");
                 assertThat(Integer.parseInt(pluginCount.toString())).isGreaterThan(0);

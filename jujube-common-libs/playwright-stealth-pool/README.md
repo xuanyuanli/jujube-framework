@@ -227,10 +227,143 @@ A: 确保 `stealthMode` 不是 `DISABLED`，根据网站检测强度选择 `LIGH
 **Q: 内存使用过高？**
 A: 适当减小连接池大小，及时调用 `close()` 释放资源。
 
+## 🧪 测试配置
+
+### 测试分类和环境变量控制
+
+项目支持多种测试运行模式，通过环境变量灵活控制：
+
+#### 测试分类
+- **单元测试**：基础功能测试，无外部依赖
+- **集成测试**：需要网络连接，测试真实场景
+- **E2E测试**：端到端测试，完整工作流程验证  
+- **性能测试**：性能基准测试，资源使用评估
+
+#### 环境变量控制
+
+| 环境变量 | 测试默认状态 | 控制逻辑 | 示例 |
+|---------|-------------|----------|------|
+| `DISABLE_INTEGRATION_TESTS` | 启用 | 需设置 `true` 才禁用 | `DISABLE_INTEGRATION_TESTS=true` |
+| `ENABLE_PERFORMANCE_TESTS` | 禁用 | 需设置 `true` 才启用 | `ENABLE_PERFORMANCE_TESTS=true` |
+| `DISABLE_E2E_TESTS` | 启用 | 需设置 `true` 才禁用 | `DISABLE_E2E_TESTS=true` |
+
+**注意**：Maven Surefire 配置默认排除 `performance` 和 `slow` 分组的测试。
+
+### 测试配置架构
+
+#### 统一配置原则
+- **单一职责**：Maven Surefire 负责JVM级别配置，JUnit Platform 负责测试执行配置
+- **避免冲突**：移除重复的并行执行配置，统一在 JUnit Platform 管理
+- **配置简化**：只维护一套配置文件，减少维护负担
+
+#### `junit-platform.properties` - 统一配置文件
+JUnit Platform 官方配置文件，统一管理所有测试行为：
+- ✅ 并行执行：`junit.jupiter.execution.parallel.enabled=true`
+- ✅ 超时配置：使用正确的属性名（`junit.jupiter.execution.timeout.*`）
+- ✅ 生命周期：`per_class`（每个类共享实例，提高性能）
+- ✅ 动态线程分配：根据CPU核心数自动调整
+
+### 推荐运行方式
+
+#### 日常开发 - 快速单元测试
+```bash
+# Maven 默认配置（推荐日常开发）
+mvn test
+# 默认排除：performance、slow 分组
+# 默认包含：单元测试、集成测试、E2E测试（非 performance/slow）
+# 运行时间：约1-2分钟
+
+# 纯单元测试（最快）
+mvn test -Ddisable.integration.tests=true
+# 运行时间：约30-60秒
+# 包含：配置测试、工厂测试、基础功能测试
+```
+
+#### 本地完整测试
+```bash
+# 运行所有测试（排除 performance 和 slow 分组）
+mvn test
+# 运行时间：约1-2分钟
+# 包含：单元测试 + 集成测试 + E2E测试（非 performance/slow）
+
+# 包含 performance 和 slow 测试的完整测试
+mvn test -DexcludedGroups=""
+# 运行时间：约3-5分钟
+# 包含：所有测试，包括性能测试和慢测试
+```
+
+#### CI/CD 环境
+```bash
+# CI环境推荐配置 - 完整测试套件（除 performance/slow）
+mvn test
+# 包含：单元测试 + 集成测试 + E2E测试
+
+# CI分层运行（推荐）
+mvn test -Ddisable.integration.tests=true                    # 第一阶段：快速单元测试
+mvn test -Dgroups="integration"                             # 第二阶段：集成测试  
+mvn test -Dgroups="e2e"                                    # 第三阶段：E2E测试
+mvn test -Dgroups="performance"                           # 第四阶段：性能测试
+```
+
+#### 性能测试
+```bash
+# 只运行性能测试（通过分组）
+mvn test -Dgroups="performance"
+
+# 或者通过环境变量启用性能测试
+ENABLE_PERFORMANCE_TESTS=true mvn test -Dgroups="performance"
+
+# 或者运行特定的性能测试类
+mvn test -Dtest="*PerformanceTest*"
+
+# 包含：连接池性能、内存使用、并发测试
+```
+
+#### 特定测试分组
+```bash
+# 只运行E2E测试
+mvn test -Dgroups="e2e"
+
+# 只运行集成测试
+mvn test -Dgroups="integration"
+
+# 运行特定测试类
+mvn test -Dtest="PlaywrightManagerTest"
+
+# 只排除 slow 测试（保留 performance）
+mvn test -DexcludedGroups="slow"
+```
+
+### 测试性能优化
+
+### 测试最佳实践
+
+1. **开发阶段**：使用 `mvn test`（默认配置）或 `mvn test -Ddisable.integration.tests=true`（纯单元测试）
+2. **提交前**：运行 `mvn test -DexcludedGroups=""`（完整测试套件）
+3. **CI/CD环境**：分层运行或 `mvn test`（除 performance/slow）
+4. **性能测试**：定期运行 `mvn test -Dgroups="performance"`，监控性能回归
+
+### 测试配置原理说明
+
+#### Maven Surefire 默认配置
+- **默认排除**：`performance` 和 `slow` 分组的测试（参见 pom.xml）
+- **理由**：这些测试通常运行时间较长，不适合日常快速开发
+
+#### 环境变量逻辑
+- **集成测试**：默认启用，需设置 `DISABLE_INTEGRATION_TESTS=true` 才禁用
+- **性能测试**：默认禁用，需设置 `ENABLE_PERFORMANCE_TESTS=true` 才启用
+- **E2E测试**：默认启用，需设置 `DISABLE_E2E_TESTS=true` 才禁用
+
+#### 灵活控制
+- **Maven 参数**：通过 `-Dgroups` 和 `-DexcludedGroups` 精确控制
+- **系统属性**：支持 `-Ddisable.integration.tests` 等参数
+- **分层执行**：CI/CD 中可分阶段运行，提高反馈效率
+
 ## 🔗 相关链接
 
 - [Playwright官方文档](https://playwright.dev/)
 - [Apache Commons Pool2](https://commons.apache.org/proper/commons-pool/)
+- [JUnit 5 用户指南](https://junit.org/junit5/docs/current/user-guide/)
 
 ## 🤝 贡献指南
 

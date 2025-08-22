@@ -154,12 +154,14 @@ public class PlaywrightBrowserFactory extends BasePooledObjectFactory<Browser> {
         } catch (Exception e) {
             log.warn("Error closing Playwright instance", e);
         } finally {
-            // 清理缓存
-            PLAYWRIGHT_CACHE.remove(browser);
+            // 清理缓存 - 需要检查null以避免NullPointerException
+            if (browser != null) {
+                PLAYWRIGHT_CACHE.remove(browser);
+            }
             
             // 确保Browser也被关闭
             try {
-                if (!browser.isConnected() == false) { // 检查连接状态
+                if (browser != null && browser.isConnected()) { // 检查连接状态
                     browser.close();
                 }
             } catch (Exception e) {

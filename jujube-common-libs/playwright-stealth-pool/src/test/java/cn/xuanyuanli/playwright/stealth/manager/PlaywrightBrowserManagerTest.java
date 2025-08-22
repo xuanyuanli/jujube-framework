@@ -3,11 +3,12 @@ package cn.xuanyuanli.playwright.stealth.manager;
 import cn.xuanyuanli.core.util.Images;
 import cn.xuanyuanli.playwright.stealth.config.PlaywrightConfig;
 import cn.xuanyuanli.playwright.stealth.config.StealthMode;
+import cn.xuanyuanli.playwright.stealth.TestConditions;
 import com.microsoft.playwright.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import java.util.stream.IntStream;
 
@@ -46,7 +47,7 @@ class PlaywrightBrowserManagerTest {
      * 测试基本的页面访问功能
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testBasicPageNavigation() {
         browserManager.execute(page -> {
             page.navigate("https://www.baidu.com");
@@ -60,7 +61,7 @@ class PlaywrightBrowserManagerTest {
      * 测试并发访问和连接池功能
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testConcurrentAccess() {
         System.out.println("开始并发测试，初始状态: " + browserManager.getPoolStatus());
         
@@ -82,7 +83,7 @@ class PlaywrightBrowserManagerTest {
      * <p>注意：该测试访问外部URL，可能因为网络问题而失败</p>
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testImageDownload() {
         // 并发下载图片测试
         IntStream.range(0, 8).parallel().forEach(i -> {
@@ -105,7 +106,7 @@ class PlaywrightBrowserManagerTest {
      * 测试反检测脚本功能
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testStealthFeatures() {
         browserManager.execute(page -> {
             // 访问一个可以检测自动化的网站

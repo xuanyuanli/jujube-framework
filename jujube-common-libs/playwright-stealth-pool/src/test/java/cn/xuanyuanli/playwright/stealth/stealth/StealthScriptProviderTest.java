@@ -81,7 +81,7 @@ class StealthScriptProviderTest {
         void shouldContainWebdriverFixInFullScript() {
             String script = StealthScriptProvider.getStealthScript();
             
-            assertThat(script).contains("navigator.webdriver");
+            assertThat(script).contains("navigator, 'webdriver'");
             assertThat(script).contains("Object.defineProperty");
             assertThat(script).contains("get: () => undefined");
         }
@@ -91,7 +91,7 @@ class StealthScriptProviderTest {
         void shouldContainWebdriverFixInLightScript() {
             String script = StealthScriptProvider.getLightStealthScript();
             
-            assertThat(script).contains("navigator.webdriver");
+            assertThat(script).contains("navigator, 'webdriver'");
             assertThat(script).contains("Object.defineProperty");
             assertThat(script).contains("get: () => undefined");
         }
@@ -107,8 +107,8 @@ class StealthScriptProviderTest {
             String fullScript = StealthScriptProvider.getStealthScript();
             String lightScript = StealthScriptProvider.getLightStealthScript();
             
-            assertThat(fullScript).contains("navigator.languages");
-            assertThat(lightScript).contains("navigator.languages");
+            assertThat(fullScript).contains("navigator, 'languages'");
+            assertThat(lightScript).contains("navigator, 'languages'");
             
             // 验证包含中文和英文语言代码
             assertThat(fullScript).contains("zh-CN");
@@ -137,8 +137,8 @@ class StealthScriptProviderTest {
             String fullScript = StealthScriptProvider.getStealthScript();
             String lightScript = StealthScriptProvider.getLightStealthScript();
             
-            assertThat(fullScript).contains("navigator.platform");
-            assertThat(lightScript).contains("navigator.platform");
+            assertThat(fullScript).contains("navigator, 'platform'");
+            assertThat(lightScript).contains("navigator, 'platform'");
             assertThat(fullScript).contains("Win32");
             assertThat(lightScript).contains("Win32");
         }
@@ -153,7 +153,7 @@ class StealthScriptProviderTest {
         void shouldContainPluginSimulationInFullScript() {
             String script = StealthScriptProvider.getStealthScript();
             
-            assertThat(script).contains("navigator.plugins");
+            assertThat(script).contains("navigator, 'plugins'");
             assertThat(script).contains("mockPlugins");
             assertThat(script).contains("Chrome PDF Viewer");
             assertThat(script).contains("Native Client");
@@ -164,7 +164,7 @@ class StealthScriptProviderTest {
         void shouldContainMimeTypeSimulationInFullScript() {
             String script = StealthScriptProvider.getStealthScript();
             
-            assertThat(script).contains("navigator.mimeTypes");
+            assertThat(script).contains("navigator, 'mimeTypes'");
             assertThat(script).contains("mockMimeTypes");
             assertThat(script).contains("application/pdf");
             assertThat(script).contains("application/x-nacl");

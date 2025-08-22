@@ -2,10 +2,11 @@ package cn.xuanyuanli.playwright.stealth.manager;
 
 import cn.xuanyuanli.playwright.stealth.config.PlaywrightConfig;
 import cn.xuanyuanli.playwright.stealth.config.StealthMode;
+import cn.xuanyuanli.playwright.stealth.TestConditions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import java.util.stream.IntStream;
 
@@ -40,10 +41,39 @@ class PlaywrightManagerTest {
     }
 
     /**
+     * 递归检查异常链中是否包含指定消息
+     */
+    private boolean containsMessageInCauseChain(Throwable throwable, String message) {
+        if (throwable == null) {
+            return false;
+        }
+        if (throwable.getMessage() != null && throwable.getMessage().contains(message)) {
+            return true;
+        }
+        return containsMessageInCauseChain(throwable.getCause(), message);
+    }
+
+    /**
+     * 构建完整的异常消息（包含整个原因链）
+     */
+    private String buildFullExceptionMessage(Throwable throwable) {
+        StringBuilder sb = new StringBuilder();
+        Throwable current = throwable;
+        while (current != null) {
+            if (sb.length() > 0) {
+                sb.append(" -> ");
+            }
+            sb.append(current.getClass().getSimpleName()).append(": ").append(current.getMessage());
+            current = current.getCause();
+        }
+        return sb.toString();
+    }
+
+    /**
      * 测试基本的页面访问功能
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testBasicPageAccess() {
         playwrightManager.execute(config, page -> {
             page.navigate("https://www.baidu.com");
@@ -57,7 +87,7 @@ class PlaywrightManagerTest {
      * 测试使用默认配置
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testDefaultConfiguration() {
         // 使用默认配置（传入null）
         playwrightManager.execute(page -> {
@@ -71,7 +101,7 @@ class PlaywrightManagerTest {
      * 测试自定义浏览器上下文配置
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testCustomBrowserContext() {
         playwrightManager.execute(config, context -> {
             // 设置额外的权限
@@ -106,7 +136,7 @@ class PlaywrightManagerTest {
      * 测试不同StealthMode配置
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testStealthModeConfiguration() {
         // 测试禁用反检测
         PlaywrightConfig disabledConfig = new PlaywrightConfig()
@@ -158,7 +188,7 @@ class PlaywrightManagerTest {
      * 测试反检测脚本配置（向后兼容）
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用") 
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testStealthScriptConfiguration() {
         // 测试启用反检测脚本
         PlaywrightConfig stealthConfig = new PlaywrightConfig()
@@ -193,7 +223,7 @@ class PlaywrightManagerTest {
      * 测试并发执行
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testConcurrentExecution() {
         System.out.println("开始并发测试，初始状态: " + playwrightManager.getPoolStatus());
         
@@ -214,7 +244,7 @@ class PlaywrightManagerTest {
      * 测试不同浏览器配置
      */
     @Test
-    @Disabled("需要网络连接的集成测试，默认禁用")
+    @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testDifferentBrowserConfigurations() {
         // 测试有头模式（仅在开发环境测试）
         PlaywrightConfig headfulConfig = new PlaywrightConfig()
@@ -256,10 +286,10 @@ class PlaywrightManagerTest {
             assert false : "应该抛出异常";
         } catch (RuntimeException e) {
             System.out.println("成功捕获异常: " + e.getMessage());
-            // 检查异常消息或者原因链
-            boolean containsTestException = e.getMessage().contains("测试异常处理") ||
-                    (e.getCause() != null && e.getCause().getMessage().contains("测试异常处理"));
-            assert containsTestException : "异常消息应该包含测试异常信息，实际消息: " + e.getMessage();
+            // 检查异常消息或者整个原因链
+            boolean containsTestException = containsMessageInCauseChain(e, "测试异常处理");
+            String actualMessage = buildFullExceptionMessage(e);
+            assert containsTestException : "异常消息应该包含测试异常信息，实际消息: " + actualMessage;
         }
         
         // 确保连接池状态正常
