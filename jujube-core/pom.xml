@@ -47,7 +47,6 @@
 
     <build>
         <plugins>
-            <!-- 继承JaCoCo覆盖率插件 -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
