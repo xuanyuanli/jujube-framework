@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.*;
+import static cn.xuanyuanli.playwright.stealth.performance.PerformanceBaseline.*;
 
 /**
  * 性能基准测试
@@ -58,24 +59,13 @@ class PerformanceBenchmarkTest {
                 long totalTime = benchmarkPlaywrightManagerWithMode(mode);
                 double avgTime = totalTime / (double) BENCHMARK_ITERATIONS;
                 
-                System.out.printf("StealthMode.%s - 平均执行时间: %.2f ms%n", 
-                                mode.name(), avgTime);
+                String metricKey = "stealth." + mode.name().toLowerCase() + ".avg";
+                System.out.println(formatReport(metricKey, avgTime));
                 
-                // 基本性能断言
-                assertThat(avgTime).isLessThan(5000); // 单次操作不超过5秒
-                
-                // 不同模式的性能比较
-                switch (mode) {
-                    case DISABLED:
-                        assertThat(avgTime).isLessThan(3000); // DISABLED模式应该最快
-                        break;
-                    case LIGHT:
-                        assertThat(avgTime).isLessThan(3500); // LIGHT模式稍慢
-                        break;
-                    case FULL:
-                        assertThat(avgTime).isLessThan(4000); // FULL模式最慢但仍可接受
-                        break;
-                }
+                // 使用性能基线验证
+                assertThat(isWithinBaseline(metricKey, avgTime))
+                    .as("性能指标 %s 应该在基线范围内: %s", metricKey, formatReport(metricKey, avgTime))
+                    .isTrue();
             }
         }
 
@@ -95,8 +85,11 @@ class PerformanceBenchmarkTest {
                 System.out.printf("PoolSize=%d - 平均执行时间: %.2f ms%n", 
                                 poolSize, avgTime);
                 
-                // 连接池应该提供性能优势
-                assertThat(avgTime).isLessThan(4000);
+                // 使用基线验证连接池创建性能
+                String metricKey = "pool.creation.avg";
+                assertThat(isWithinBaseline(metricKey, avgTime))
+                    .as("连接池创建性能应在基线范围内: %s", formatReport(metricKey, avgTime))
+                    .isTrue();
             }
         }
 
@@ -116,8 +109,12 @@ class PerformanceBenchmarkTest {
                 System.out.printf("并发线程数=%d - 总执行时间: %d ms%n", 
                                 threadCount, executionTime);
                 
-                // 并发执行应该在合理时间内完成
-                assertThat(executionTime).isLessThan(30000); // 30秒内完成
+                // 使用基线验证并发执行性能  
+                String metricKey = "pool.concurrent.avg";
+                double avgConcurrentTime = (double) executionTime / threadCount;
+                assertThat(isWithinBaseline(metricKey, avgConcurrentTime))
+                    .as("并发执行性能应在基线范围内: %s", formatReport(metricKey, avgConcurrentTime))
+                    .isTrue();
             }
         }
 
