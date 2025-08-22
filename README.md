@@ -322,6 +322,47 @@ public class UserService {
 
 本项目采用 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) 许可证。
 
+## 📦 发布到 Maven 中央仓库
+
+### 发布流程概述
+参考 [Maven Central 官方文档](https://central.sonatype.org/register/central-portal/)，主要流程如下：
+
+#### 1. 账户注册
+- 访问 [Central Portal](https://central.sonatype.org/) 注册账户
+- 建立 [Namespace](https://central.sonatype.com/publishing/namespaces) 验证命名空间所有权（GitHub 或域名）
+
+#### 2. 项目配置
+- 满足 [必要要求](https://central.sonatype.org/publish/requirements/)
+- 配置 [GPG 签名](https://central.sonatype.org/publish/requirements/gpg/)
+
+#### 3. 构建和签名
+- 使用 [Maven插件](https://central.sonatype.org/publish/publish-portal-maven/) 进行发布
+- 运行构建命令
+```bash
+# 清理构建
+mvn clean deploy
+```
+
+#### 4. 发布验证
+- 通过 [Publishing Deployments](https://central.sonatype.com/publishing/deployments) 查看发布状态
+- 等待同步到 Maven Central（通常 10-30 分钟）
+
+#### 5. 自动化发布（可选）
+配置 GitHub Actions 实现自动化发布：
+- 创建 release tag 触发发布
+- 自动构建、签名、上传
+- 发布成功后自动同步
+
+### 注意事项
+- 确保版本号符合语义化版本规范
+- 所有 artifact 必须包含源码和 Javadoc
+- 使用 GPG 签名所有发布的文件
+- 首次发布需要手动验证命名空间所有权
+
+---
+
+**Jujube Framework - 让 Java 开发更简单、更高效！** 🚀
+
 ## 🙏 致谢
 
 感谢以下优秀的开源项目为 Jujube Framework 提供基础支持：
@@ -335,5 +376,3 @@ public class UserService {
 ---
 
 ⭐ 如果这个项目对你有帮助，请给个 Star 支持一下！
-
-**Jujube Framework - 让 Java 开发更简单、更高效！** 🚀
