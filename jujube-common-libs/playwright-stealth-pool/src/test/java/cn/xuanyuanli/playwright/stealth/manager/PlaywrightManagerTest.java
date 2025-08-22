@@ -2,13 +2,16 @@ package cn.xuanyuanli.playwright.stealth.manager;
 
 import cn.xuanyuanli.playwright.stealth.config.PlaywrightConfig;
 import cn.xuanyuanli.playwright.stealth.config.StealthMode;
-import cn.xuanyuanli.playwright.stealth.TestConditions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * PlaywrightManager测试类
@@ -60,7 +63,7 @@ class PlaywrightManagerTest {
         StringBuilder sb = new StringBuilder();
         Throwable current = throwable;
         while (current != null) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(" -> ");
             }
             sb.append(current.getClass().getSimpleName()).append(": ").append(current.getMessage());
@@ -78,8 +81,7 @@ class PlaywrightManagerTest {
         playwrightManager.execute(config, page -> {
             page.navigate("https://www.baidu.com");
             String title = page.title();
-            System.out.println("页面标题: " + title);
-            assert title.contains("百度");
+            assertThat(title).containsIgnoringCase("百度");
         });
     }
 
@@ -93,7 +95,8 @@ class PlaywrightManagerTest {
         playwrightManager.execute(page -> {
             page.navigate("https://httpbin.org/get");
             String content = page.content();
-            System.out.println("页面内容长度: " + content.length());
+            assertThat(content).isNotEmpty();
+            assertThat(content).containsIgnoringCase("httpbin");
         });
     }
 
@@ -105,7 +108,7 @@ class PlaywrightManagerTest {
     void testCustomBrowserContext() {
         playwrightManager.execute(config, context -> {
             // 设置额外的权限
-            context.grantPermissions(java.util.Arrays.asList("geolocation"));
+            context.grantPermissions(List.of("geolocation"));
             
             // 设置地理位置
             context.setGeolocation(new com.microsoft.playwright.options.Geolocation(39.9042, 116.4074));
@@ -113,22 +116,23 @@ class PlaywrightManagerTest {
         }, page -> {
             page.navigate("https://httpbin.org/get");
             
+            // 验证页面可以正常访问
+            String content = page.content();
+            assertThat(content).containsIgnoringCase("httpbin");
+            
             // 检查地理位置权限 - 注意反检测脚本可能会修改permissions API
-            try {
-                Object geolocationPermission = page.evaluate("""
-                    (async () => {
-                        try {
-                            const result = await navigator.permissions.query({name: 'geolocation'});
-                            return result.state;
-                        } catch (e) {
-                            return 'unavailable';
-                        }
-                    })()
-                """);
-                System.out.println("地理位置权限: " + geolocationPermission);
-            } catch (Exception e) {
-                System.out.println("权限查询被反检测脚本修改，这是预期行为");
-            }
+            Object geolocationPermission = page.evaluate("""
+                (async () => {
+                    try {
+                        const result = await navigator.permissions.query({name: 'geolocation'});
+                        return result.state;
+                    } catch (e) {
+                        return 'unavailable';
+                    }
+                })()
+            """);
+            // 验证权限查询能够执行（无论结果如何，反检测脚本可能会修改行为）
+            assertThat(geolocationPermission).isNotNull();
         });
     }
 
@@ -146,8 +150,9 @@ class PlaywrightManagerTest {
         playwrightManager.execute(disabledConfig, page -> {
             page.navigate("https://httpbin.org/get");
             Object webdriver = page.evaluate("navigator.webdriver");
-            System.out.println("DISABLED模式 - navigator.webdriver: " + webdriver);
-            // 在禁用模式下，webdriver属性应该存在
+            // webdriver属性被Playwright默认隐藏了
+            assertThat(webdriver).isNotNull();
+            assertThat(webdriver).isEqualTo(false);
         });
 
         // 测试轻量级反检测
@@ -156,12 +161,14 @@ class PlaywrightManagerTest {
                 .setStealthMode(StealthMode.LIGHT);
                 
         playwrightManager.execute(lightConfig, page -> {
+            page.navigate("about:blank");
             page.navigate("https://httpbin.org/get");
             Object webdriver = page.evaluate("navigator.webdriver");
             Object languages = page.evaluate("navigator.languages");
-            System.out.println("LIGHT模式 - navigator.webdriver: " + webdriver);
-            System.out.println("LIGHT模式 - navigator.languages: " + languages);
-            assert webdriver == null || webdriver.toString().equals("undefined");
+            // LIGHT模式应该隐藏webdriver
+            assertThat(webdriver == null || webdriver.toString().equals("undefined")).isTrue();
+            // 应该有语言设置
+            assertThat(languages).isNotNull();
         });
 
         // 测试完整反检测
@@ -170,17 +177,17 @@ class PlaywrightManagerTest {
                 .setStealthMode(StealthMode.FULL);
                 
         playwrightManager.execute(fullConfig, page -> {
+            page.navigate("about:blank");
             page.navigate("https://httpbin.org/get");
             Object webdriver = page.evaluate("navigator.webdriver");
             Object pluginsLength = page.evaluate("navigator.plugins.length");
             Object hardwareConcurrency = page.evaluate("navigator.hardwareConcurrency");
             
-            System.out.println("FULL模式 - navigator.webdriver: " + webdriver);
-            System.out.println("FULL模式 - navigator.plugins.length: " + pluginsLength);
-            System.out.println("FULL模式 - navigator.hardwareConcurrency: " + hardwareConcurrency);
-            
-            assert webdriver == null || webdriver.toString().equals("undefined");
-            assert pluginsLength != null && Integer.parseInt(pluginsLength.toString()) > 0;
+            // FULL模式应该全面伪装
+            assertThat(webdriver == null || webdriver.toString().equals("undefined")).isTrue();
+            assertThat(pluginsLength).isNotNull();
+            assertThat(Integer.parseInt(pluginsLength.toString())).isGreaterThan(0);
+            assertThat(hardwareConcurrency).isEqualTo(8);
         });
     }
 
@@ -196,12 +203,12 @@ class PlaywrightManagerTest {
                 .setStealthMode(StealthMode.FULL);
                 
         playwrightManager.execute(stealthConfig, page -> {
+            page.navigate("about:blank");
             page.navigate("https://httpbin.org/get");
             
             // 检查webdriver属性是否被隐藏
             Object webdriver = page.evaluate("navigator.webdriver");
-            System.out.println("启用反检测 - navigator.webdriver: " + webdriver);
-            assert webdriver == null || webdriver.toString().equals("undefined");
+            assertThat(webdriver == null || webdriver.toString().equals("undefined")).isTrue();
         });
 
         // 测试禁用反检测脚本  
@@ -211,11 +218,11 @@ class PlaywrightManagerTest {
                 
         playwrightManager.execute(noStealthConfig, page -> {
             page.navigate("https://httpbin.org/get");
-            
-            // webdriver属性应该存在
+
+            // webdriver属性被Playwright默认隐藏了
             Object webdriver = page.evaluate("navigator.webdriver");
-            System.out.println("禁用反检测 - navigator.webdriver: " + webdriver);
-            // 注意：在无头模式下，webdriver可能仍为true
+            assertThat(webdriver).isNotNull();
+            assertThat(webdriver).isEqualTo(false);
         });
     }
 
@@ -225,19 +232,18 @@ class PlaywrightManagerTest {
     @Test
     @EnabledIf("cn.xuanyuanli.playwright.stealth.TestConditions#isIntegrationTestsEnabled")
     void testConcurrentExecution() {
-        System.out.println("开始并发测试，初始状态: " + playwrightManager.getPoolStatus());
+        // 并发执行12个任务，验证连接池能正确处理并发请求
+        AtomicInteger successCount = new AtomicInteger(0);
         
-        // 并发执行12个任务
-        IntStream.range(0, 12).parallel().forEach(i -> {
-            playwrightManager.execute(config, page -> {
-                page.navigate("https://httpbin.org/delay/1");
-                String content = page.textContent("body");
-                System.out.printf("任务 %d 完成，响应包含delay: %s%n", 
-                                 i, content.contains("delay"));
-            });
-        });
+        IntStream.range(0, 12).parallel().forEach(i -> playwrightManager.execute(config, page -> {
+            page.navigate("https://httpbin.org/delay/1");
+            String content = page.textContent("body");
+            assertThat(content).containsIgnoringCase("delay");
+            successCount.incrementAndGet();
+        }));
         
-        System.out.println("并发测试完成，最终状态: " + playwrightManager.getPoolStatus());
+        // 验证所有任务都成功完成
+        assertThat(successCount.get()).isEqualTo(12);
     }
 
     /**
@@ -252,14 +258,12 @@ class PlaywrightManagerTest {
                 .setStartMaximized(true)
                 .setSlowMo(100.0);
                 
-        // 这个测试在CI环境中应该跳过
-        if (System.getProperty("CI") == null) {
-            playwrightManager.execute(headfulConfig, page -> {
-                page.navigate("https://www.baidu.com");
-                page.waitForTimeout(2000); // 等待观察
-                System.out.println("有头模式测试完成");
-            });
-        }
+        playwrightManager.execute(headfulConfig, page -> {
+            page.navigate("https://www.baidu.com");
+            page.waitForTimeout(2000); // 等待观察
+            String title = page.title();
+            assertThat(title).containsIgnoringCase("百度");
+        });
 
         // 测试禁用GPU
         PlaywrightConfig noGpuConfig = new PlaywrightConfig()
@@ -269,7 +273,8 @@ class PlaywrightManagerTest {
                 
         playwrightManager.execute(noGpuConfig, page -> {
             page.navigate("https://httpbin.org/get");
-            System.out.println("无GPU模式测试完成");
+            String content = page.content();
+            assertThat(content).containsIgnoringCase("httpbin");
         });
     }
 
@@ -278,21 +283,24 @@ class PlaywrightManagerTest {
      */
     @Test
     void testErrorHandling() {
-        try {
-            playwrightManager.execute(config, page -> {
-                // 故意触发一个错误
-                throw new RuntimeException("测试异常处理");
-            });
-            assert false : "应该抛出异常";
-        } catch (RuntimeException e) {
-            System.out.println("成功捕获异常: " + e.getMessage());
-            // 检查异常消息或者整个原因链
-            boolean containsTestException = containsMessageInCauseChain(e, "测试异常处理");
-            String actualMessage = buildFullExceptionMessage(e);
-            assert containsTestException : "异常消息应该包含测试异常信息，实际消息: " + actualMessage;
-        }
+        assertThatThrownBy(() -> playwrightManager.execute(config, page -> {
+            // 故意触发一个错误
+            throw new RuntimeException("测试异常处理");
+        })).isInstanceOf(RuntimeException.class)
+          .satisfies(e -> {
+              // 检查异常消息或者整个原因链
+              boolean containsTestException = containsMessageInCauseChain(e, "测试异常处理");
+              String actualMessage = buildFullExceptionMessage(e);
+              assertThat(containsTestException)
+                  .as("异常消息应该包含测试异常信息，实际消息: " + actualMessage)
+                  .isTrue();
+          });
         
-        // 确保连接池状态正常
-        System.out.println("异常处理后连接池状态: " + playwrightManager.getPoolStatus());
+        // 确保连接池状态正常 - 验证连接池仍可正常工作
+        playwrightManager.execute(config, page -> {
+            page.navigate("https://httpbin.org/get");
+            String content = page.content();
+            assertThat(content).containsIgnoringCase("httpbin");
+        });
     }
 }
