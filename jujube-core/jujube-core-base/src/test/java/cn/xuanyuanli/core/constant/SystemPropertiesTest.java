@@ -7,14 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 
 import cn.xuanyuanli.core.constant.SystemProperties.SpInnerUtil;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+@DisplayName("SystemProperties 系统属性常量测试")
 class SystemPropertiesTest {
 
     @Test
-    void testProjectDir() {
+    @DisplayName("项目目录应该不为空")
+    void shouldHaveNonEmptyProjectDir() {
         assertNotNull(SystemProperties.PROJECT_DIR);
         assertFalse(SystemProperties.PROJECT_DIR.isEmpty());
     }
@@ -117,12 +120,14 @@ class SystemPropertiesTest {
     }
 
     @Test
-    void testJreIs64Bit() {
+    @DisplayName("JRE应详64位")
+    void shouldBe64BitJre() {
         assertTrue(SystemProperties.JRE_IS_64BIT);
     }
 
     @Test
-    public void testJreIs64BitThrowsException() {
+    @DisplayName("当无法获取地址大小时应该默认返回true")
+    public void shouldReturnTrueWhenAddressSizeUnavailable() {
         // 使用 Mockito 模拟静态方法
         try (MockedStatic<SpInnerUtil> mockedClass = Mockito.mockStatic(SpInnerUtil.class)) {
             // 模拟 方法 抛出 ClassNotFoundException
@@ -159,7 +164,8 @@ class SystemPropertiesTest {
     }
 
     @Test
-    void testOsSpecificFlags() {
+    @DisplayName("操作系统标识应该与操作系统名称一致")
+    void shouldHaveConsistentOsFlags() {
         // These flags should be consistent with the OS_NAME
         if (SystemProperties.OS_NAME.startsWith("Linux")) {
             assertTrue(SystemProperties.LINUX);

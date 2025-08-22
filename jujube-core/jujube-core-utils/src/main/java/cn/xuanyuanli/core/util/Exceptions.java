@@ -20,6 +20,9 @@ public class Exceptions {
      * @param e e
      */
     public static void throwException(Throwable e) {
+        if (e == null) {
+            throw new NullPointerException();
+        }
         throw new RuntimeException(e);
     }
 
@@ -30,6 +33,9 @@ public class Exceptions {
      * @return {@link String}
      */
     public static String exceptionToString(Exception exception) {
+        if (exception == null) {
+            return "null";
+        }
         StringWriter writer = new StringWriter();
         exception.printStackTrace(new PrintWriter(writer));
         return writer.toString();
@@ -43,6 +49,9 @@ public class Exceptions {
      * @return {@link String}
      */
     public static String exceptionToString(Exception exception, int len) {
+        if (len <= 0) {
+            return "";
+        }
         String data = exceptionToString(exception);
         if (data != null && data.length() > len) {
             data = data.substring(0, len);

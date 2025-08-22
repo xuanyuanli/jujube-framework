@@ -18,12 +18,15 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("Dates 日期工具类测试")
 class DatesTest {
 
     @Test
-    public void isSameDay() {
+    @DisplayName("应该正确判断是否为同一天")
+    public void shouldCorrectlyDetermineSameDay() {
         long t1 = Dates.getEpochSecond(LocalDateTime.of(2021, 1, 1, 10, 45, 8));
         long t2 = Dates.getEpochSecond(LocalDateTime.of(2021, 1, 1, 18, 45, 8));
         Assertions.assertTrue(Dates.isSameDay(t1, t2));
@@ -38,12 +41,13 @@ class DatesTest {
     }
 
     @Test
-    void formatTimeMillis() {
-        assertEquals(Dates.formatTimeMillis(1631185252L, null), "2021-09-09 19:00:52");
-        assertEquals(Dates.formatTimeMillis(1631185252L, "yyyy-MM-dd"), "2021-09-09");
+    @DisplayName("应该正确格式化时间戳")
+    void shouldCorrectlyFormatTimeMillis() {
+        assertEquals("2021-09-09 19:00:52", Dates.formatTimeMillis(1631185252L, null));
+        assertEquals("2021-09-09", Dates.formatTimeMillis(1631185252L, "yyyy-MM-dd"));
 
-        assertEquals(Dates.formatTimeMillis(1631185252000L, null), "2021-09-09 19:00:52");
-        assertEquals(Dates.formatTimeMillis(1631185252456L, null), "2021-09-09 19:00:52");
+        assertEquals("2021-09-09 19:00:52", Dates.formatTimeMillis(1631185252000L, null));
+        assertEquals("2021-09-09 19:00:52", Dates.formatTimeMillis(1631185252456L, null));
     }
 
     @Test
@@ -261,13 +265,14 @@ class DatesTest {
     }
 
     @Test
-    void humanReadableSecord() {
-        assertEquals(Dates.humanReadableSecord(60), "1m");
-        assertEquals(Dates.humanReadableSecord(1), "1s");
-        assertEquals(Dates.humanReadableSecord(7200), "2h");
-        assertEquals(Dates.humanReadableSecord(7201), "2h1s");
-        assertEquals(Dates.humanReadableSecord(7271), "2h1m11s");
-        assertEquals(Dates.humanReadableSecord(720071), "8d8h1m11s");
+    @DisplayName("应该将秒数转换为可读格式")
+    void shouldConvertSecondsToHumanReadableFormat() {
+        assertEquals("1m", Dates.humanReadableSecord(60));
+        assertEquals("1s", Dates.humanReadableSecord(1));
+        assertEquals("2h", Dates.humanReadableSecord(7200));
+        assertEquals("2h1s", Dates.humanReadableSecord(7201));
+        assertEquals("2h1m11s", Dates.humanReadableSecord(7271));
+        assertEquals("8d8h1m11s", Dates.humanReadableSecord(720071));
     }
 
     @Test
