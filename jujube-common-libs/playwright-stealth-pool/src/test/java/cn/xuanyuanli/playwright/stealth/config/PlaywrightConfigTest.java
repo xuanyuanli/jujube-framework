@@ -7,6 +7,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -50,6 +54,7 @@ class PlaywrightConfigTest {
             assertThat(config.getSlowMo()).isNull();
             assertThat(config.getNewContextOptions()).isNotNull();
             assertThat(config.getProxy()).isNull();
+            assertThat(config.getCustomInitScripts()).isNull();
         }
 
         @Test
@@ -127,6 +132,21 @@ class PlaywrightConfigTest {
             assertThat(config.getNewContextOptions()).isEqualTo(customOptions);
             assertThat(config.getNewContextOptions().userAgent).isEqualTo("Custom Agent");
         }
+
+        @Test
+        @DisplayName("应该支持自定义初始化脚本配置")
+        void shouldSupportCustomInitScriptsConfiguration() {
+            List<String> scripts = Arrays.asList(
+                    "console.log('test script 1');",
+                    "window.customVariable = 'test value';"
+            );
+            
+            PlaywrightConfig result = config.setCustomInitScripts(scripts);
+            
+            assertThat(result).isSameAs(config);
+            assertThat(config.getCustomInitScripts()).isEqualTo(scripts);
+            assertThat(config.getCustomInitScripts()).hasSize(2);
+        }
     }
 
     @Nested
@@ -140,11 +160,13 @@ class PlaywrightConfigTest {
                 config.setSlowMo(null);
                 config.setProxy(null);
                 config.setNewContextOptions(null);
+                config.setCustomInitScripts(null);
             }).doesNotThrowAnyException();
 
             assertThat(config.getSlowMo()).isNull();
             assertThat(config.getProxy()).isNull();
             assertThat(config.getNewContextOptions()).isNull();
+            assertThat(config.getCustomInitScripts()).isNull();
         }
 
         @Test
@@ -161,6 +183,34 @@ class PlaywrightConfigTest {
             // 测试负值（虽然在实际使用中可能无意义）
             config.setSlowMo(-1.0);
             assertThat(config.getSlowMo()).isEqualTo(-1.0);
+        }
+
+        @Test
+        @DisplayName("应该正确处理自定义脚本边界值")
+        void shouldHandleCustomInitScriptsBoundaryValues() {
+            // 测试空列表
+            config.setCustomInitScripts(Collections.emptyList());
+            assertThat(config.getCustomInitScripts()).isEmpty();
+
+            // 测试单个脚本
+            List<String> singleScript = Collections.singletonList("window.test = true;");
+            config.setCustomInitScripts(singleScript);
+            assertThat(config.getCustomInitScripts()).hasSize(1);
+            assertThat(config.getCustomInitScripts().get(0)).isEqualTo("window.test = true;");
+
+            // 测试多个脚本
+            List<String> multipleScripts = Arrays.asList(
+                    "script1;", "script2;", "script3;"
+            );
+            config.setCustomInitScripts(multipleScripts);
+            assertThat(config.getCustomInitScripts()).hasSize(3);
+
+            // 测试包含空字符串的脚本
+            List<String> scriptsWithEmpty = Arrays.asList("", "valid script;", "");
+            config.setCustomInitScripts(scriptsWithEmpty);
+            assertThat(config.getCustomInitScripts()).hasSize(3);
+            assertThat(config.getCustomInitScripts().get(0)).isEmpty();
+            assertThat(config.getCustomInitScripts().get(1)).isEqualTo("valid script;");
         }
     }
 
@@ -242,6 +292,21 @@ class PlaywrightConfigTest {
 
             assertThat(config1).isNotEqualTo(config2);
         }
+
+        @Test
+        @DisplayName("包含自定义脚本的对象应该正确比较")
+        void shouldCompareCustomInitScriptsConfiguration() {
+            List<String> scripts1 = Arrays.asList("script1;", "script2;");
+            List<String> scripts2 = Arrays.asList("script3;", "script4;");
+
+            PlaywrightConfig config1 = new PlaywrightConfig().setCustomInitScripts(scripts1);
+            PlaywrightConfig config2 = new PlaywrightConfig().setCustomInitScripts(scripts2);
+            PlaywrightConfig config3 = new PlaywrightConfig().setCustomInitScripts(scripts1);
+
+            assertThat(config1).isNotEqualTo(config2);
+            assertThat(config1).isEqualTo(config3);
+            assertThat(config1.hashCode()).isEqualTo(config3.hashCode());
+        }
     }
 
     @Nested
@@ -264,6 +329,88 @@ class PlaywrightConfigTest {
                     .doesNotThrowAnyException();
             
             assertThat(config.getStealthMode()).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("自定义脚本功能测试")
+    class CustomInitScriptsTests {
+
+        @Test
+        @DisplayName("应该支持单个自定义脚本")
+        void shouldSupportSingleCustomScript() {
+            String script = "window.customFlag = true;";
+            config.setCustomInitScripts(Collections.singletonList(script));
+
+            assertThat(config.getCustomInitScripts()).hasSize(1);
+            assertThat(config.getCustomInitScripts().get(0)).isEqualTo(script);
+        }
+
+        @Test
+        @DisplayName("应该支持多个自定义脚本")
+        void shouldSupportMultipleCustomScripts() {
+            List<String> scripts = Arrays.asList(
+                    "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});",
+                    "window.chrome = {runtime: {}};",
+                    "Object.defineProperty(navigator, 'languages', {get: () => ['zh-CN', 'zh', 'en']});"
+            );
+            
+            config.setCustomInitScripts(scripts);
+
+            assertThat(config.getCustomInitScripts()).hasSize(3);
+            assertThat(config.getCustomInitScripts()).containsExactlyElementsOf(scripts);
+        }
+
+        @Test
+        @DisplayName("应该正确处理复杂JavaScript脚本")
+        void shouldHandleComplexJavaScriptScripts() {
+            String complexScript = """
+                    (function() {
+                        const originalFunction = window.navigator.webdriver;
+                        delete window.navigator.webdriver;
+                        Object.defineProperty(navigator, 'webdriver', {
+                            get: () => undefined,
+                            configurable: true
+                        });
+                    })();
+                    """;
+            
+            config.setCustomInitScripts(Collections.singletonList(complexScript));
+
+            assertThat(config.getCustomInitScripts()).hasSize(1);
+            assertThat(config.getCustomInitScripts().get(0)).isEqualTo(complexScript);
+        }
+
+        @Test
+        @DisplayName("自定义脚本不应影响其他配置")
+        void customScriptsShouldNotAffectOtherConfigurations() {
+            List<String> scripts = Arrays.asList("script1;", "script2;");
+            
+            config.setCustomInitScripts(scripts)
+                  .setHeadless(false)
+                  .setStealthMode(StealthMode.FULL)
+                  .setSlowMo(100.0);
+
+            assertThat(config.getCustomInitScripts()).isEqualTo(scripts);
+            assertThat(config.isHeadless()).isFalse();
+            assertThat(config.getStealthMode()).isEqualTo(StealthMode.FULL);
+            assertThat(config.getSlowMo()).isEqualTo(100.0);
+        }
+
+        @Test
+        @DisplayName("应该支持清空自定义脚本")
+        void shouldSupportClearingCustomScripts() {
+            // 先设置脚本
+            config.setCustomInitScripts(Arrays.asList("script1;", "script2;"));
+            assertThat(config.getCustomInitScripts()).hasSize(2);
+
+            // 清空脚本
+            config.setCustomInitScripts(Collections.emptyList());
+            assertThat(config.getCustomInitScripts()).isEmpty();
+
+            // 设置为null
+            config.setCustomInitScripts(null);
+            assertThat(config.getCustomInitScripts()).isNull();
         }
     }
 
@@ -322,6 +469,28 @@ class PlaywrightConfigTest {
             assertThat(stealthConfig.isDisableAutomationControlled()).isTrue();
             assertThat(stealthConfig.getProxy()).isEqualTo(proxy);
             assertThat(stealthConfig.getSlowMo()).isEqualTo(100.0);
+        }
+
+        @Test
+        @DisplayName("应该正确配置自定义脚本增强反检测场景")
+        void shouldConfigureCustomScriptEnhancedStealthScenario() {
+            List<String> customStealthScripts = Arrays.asList(
+                    "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});",
+                    "window.chrome = {runtime: {}, loadTimes: function() {}, csi: function() {}};",
+                    "Object.defineProperty(navigator, 'plugins', {get: () => [1, 2, 3, 4, 5]});",
+                    "Object.defineProperty(navigator, 'languages', {get: () => ['zh-CN', 'zh', 'en']});"
+            );
+
+            PlaywrightConfig enhancedConfig = new PlaywrightConfig()
+                    .setStealthMode(StealthMode.LIGHT)  // 轻量级内置反检测
+                    .setCustomInitScripts(customStealthScripts)  // 额外的自定义反检测
+                    .setHeadless(true)
+                    .setDisableAutomationControlled(true);
+
+            assertThat(enhancedConfig.getStealthMode()).isEqualTo(StealthMode.LIGHT);
+            assertThat(enhancedConfig.getCustomInitScripts()).hasSize(4);
+            assertThat(enhancedConfig.isHeadless()).isTrue();
+            assertThat(enhancedConfig.isDisableAutomationControlled()).isTrue();
         }
     }
 }

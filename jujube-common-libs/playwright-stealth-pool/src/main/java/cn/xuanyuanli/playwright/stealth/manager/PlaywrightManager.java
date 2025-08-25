@@ -13,6 +13,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -41,11 +42,11 @@ import java.util.function.Consumer;
  * // 使用自定义配置
  * PlaywrightConfig config = new PlaywrightConfig()
  *     .setHeadless(false)
- *     .setEnableStealthScript(true);
+ *     .setStealthMode(StealthMode.LIGHT);
  * manager.execute(config, page -> {
  *     // 页面操作
  * });
- * 
+ *
  * // 记得关闭管理器释放资源
  * manager.close();
  * }</pre>
@@ -193,7 +194,7 @@ public class PlaywrightManager implements AutoCloseable {
             // 创建页面
             page = browserContext.newPage();
 
-            // 根据配置注入反检测脚本
+            // 根据配置注入内置反检测脚本
             if (config.getStealthMode().isEnabled()) {
                 if (config.getStealthMode().isLight()) {
                     page.addInitScript(StealthScriptProvider.getLightStealthScript());
@@ -202,6 +203,16 @@ public class PlaywrightManager implements AutoCloseable {
                     page.addInitScript(StealthScriptProvider.getStealthScript());
                     log.debug("Full stealth script injected");
                 }
+            }
+
+            // 注入自定义初始化脚本（在内置脚本之后执行）
+            if (config.getCustomInitScripts() != null && !config.getCustomInitScripts().isEmpty()) {
+                for (int i = 0; i < config.getCustomInitScripts().size(); i++) {
+                    String script = config.getCustomInitScripts().get(i);
+                    page.addInitScript(script);
+                    log.debug("Custom init script [{}] injected: {} chars", i + 1, script.length());
+                }
+                log.debug("Total {} custom init scripts injected", config.getCustomInitScripts().size());
             }
 
             // 执行页面操作

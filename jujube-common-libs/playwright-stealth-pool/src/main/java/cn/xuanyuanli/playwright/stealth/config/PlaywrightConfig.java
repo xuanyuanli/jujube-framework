@@ -5,7 +5,9 @@ import com.microsoft.playwright.options.Proxy;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -16,6 +18,7 @@ import java.util.Objects;
  *   <li>浏览器启动参数配置</li>
  *   <li>反检测功能配置</li>
  *   <li>上下文和代理配置</li>
+ *   <li>自定义初始化脚本注入</li>
  * </ul>
  *
  * @author xuanyuanli
@@ -130,6 +133,41 @@ public class PlaywrightConfig {
      */
     private Proxy proxy;
 
+    /**
+     * 自定义初始化脚本列表
+     *
+     * <p>在页面加载之前注入的JavaScript代码，用于自定义页面行为或添加额外的反检测功能。
+     * 这些脚本会在内置反检测脚本之后按顺序执行。</p>
+     *
+     * <p><strong>特性：</strong></p>
+     * <ul>
+     *   <li>支持多个脚本，按列表顺序依次注入</li>
+     *   <li>与内置反检测脚本兼容，可以共同使用</li>
+     *   <li>在每个新页面加载时自动执行</li>
+     *   <li>支持复杂的JavaScript逻辑和异步操作</li>
+     * </ul>
+     *
+     * <p><strong>使用场景：</strong></p>
+     * <ul>
+     *   <li>自定义反检测逻辑</li>
+     *   <li>修改浏览器指纹信息</li>
+     *   <li>注入工具函数或全局变量</li>
+     *   <li>增强现有反检测功能</li>
+     * </ul>
+     *
+     * <p><strong>注意事项：</strong></p>
+     * <ul>
+     *   <li>脚本执行失败不会阻止页面加载</li>
+     *   <li>避免使用可能导致页面行为异常的脚本</li>
+     *   <li>建议进行充分测试以确保脚本稳定性</li>
+     * </ul>
+     *
+     * <p>默认值：null（不注入自定义脚本）</p>
+     *
+     * @see StealthMode 内置反检测模式
+     */
+    private List<String> customInitScripts;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -148,14 +186,15 @@ public class PlaywrightConfig {
                 stealthMode == that.stealthMode &&
                 Objects.equals(slowMo, that.slowMo) &&
                 Objects.equals(contextOptionsToString(), that.contextOptionsToString()) &&
-                Objects.equals(proxyToString(), that.proxyToString());
+                Objects.equals(proxyToString(), that.proxyToString()) &&
+                Objects.equals(customInitScripts, that.customInitScripts);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(disableAutomationControlled, disableGpu, disableImageRender,
                 startMaximized, headless, chromiumSandbox, stealthMode, slowMo,
-                contextOptionsToString(), proxyToString());
+                contextOptionsToString(), proxyToString(), customInitScripts);
     }
 
     /**
@@ -169,7 +208,7 @@ public class PlaywrightConfig {
         if (newContextOptions == null) {
             return null;
         }
-        return ToStringBuilder.reflectionToString(newContextOptions);
+        return ToStringBuilder.reflectionToString(newContextOptions, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     /**
@@ -183,6 +222,6 @@ public class PlaywrightConfig {
         if (proxy == null) {
             return null;
         }
-        return ToStringBuilder.reflectionToString(proxy);
+        return ToStringBuilder.reflectionToString(proxy, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

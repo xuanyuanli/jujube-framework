@@ -6,6 +6,7 @@
 
 - **🔄 连接池管理**: 支持Playwright实例和Browser实例的连接池管理
 - **🥷 反检测功能**: 内置JavaScript脚本绕过常见的自动化检测机制  
+- **🎨 自定义脚本**: 支持注入自定义初始化脚本，灵活扩展反检测能力
 - **⚙️ 灵活配置**: 丰富的配置选项，支持各种使用场景
 - **🛡️ 健壮性**: 完善的错误处理和资源清理机制
 - **📊 监控支持**: 提供连接池状态监控和统计信息
@@ -79,6 +80,37 @@ IntStream.range(0, 20).parallel().forEach(i -> {
 browserManager.close();
 ```
 
+### 自定义脚本增强反检测
+
+```java
+// 创建自定义反检测脚本
+List<String> customScripts = Arrays.asList(
+    // 隐藏webdriver属性
+    "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});",
+    // 模拟chrome对象
+    "window.chrome = {runtime: {}, loadTimes: function() {}};",
+    // 自定义插件信息
+    "Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3]});",
+    // 注入自定义标识
+    "window.customStealthFlag = 'enhanced';"
+);
+
+PlaywrightConfig enhancedConfig = new PlaywrightConfig()
+    .setStealthMode(StealthMode.LIGHT)      // 启用内置轻量级反检测
+    .setCustomInitScripts(customScripts)    // 添加自定义脚本
+    .setHeadless(true);
+
+// 使用增强配置
+manager.execute(enhancedConfig, page -> {
+    // 内置反检测脚本 + 自定义脚本都会在页面加载前执行
+    page.navigate("https://bot-detection-site.com");
+    
+    // 验证自定义脚本是否生效
+    Object customFlag = page.evaluate("window.customStealthFlag");
+    System.out.println("Custom script result: " + customFlag); // 输出: enhanced
+});
+```
+
 ### 高级配置
 
 ```java
@@ -95,6 +127,9 @@ PlaywrightConfig config = new PlaywrightConfig()
     // 反检测配置
     .setStealthMode(StealthMode.FULL)      // 完整反检测模式
     .setDisableAutomationControlled(true)  // 隐藏自动化标识
+    
+    // 自定义脚本（可选）
+    .setCustomInitScripts(customScripts)   // 注入自定义脚本
     
     // 网络配置
     .setProxy(new Proxy("http://proxy:8080"));
@@ -120,14 +155,21 @@ manager.execute(config, context -> {
 
 ## 🥷 反检测功能
 
-该库内置了多种反检测机制：
+该库提供两级反检测机制：**内置反检测** + **自定义脚本扩展**
 
-### JavaScript指纹修复
+### 内置JavaScript指纹修复
 - ✅ 隐藏 `navigator.webdriver` 属性
 - ✅ 模拟真实的 `navigator.plugins` 和 `mimeTypes`
 - ✅ 修复 WebGL 指纹信息
 - ✅ 模拟硬件信息（CPU核心数、内存等）
 - ✅ 修复 AudioContext 指纹
+
+### 自定义脚本扩展
+- ✅ 支持注入多个自定义JavaScript脚本
+- ✅ 脚本按顺序执行，可覆盖或增强内置功能
+- ✅ 支持复杂脚本逻辑和异步操作
+- ✅ 脚本执行失败不影响页面正常加载
+- ✅ 与内置反检测脚本完全兼容
 
 ### 浏览器启动参数
 - ✅ `--disable-blink-features=AutomationControlled`
@@ -151,6 +193,17 @@ PlaywrightConfig lightConfig = new PlaywrightConfig()
 PlaywrightConfig fullConfig = new PlaywrightConfig()
     .setStealthMode(StealthMode.FULL)       // 全面反检测
     .setDisableAutomationControlled(true);
+
+// 自定义脚本增强（最高灵活性）
+List<String> enhancedScripts = Arrays.asList(
+    "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});",
+    "window.chrome = {runtime: {}, app: {isInstalled: false}};",
+    "Object.defineProperty(navigator, 'permissions', {get: () => ({query: () => Promise.resolve({state: 'granted'})})});"
+);
+PlaywrightConfig customConfig = new PlaywrightConfig()
+    .setStealthMode(StealthMode.LIGHT)      // 基础内置反检测
+    .setCustomInitScripts(enhancedScripts)  // 自定义增强脚本
+    .setDisableAutomationControlled(true);
 ```
 
 ### StealthMode 详细说明
@@ -160,6 +213,7 @@ PlaywrightConfig fullConfig = new PlaywrightConfig()
 | **DISABLED** | 无 | 无 | 不注入任何脚本 | 内部测试、性能敏感 |
 | **LIGHT** | 极低 | 基础检测 | `navigator.webdriver`<br/>`navigator.languages`<br/>`navigator.platform` | 一般网站、批量任务 |
 | **FULL** | 中等 | 全面检测 | 所有LIGHT功能 +<br/>插件模拟、WebGL修复<br/>AudioContext修复等 | 强检测网站、生产环境 |
+| **CUSTOM** | 可控 | 自定义 | 内置功能 + 自定义脚本<br/>完全可定制的反检测策略 | 特殊需求、高级用户 |
 ```
 
 ## 📊 监控和调试
@@ -216,6 +270,12 @@ browserManager.evictIdleBrowsers();
    - 启用 `disableImageRender` 提高页面加载速度
    - 启用 `disableGpu` 在服务器环境中提高稳定性
 
+4. **自定义脚本使用建议**：
+   - 与内置反检测配合使用，避免重复功能
+   - 测试脚本稳定性，确保不影响页面正常功能
+   - 根据目标网站特点定制脚本内容
+   - 定期更新脚本以应对检测机制的变化
+
 ### 常见问题
 
 **Q: 为什么Browser创建很慢？**
@@ -223,6 +283,12 @@ A: 首次创建需要初始化浏览器引擎。使用 `warmUpPool()` 预热连�
 
 **Q: 反检测脚本不起作用？**  
 A: 确保 `stealthMode` 不是 `DISABLED`，根据网站检测强度选择 `LIGHT` 或 `FULL` 模式。
+
+**Q: 如何调试自定义脚本？**
+A: 在脚本中添加 `console.log()` 语句，通过浏览器控制台查看输出。或使用 `page.evaluate()` 验证脚本效果。
+
+**Q: 自定义脚本执行顺序？**
+A: 内置反检测脚本先执行，然后按列表顺序执行自定义脚本。后执行的脚本可以覆盖前面的设置。
 
 **Q: 内存使用过高？**
 A: 适当减小连接池大小，及时调用 `close()` 释放资源。

@@ -252,7 +252,7 @@ class PoolIntegrationTest {
 
         @Test
         @DisplayName("多线程并发访问Playwright连接池应该安全")
-        void shouldHandleConcurrentPlaywrightPoolAccess() throws InterruptedException {
+        void shouldHandleConcurrentPlaywrightPoolAccess() {
             PlaywrightFactory factory = new PlaywrightFactory();
             GenericObjectPoolConfig<Playwright> config = new GenericObjectPoolConfig<>();
             config.setMaxTotal(3);
@@ -300,7 +300,7 @@ class PoolIntegrationTest {
 
         @Test
         @DisplayName("多线程并发访问Browser连接池应该安全")
-        void shouldHandleConcurrentBrowserPoolAccess() throws InterruptedException {
+        void shouldHandleConcurrentBrowserPoolAccess() {
             PlaywrightConfig playwrightConfig = new PlaywrightConfig()
                     .setHeadless(true)
                     .setStealthMode(StealthMode.LIGHT);
