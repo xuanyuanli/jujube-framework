@@ -16,7 +16,7 @@ import lombok.Getter;
  *   </tr>
  *   <tr>
  *     <td>QUICK</td>
- *     <td>0.5-1秒</td>
+ *     <td>0.5-1.5秒</td>
  *     <td>快速验证、批量处理</td>
  *   </tr>
  *   <tr>
@@ -48,7 +48,7 @@ public enum BehaviorIntensity {
      *   <li>内部系统测试</li>
      * </ul>
      */
-    QUICK("快速强度", 500, 1000),
+    QUICK("快速强度", 500, 1500),
     
     /**
      * 正常强度

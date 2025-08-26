@@ -65,7 +65,6 @@ public class HumanBehaviorSimulator {
         SCROLL_TO,       // 滚动到指定位置
         HOVER_ELEMENT,   // 悬停元素（只读）
         MOUSE_TRACK,     // 鼠标轨迹移动
-        GENTLE_DRAG      // 轻微拖拽（不影响元素）
     }
     
     /**
@@ -188,7 +187,6 @@ public class HumanBehaviorSimulator {
                 case SCROLL_TO -> executeScrollToRandom(page);
                 case HOVER_ELEMENT -> executeSafeHover(page);
                 case MOUSE_TRACK -> executeMouseTrack(page, dimensions);
-                case GENTLE_DRAG -> executeGentleDrag(page, dimensions);
             }
             log.trace("Executed action: {}", action);
         } catch (Exception e) {
@@ -276,31 +274,7 @@ public class HumanBehaviorSimulator {
             startY = newY;
         }
     }
-    
-    /**
-     * 执行轻微拖拽（不拖拽到具体元素上）
-     */
-    private static void executeGentleDrag(Page page, PageDimensions dimensions) {
-        // 选择页面中央区域，避免拖拽到边缘元素
-        double startX = ThreadLocalRandom.current().nextDouble(
-            dimensions.width * 0.3, dimensions.width * 0.7);
-        double startY = ThreadLocalRandom.current().nextDouble(
-            dimensions.height * 0.3, dimensions.height * 0.7);
-        
-        // 很小范围的拖拽，不会影响页面元素
-        double endX = startX + ThreadLocalRandom.current().nextInt(-30, 30);
-        double endY = startY + ThreadLocalRandom.current().nextInt(-20, 20);
-        
-        // 确保拖拽终点在安全范围内
-        endX = Math.max(dimensions.width * 0.2, Math.min(dimensions.width * 0.8, endX));
-        endY = Math.max(dimensions.height * 0.2, Math.min(dimensions.height * 0.8, endY));
-        
-        page.mouse().move(startX, startY);
-        page.mouse().down();
-        page.mouse().move(endX, endY);
-        page.mouse().up();
-    }
-    
+
     /**
      * 计算智能延迟时间
      */
