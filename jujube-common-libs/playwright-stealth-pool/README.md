@@ -7,6 +7,7 @@
 - **🔄 连接池管理**: 支持Playwright实例和Browser实例的连接池管理
 - **🥷 反检测功能**: 内置JavaScript脚本绕过常见的自动化检测机制  
 - **🎨 自定义脚本**: 支持注入自定义初始化脚本，灵活扩展反检测能力
+- **🎭 人类行为模拟**: 智能模拟真实用户行为，包括鼠标移动、滚动、悬停等
 - **⚙️ 灵活配置**: 丰富的配置选项，支持各种使用场景
 - **🛡️ 健壮性**: 完善的错误处理和资源清理机制
 - **📊 监控支持**: 提供连接池状态监控和统计信息
@@ -15,8 +16,12 @@
 
 ```
 cn.xuanyuanli.playwright.stealth/
+├── behavior/                # 人类行为模拟
+│   ├── BehaviorIntensity.java
+│   └── HumanBehaviorSimulator.java
 ├── config/                  # 配置管理
-│   └── PlaywrightConfig.java
+│   ├── PlaywrightConfig.java
+│   └── StealthMode.java
 ├── manager/                 # 管理器
 │   ├── PlaywrightManager.java
 │   └── PlaywrightBrowserManager.java  
@@ -56,6 +61,11 @@ PlaywrightManager manager = new PlaywrightManager(8);
 // 3. 执行页面操作
 manager.execute(config, page -> {
     page.navigate("https://example.com");
+    page.waitForLoadState();
+    
+    // 执行人类行为模拟（可选）
+    HumanBehaviorSimulator.simulate(page);
+    
     System.out.println(page.title());
 });
 
@@ -73,6 +83,11 @@ PlaywrightBrowserManager browserManager = new PlaywrightBrowserManager(config, 5
 IntStream.range(0, 20).parallel().forEach(i -> {
     browserManager.execute(page -> {
         page.navigate("https://httpbin.org/get");
+        page.waitForLoadState();
+        
+        // 模拟人类行为（可选）
+        HumanBehaviorSimulator.quickSimulate(page); // 快速模式，适合批量处理
+        
         // 处理页面...
     });
 });
@@ -104,6 +119,10 @@ PlaywrightConfig enhancedConfig = new PlaywrightConfig()
 manager.execute(enhancedConfig, page -> {
     // 内置反检测脚本 + 自定义脚本都会在页面加载前执行
     page.navigate("https://bot-detection-site.com");
+    page.waitForLoadState();
+    
+    // 执行人类行为模拟增强伪装效果
+    HumanBehaviorSimulator.simulate(page, BehaviorIntensity.THOROUGH);
     
     // 验证自定义脚本是否生效
     Object customFlag = page.evaluate("window.customStealthFlag");
@@ -149,13 +168,19 @@ manager.execute(config, context -> {
     context.setExtraHTTPHeaders(Map.of("Custom-Header", "value"));
     
 }, page -> {
+    page.navigate("https://example.com");
+    page.waitForLoadState();
+    
+    // 根据需要选择行为模拟强度
+    HumanBehaviorSimulator.simulate(page, BehaviorIntensity.NORMAL);
+    
     // 页面操作...
 });
 ```
 
 ## 🥷 反检测功能
 
-该库提供两级反检测机制：**内置反检测** + **自定义脚本扩展**
+该库提供三层反检测机制：**内置反检测** + **自定义脚本扩展** + **人类行为模拟**
 
 ### 内置JavaScript指纹修复
 - ✅ 隐藏 `navigator.webdriver` 属性
@@ -170,6 +195,12 @@ manager.execute(config, context -> {
 - ✅ 支持复杂脚本逻辑和异步操作
 - ✅ 脚本执行失败不影响页面正常加载
 - ✅ 与内置反检测脚本完全兼容
+
+### 人类行为模拟
+- ✅ **精确时间控制**：基于目标时间范围执行，而非固定延迟
+- ✅ **安全操作**：鼠标移动、滚动、悬停、轻微拖拽（不改变页面状态）
+- ✅ **智能延迟**：模拟真实用户的不规律行为模式
+- ✅ **强度级别**：`QUICK`（0.5-1秒）、`NORMAL`（1.5-3秒）、`THOROUGH`（3-6秒）
 
 ### 浏览器启动参数
 - ✅ `--disable-blink-features=AutomationControlled`
@@ -204,7 +235,65 @@ PlaywrightConfig customConfig = new PlaywrightConfig()
     .setStealthMode(StealthMode.LIGHT)      // 基础内置反检测
     .setCustomInitScripts(enhancedScripts)  // 自定义增强脚本
     .setDisableAutomationControlled(true);
+
+// 使用示例
+manager.execute(customConfig, page -> {
+    page.navigate("https://example.com");
+    page.waitForLoadState();
+    
+    // 三层防护：内置脚本 + 自定义脚本 + 人类行为模拟
+    HumanBehaviorSimulator.simulate(page, BehaviorIntensity.THOROUGH);
+    
+    // 页面操作...
+});
 ```
+
+### 🎭 人类行为模拟详细说明
+
+#### 行为强度对比
+
+| 强度 | 执行时间 | 适用场景 | 特点 |
+|------|----------|----------|------|
+| **QUICK** | 0.5-1秒 | 批量处理、快速验证 | 基础鼠标移动、简单滚动 |
+| **NORMAL** | 1.5-3秒 | 标准场景、一般网站 | 平衡的行为组合、自然延迟 |
+| **THOROUGH** | 3-6秒 | 强检测网站、高仿真需求 | 复杂行为序列、深度模拟 |
+
+#### 使用示例
+
+```java
+// 基本使用（推荐）
+page.navigate("https://example.com");
+page.waitForLoadState();
+HumanBehaviorSimulator.simulate(page); // 默认 NORMAL 强度
+
+// 快速模拟（批量处理）
+HumanBehaviorSimulator.quickSimulate(page); // 等同于 QUICK 强度
+
+// 指定强度级别
+HumanBehaviorSimulator.simulate(page, BehaviorIntensity.THOROUGH);
+
+// 完整的防护方案
+manager.execute(config, page -> {
+    page.navigate("https://target-site.com");
+    page.waitForLoadState(); // 等待页面完全加载
+    
+    // 执行人类行为模拟（在页面操作前）
+    HumanBehaviorSimulator.simulate(page, BehaviorIntensity.NORMAL);
+    
+    // 正常的页面操作
+    String title = page.title();
+    page.locator("#content").textContent();
+});
+```
+
+#### 安全保证
+
+人类行为模拟器采用以下安全措施：
+
+- ❌ **不执行危险操作**：无点击、按键、表单提交等可能改变页面状态的操作
+- ✅ **只读行为**：仅执行鼠标移动、滚动、悬停等安全操作
+- ✅ **异常处理**：所有操作都有容错机制，不会中断主流程
+- ✅ **精确控制**：时间驱动的执行模式，确保在预期时间内完成
 
 ### StealthMode 详细说明
 
@@ -276,6 +365,12 @@ browserManager.evictIdleBrowsers();
    - 根据目标网站特点定制脚本内容
    - 定期更新脚本以应对检测机制的变化
 
+5. **人类行为模拟建议**：
+   - 在页面完全加载后（`page.waitForLoadState()`）再执行行为模拟
+   - 根据场景选择合适的强度：批量处理用QUICK，一般场景用NORMAL，强检测网站用THOROUGH
+   - 行为模拟与反检测脚本配合使用效果最佳
+   - 避免在时间敏感的操作中使用高强度模拟
+
 ### 常见问题
 
 **Q: 为什么Browser创建很慢？**
@@ -292,6 +387,15 @@ A: 内置反检测脚本先执行，然后按列表顺序执行自定义脚本�
 
 **Q: 内存使用过高？**
 A: 适当减小连接池大小，及时调用 `close()` 释放资源。
+
+**Q: 人类行为模拟会影响页面内容吗？**
+A: 不会。行为模拟只执行安全的只读操作（鼠标移动、滚动、悬停），不会点击或修改页面内容。
+
+**Q: 如何选择合适的行为模拟强度？**
+A: QUICK用于批量处理，NORMAL用于一般场景，THOROUGH用于强检测网站。建议从NORMAL开始测试。
+
+**Q: 行为模拟什么时候执行？**
+A: 在`page.navigate()`和`page.waitForLoadState()`之后，正式操作页面之前执行。
 
 ## 🧪 测试配置
 
