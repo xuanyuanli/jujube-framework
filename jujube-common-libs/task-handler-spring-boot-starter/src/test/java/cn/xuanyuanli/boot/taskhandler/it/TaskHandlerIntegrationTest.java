@@ -4,22 +4,22 @@ import cn.xuanyuanli.boot.taskhandler.core.SplitTaskNameResolver;
 import cn.xuanyuanli.boot.taskhandler.core.TaskMapping;
 import cn.xuanyuanli.boot.taskhandler.core.TaskMappingContext;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
 
-@SpringBootTest(classes = TaskHandlerIntegrationTest.ItTestApplication.class)
+
+@SpringBootTest(classes = {TaskHandlerIntegrationTest.ItTestApplication.class, TaskHandlerIntegrationTest.ItTasks.class})
 class TaskHandlerIntegrationTest {
 
     @SpringBootApplication
     static class ItTestApplication { }
 
     @Component
-    static class ItTasks {
+    public static class ItTasks {
         static String[] last;
 
         @TaskMapping("itEcho")
@@ -29,12 +29,10 @@ class TaskHandlerIntegrationTest {
         public void noArg() { last = new String[]{}; }
     }
 
-    @AfterEach
-    void tearDown() throws Exception {
-        // 清理全局注册，避免影响其他测试
-        Field f = TaskMappingContext.class.getDeclaredField("HANDLERS");
-        f.setAccessible(true);
-        ((java.util.Map<?, ?>) f.get(null)).clear();
+    @BeforeEach
+    void setUp() {
+        // 重置测试数据
+        ItTasks.last = null;
     }
 
     @Test

@@ -22,7 +22,7 @@ public class TaskHandlerConfiguration {
      * @return {@link TaskMappingPostProcessor}
      */
     @Bean
-    public TaskMappingPostProcessor taskMappingPostProcessor() {
+    public static TaskMappingPostProcessor taskMappingPostProcessor() {
         return new TaskMappingPostProcessor();
     }
 }
