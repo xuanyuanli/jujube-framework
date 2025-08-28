@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>cn.xuanyuanli</groupId>
         <artifactId>jujube-parent</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.2</version>
 		<relativePath/>
 	</parent>
 	<artifactId>jujube-common-libs-modules</artifactId>
@@ -32,6 +32,7 @@
 
 	<modules>
 		<module>playwright-stealth-pool</module>
+		<module>task-handler-spring-boot-starter</module>
 	</modules>
 
 </project>
