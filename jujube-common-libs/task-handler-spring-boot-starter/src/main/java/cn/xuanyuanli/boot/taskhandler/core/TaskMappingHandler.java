@@ -21,6 +21,8 @@ public class TaskMappingHandler {
                 handlerMethod.invoke(handlerInstance);
             } else if (handlerMethod.getParameterCount() == 1) {
                 handlerMethod.invoke(handlerInstance, (Object) taskParam);
+            } else {
+                log.warn("不支持的参数个数: method={}, paramCount={}", handlerMethod, handlerMethod.getParameterCount());
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("handler execute", e);

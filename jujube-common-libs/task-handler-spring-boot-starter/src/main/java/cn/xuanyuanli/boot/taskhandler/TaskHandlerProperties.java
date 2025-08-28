@@ -10,5 +10,5 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "taskhandler")
 @Data
 public class TaskHandlerProperties {
-
+    // 目前暂无可配置属性；预留扩展
 }

@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Bean;
 @Slf4j
 public class TaskHandlerConfiguration {
 
+    
+
     /**
      * 任务映射后置处理程序
      *

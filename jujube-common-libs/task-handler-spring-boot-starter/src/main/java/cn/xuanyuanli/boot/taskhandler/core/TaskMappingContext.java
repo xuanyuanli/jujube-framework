@@ -17,7 +17,7 @@ public class TaskMappingContext {
         if (taskMappingHandler != null) {
             taskMappingHandler.execute(nameResolver.getTaskParam());
         } else {
-            log.error("没有找到对应的task--taskname:{},taskParam:{}", nameResolver.getTaskName(), nameResolver.getTaskParam());
+            log.warn("没有找到对应的task--taskname:{},taskParam:{}", nameResolver.getTaskName(), nameResolver.getTaskParam());
         }
     }
 }

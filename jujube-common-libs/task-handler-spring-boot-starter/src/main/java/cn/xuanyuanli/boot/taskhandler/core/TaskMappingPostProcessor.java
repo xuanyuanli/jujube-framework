@@ -22,6 +22,9 @@ public class TaskMappingPostProcessor implements BeanPostProcessor {
         Arrays.stream(aClass.getMethods()).filter(m -> m.isAnnotationPresent(TaskMapping.class)).forEach(m -> {
             TaskMapping taskMapping = m.getAnnotation(TaskMapping.class);
             String taskName = taskMapping.value();
+            if (taskName == null || taskName.trim().isEmpty()) {
+                throw new RuntimeException("taskName不能为空，请检查方法：" + m);
+            }
             if (TaskMappingContext.HANDLERS.containsKey(taskName)) {
                 throw new RuntimeException("已存在相同的taskName：" + taskName);
             }
