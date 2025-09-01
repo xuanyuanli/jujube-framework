@@ -21,7 +21,62 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 /**
- * 文件工具
+ * 文件操作工具类
+ * <p>
+ * 提供全面的文件操作功能，包括但不限于：
+ * <ul>
+ * <li>文件和目录的创建与管理</li>
+ * <li>文件扩展名获取和处理</li>
+ * <li>文件内容的读写操作</li>
+ * <li>Base64 编码解码与文件互转</li>
+ * <li>路径安全性验证</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>核心功能：</strong>
+ * <ul>
+ * <li><strong>文件创建：</strong>支持递归创建目录和文件，自动处理父目录</li>
+ * <li><strong>Base64 处理：</strong>支持文件与Base64字符串的双向转换</li>
+ * <li><strong>安全路径检查：</strong>防止路径遍历攻击，确保文件操作安全</li>
+ * <li><strong>编码支持：</strong>支持指定字符编码的文件读写</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>使用示例：</strong>
+ * <pre>{@code
+ * // 创建文件和目录
+ * File dir = Files.createDir("/path/to/directory");
+ * File file = Files.createFile("/path/to/file.txt");
+ * 
+ * // 获取文件扩展名
+ * String ext = Files.getExtention("document.pdf"); // ".pdf"
+ * 
+ * // 向文件追加内容
+ * Files.appendStringToFile("log.txt", "新日志内容", StandardCharsets.UTF_8);
+ * 
+ * // Base64 与文件互转
+ * String base64 = Files.fileToBase64(new File("image.jpg"));
+ * Files.base64ToFile(base64Data, new File("output.jpg"));
+ * 
+ * // 验证路径安全性
+ * boolean safe = Files.isValidPath("/base/path", "../../../etc/passwd");
+ * }</pre>
+ * </p>
+ * 
+ * <p>
+ * <strong>安全注意事项：</strong>
+ * <ul>
+ * <li>使用 {@link #isValidPath(String, String)} 验证用户输入路径，防止路径遍历攻击</li>
+ * <li>Base64 处理会自动去除数据URL前缀（如 "data:image/jpeg;base64,"）</li>
+ * <li>所有文件操作都包含适当的异常处理和资源管理</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>依赖：</strong>基于 Apache Commons IO 和 Java NIO 实现，提供高性能的文件操作。
+ * </p>
  *
  * @author xuanyuanli
  * @date 2021/09/01

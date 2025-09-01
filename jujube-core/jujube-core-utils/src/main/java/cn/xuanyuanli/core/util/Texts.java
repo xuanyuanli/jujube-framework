@@ -22,7 +22,98 @@ import cn.xuanyuanli.core.exception.RepeatException;
 import cn.xuanyuanli.core.util.support.PatternHolder;
 
 /**
- * 文本字符工具
+ * 文本字符处理工具类
+ * <p>
+ * 提供全面的文本处理功能，涵盖字符串操作、正则表达式、中文处理、格式化、验证等多个方面：
+ * <ul>
+ * <li><strong>正则表达式：</strong>模式匹配、替换、查询和分组等操作</li>
+ * <li><strong>中文处理：</strong>汉字拼音转换、中文字符识别和处理</li>
+ * <li><strong>文本验证：</strong>邮箱、手机号、IP地址等格式验证</li>
+ * <li><strong>字符串格式化：</strong>高亮显示、脱敏处理、截断等</li>
+ * <li><strong>编码处理：</strong>全角半角转换、HTML转义、UTF-8过滤等</li>
+ * <li><strong>数据分组：</strong>文本行的智能分组和重组功能</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>核心功能模块：</strong>
+ * </p>
+ * 
+ * <h3>1. 正则表达式处理</h3>
+ * <ul>
+ * <li>支持模式查找、替换和提取</li>
+ * <li>提供忽略大小写选项</li>
+ * <li>支持分组捕获和多次匹配</li>
+ * </ul>
+ * 
+ * <h3>2. 中文处理</h3>
+ * <ul>
+ * <li>基于 pinyin4j 的汉字拼音转换</li>
+ * <li>支持获取汉字首字母和全拼</li>
+ * <li>中英文字符混合处理</li>
+ * </ul>
+ * 
+ * <h3>3. 文本验证</h3>
+ * <ul>
+ * <li>邮箱格式验证（RFC标准）</li>
+ * <li>中国手机号验证</li>
+ * <li>IP地址格式验证</li>
+ * <li>密码强度验证</li>
+ * </ul>
+ * 
+ * <h3>4. 字符串处理</h3>
+ * <ul>
+ * <li>HTML标签清理和转义</li>
+ * <li>UTF-8编码过滤</li>
+ * <li>全角半角转换</li>
+ * <li>特殊字符清理</li>
+ * </ul>
+ * 
+ * <p>
+ * <strong>使用示例：</strong>
+ * <pre>{@code
+ * // 正则表达式操作
+ * boolean found = Texts.find("hello123", "\\d+"); // true
+ * String replaced = Texts.regReplace("\\d+", "X", "abc123def"); // "abcXdef"
+ * 
+ * // 文本验证
+ * boolean validEmail = Texts.emailValidate("user@example.com"); // true
+ * boolean validMobile = Texts.mobileValidate("13800138000"); // true
+ * 
+ * // 中文处理
+ * String pinyin = Texts.getHanyupinyin("你好"); // "nihao"
+ * String firstLetter = Texts.getFirstLetter("张三"); // "z"
+ * 
+ * // 文本格式化
+ * String highlighted = Texts.highlight("关键词测试", "关键词", "<b>", "</b>");
+ * String truncated = Texts.truncate("很长的文本...", 10); // "很长的文本..."
+ * 
+ * // 脱敏处理
+ * String masked = Texts.getHideName("张三丰"); // "张*丰"
+ * 
+ * // 版本号比较
+ * int result = Texts.compareVersion("1.2.3", "1.2.4"); // -1
+ * }</pre>
+ * </p>
+ * 
+ * <p>
+ * <strong>性能优化：</strong>
+ * <ul>
+ * <li>使用 {@link PatternHolder} 缓存编译后的正则表达式</li>
+ * <li>Stream API 优化集合处理</li>
+ * <li>StringBuilder 优化字符串拼接</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>注意事项：</strong>
+ * <ul>
+ * <li>中文处理依赖 pinyin4j 库，需要确保相关依赖可用</li>
+ * <li>正则表达式特殊字符需要使用 {@link #escapeExprSpecialWord(String)} 转义</li>
+ * <li>UTF-8过滤会移除4字节字符（如某些emoji），请谨慎使用</li>
+ * <li>版本号比较仅支持数字版本号格式（如1.2.3）</li>
+ * </ul>
+ * </p>
  *
  * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01

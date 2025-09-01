@@ -24,10 +24,87 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 集合工具类。区别于jdk的Collections和guava的Collections2
+ * 增强集合操作工具类
+ * <p>
+ * 提供比 JDK {@link Collections} 和 Guava Collections2 更丰富的集合操作功能，
+ * 特别针对业务开发中的常见场景进行优化：
+ * <ul>
+ * <li><strong>属性提取：</strong>从对象集合中提取特定属性，支持类型转换</li>
+ * <li><strong>条件过滤：</strong>基于属性值进行对象筛选和查找</li>
+ * <li><strong>集合转换：</strong>集合与 Map 的相互转换，支持自定义映射规则</li>
+ * <li><strong>数据去重：</strong>保持顺序的去重操作</li>
+ * <li><strong>分组聚合：</strong>按属性值对集合进行分组处理</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>核心特性：</strong>
+ * <ul>
+ * <li>基于 Java 8 Stream API 实现，性能优异</li>
+ * <li>与 {@link Beans} 工具类深度集成，支持反射属性访问</li>
+ * <li>支持泛型，类型安全</li>
+ * <li>空值安全处理</li>
+ * <li>保持集合原有顺序（使用 LinkedHashSet 和 LinkedHashMap）</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>使用示例：</strong>
+ * <pre>{@code
+ * // 假设有用户对象列表
+ * List<User> users = Arrays.asList(
+ *     new User("张三", 25, "北京"),
+ *     new User("李四", 30, "上海"),
+ *     new User("王五", 25, "北京")
+ * );
+ * 
+ * // 提取所有用户名称
+ * List<String> names = Collections3.extractToListString(users, "name");
+ * // 结果: ["张三", "李四", "王五"]
+ * 
+ * // 根据条件查找用户
+ * User user = Collections3.getOne(users, "age", 25);
+ * // 结果: 张三（第一个25岁的用户）
+ * 
+ * // 根据条件筛选用户
+ * List<User> beijingUsers = Collections3.getPart(users, "city", "北京");
+ * // 结果: [张三, 王五]
+ * 
+ * // 创建姓名到年龄的映射
+ * Map<Object, Object> nameToAge = Collections3.extractToMap(users, "name", "age");
+ * // 结果: {"张三": 25, "李四": 30, "王五": 25}
+ * 
+ * // 数组去重
+ * String[] cities = {"北京", "上海", "北京", "广州"};
+ * String[] uniqueCities = Collections3.toDiffArray(cities);
+ * // 结果: ["北京", "上海", "广州"]
+ * }</pre>
+ * </p>
+ * 
+ * <p>
+ * <strong>设计原则：</strong>
+ * <ul>
+ * <li><strong>易用性：</strong>简化常见集合操作，减少样板代码</li>
+ * <li><strong>性能：</strong>基于 Stream API 和高效数据结构</li>
+ * <li><strong>兼容性：</strong>与现有 JDK 和第三方集合工具互补</li>
+ * <li><strong>安全性：</strong>空值检查和异常处理</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>注意事项：</strong>
+ * <ul>
+ * <li>属性访问基于 {@link Beans} 工具类，需要目标对象有相应的 getter 方法</li>
+ * <li>对于大数据量集合，建议使用并行流或考虑性能优化</li>
+ * <li>返回的集合类型通常为 ArrayList，需要特定类型请进行转换</li>
+ * <li>Map 提取操作会覆盖重复的 key，保留最后出现的值</li>
+ * </ul>
+ * </p>
  *
  * @author xuanyuanli
  * @date 2021/09/01
+ * @see java.util.Collections
+ * @see Beans
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Collections3 {

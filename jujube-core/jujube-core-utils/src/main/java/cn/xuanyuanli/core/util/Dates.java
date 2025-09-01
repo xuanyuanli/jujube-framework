@@ -27,7 +27,59 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 日期工具类
+ * 日期时间工具类
+ * <p>
+ * 提供全面的日期时间操作功能，包括但不限于：
+ * <ul>
+ * <li>日期格式化与解析，支持多种常用格式</li>
+ * <li>时间戳转换（秒值、毫秒值与 Date 对象互转）</li>
+ * <li>日期计算（时间差、倒计时、日期加减等）</li>
+ * <li>日历功能（获取月历、周标记等）</li>
+ * <li>时区处理和人性化时间显示</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>支持的时间戳格式：</strong>
+ * <ul>
+ * <li>10位数字：Unix 秒时间戳（如：1609459200）</li>
+ * <li>13位数字：Java 毫秒时间戳（如：1609459200000）</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>默认日期格式：</strong>
+ * <ul>
+ * <li>"yyyy-MM-dd HH:mm:ss" - 完整日期时间格式</li>
+ * <li>"yyyy-MM-dd HH:mm" - 日期小时分钟格式</li>
+ * <li>"yyyy-MM-dd HH" - 日期小时格式</li>
+ * <li>"yyyy-MM-dd" - 仅日期格式</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>使用示例：</strong>
+ * <pre>{@code
+ * // 格式化当前时间
+ * String now = Dates.formatNow(); // "2021-09-01 12:30:45"
+ * 
+ * // 时间戳转换
+ * Date date = Dates.getDateFromMillis(1630478445000L);
+ * 
+ * // 解析字符串日期
+ * Date parsed = Dates.parse("2021-09-01 12:30:45");
+ * 
+ * // 计算时间差
+ * long[] diff = Dates.endDown(startTime, endTime); // [天, 时, 分, 秒]
+ * 
+ * // 人性化时间显示
+ * String readable = Dates.humanReadableMillis(125000); // "2m5s"
+ * }</pre>
+ * </p>
+ * 
+ * <p>
+ * <strong>线程安全性：</strong>所有方法都是静态的且线程安全的。
+ * </p>
  *
  * @author xuanyuanli
  * @date 2021/09/01

@@ -37,16 +37,90 @@ import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.util.ClassUtils;
 
 /**
- * 关于类操作的，都在这里
- * <pre>
- *     用到工具类BeanUtils，把抛出的异常屏蔽了
- *     其他类操作工具类，参考：FieldUtils、MethodUtils等
- *     泛型操作这里是自己写了，也可以考虑使用Spring的ResolvableType
- *     类型转换使用了ConvertUtilsBean，可以考虑Spring的DefaultConversionService
- * </pre>
+ * Java Bean 操作工具类
+ * <p>
+ * 提供全面的 Bean 操作功能，包括反射操作、属性访问、类型转换、泛型处理等。
+ * 主要功能涵盖：
+ * <ul>
+ * <li><strong>Bean 属性操作：</strong>获取、设置、复制 Bean 属性值</li>
+ * <li><strong>反射工具：</strong>方法调用、字段访问、类型检查</li>
+ * <li><strong>泛型处理：</strong>泛型类型解析、参数化类型获取</li>
+ * <li><strong>类型转换：</strong>自动类型转换和兼容性处理</li>
+ * <li><strong>缓存优化：</strong>反射结果缓存，提升性能</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>技术架构：</strong>
+ * <ul>
+ * <li>基于 Apache Commons BeanUtils 进行 Bean 操作</li>
+ * <li>使用 Spring CGLIB 的 BeanMap 进行对象映射</li>
+ * <li>集成 Spring Core 的参数名发现机制</li>
+ * <li>自定义泛型类型解析算法</li>
+ * <li>多级缓存机制优化反射性能</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>缓存机制：</strong>
+ * <ul>
+ * <li>{@code PROPERTY_DESCRIPTOR_CACHE} - 属性描述符缓存</li>
+ * <li>{@code METHOD_CACHE} - 方法缓存</li>
+ * <li>{@code DECLARED_METHOD_CACHE} - 声明方法缓存</li>
+ * <li>{@code SELF_DECLARED_METHOD_CACHE} - 自身声明方法缓存</li>
+ * <li>{@code BEANINFO_CACHE} - BeanInfo 缓存</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>使用示例：</strong>
+ * <pre>{@code
+ * // Bean 属性操作
+ * Object value = Beans.getProperty(bean, "propertyName");
+ * Beans.setProperty(bean, "propertyName", newValue);
+ * String strValue = Beans.getPropertyAsString(bean, "propertyName");
+ * 
+ * // Bean 复制
+ * Beans.copyProperties(sourceBean, targetBean);
+ * 
+ * // 反射操作
+ * Method method = Beans.getMethod(clazz, "methodName", paramTypes);
+ * Object result = Beans.invokeMethod(bean, method, args);
+ * 
+ * // 泛型类型处理
+ * Class<?> genericType = Beans.getGenericClass(field, 0);
+ * Type[] actualTypes = Beans.getActualTypeArguments(parameterizedType);
+ * 
+ * // 类型转换
+ * Integer intValue = Beans.convertValue(stringValue, Integer.class);
+ * }</pre>
+ * </p>
+ * 
+ * <p>
+ * <strong>性能优化：</strong>
+ * <ul>
+ * <li>使用 {@link ConcurrentHashMap} 实现线程安全的缓存</li>
+ * <li>通过 {@link AtomicReference} 支持空值缓存</li>
+ * <li>避免重复的反射操作，提升运行时性能</li>
+ * <li>支持递归调用的缓存设计</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>注意事项：</strong>
+ * <ul>
+ * <li>所有异常都被捕获并转换为 {@link RuntimeException}</li>
+ * <li>属性访问优先使用 Getter/Setter 方法，其次直接字段访问</li>
+ * <li>泛型类型解析支持复杂的嵌套泛型结构</li>
+ * <li>类型转换基于 Apache Commons BeanUtils 的转换机制</li>
+ * </ul>
+ * </p>
  *
  * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01
+ * @see org.apache.commons.beanutils.BeanUtils
+ * @see org.springframework.cglib.beans.BeanMap
+ * @see java.beans.Introspector
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Beans {
