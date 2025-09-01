@@ -122,18 +122,6 @@ Maven 父 POM，为整个框架提供统一的依赖管理和构建规范。
 </parent>
 ```
 
-### 4. 🧰 [Jujube Common Libs](./jujube-common-libs) - 通用扩展库集合
-
-面向通用场景的独立组件集合，按需引入、互不耦合。
-
-目前已包含以下子库：
-
-- `playwright-stealth-pool`：Playwright 连接池管理 + 反自动化检测增强
-  - 🔄 连接池与资源复用，提升稳定性与并发能力
-  - 🥷 内置多种反检测策略，支持脚本扩展与指纹修复
-  - ⚙️ 灵活配置、健壮容错与自动清理
-  - 📊 连接池状态监控与调试支持
-
 ## 🚀 快速开始
 
 ### 📋 环境要求
@@ -292,7 +280,6 @@ public class UserService {
 - 📖 [Jujube Core 文档](./jujube-core/README.md)
 - 📖 [Jujube JDBC 文档](./jujube-jdbc/README.md)
 - 📖 [Jujube Parent 文档](./jujube-parent/README.md)
-- 📖 [Jujube Common Libs 文档](./jujube-common-libs/README.md)
 
 ### 示例项目
 - 🔍 [JDBC 使用示例](./jujube-jdbc/jujube-jdbc-sample)

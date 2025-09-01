@@ -11,7 +11,6 @@
         <module>jujube-parent</module>
         <module>jujube-core</module>
         <module>jujube-jdbc</module>
-        <module>jujube-common-libs</module>
     </modules>
 
     <name>Jujube Core</name>
