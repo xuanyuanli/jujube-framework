@@ -83,6 +83,9 @@ Jujube Core 3.x 版本采用模块化设计，您可以根据需要选择引入�
 - **数字计算**：`Numbers`, `Calcs` - 数学计算和数字处理
 - **文件操作**：`Files` - 文件读写、压缩等操作
 - **随机数据**：`Randoms`, `DataGenerator` - 随机数和测试数据生成
+- **并发处理**：`CompletableFutures` - 异步任务组合和执行工具
+- **多线程执行器**：`ListMutilThreadExecutor` - 集合元素多线程并发处理
+- **进度跟踪器**：`ProgressTracker` - 提供精确的进度跟踪和里程碑检查
 - **雪花ID**：`SnowFlakes` - 分布式唯一ID生成
 - **实体基类**：`BaseEntity` - 通用实体基类
 - **记录类型**：`Record` - 键值对记录
@@ -168,6 +171,29 @@ String formatted = Dates.format(date, "yyyy/MM/dd");
 
 // 工具模块 - Bean拷贝
 UserDTO dto = Beans.copy(user, UserDTO.class);
+
+// 工具模块 - 异步任务组合
+String result = CompletableFutures.combine(
+    () -> "Hello",
+    () -> "World", 
+    (s1, s2) -> s1 + " " + s2
+);
+
+// 工具模块 - 集合多线程处理
+List<String> urls = Arrays.asList("url1", "url2", "url3");
+ListMutilThreadExecutor<String> executor = new ListMutilThreadExecutor<>(urls, 5);
+executor.start(
+    url -> processUrl(url), // 处理每个URL
+    result -> System.out.println("处理完成，耗时：" + result.getUseTime() + "秒")
+);
+
+// 工具模块 - 进度跟踪
+ProgressTracker tracker = new ProgressTracker(100);
+tracker.step(25);  // 步进25个单位
+System.out.println(tracker.getProgressPercentage());  // "25.00 %"
+if (tracker.isPercentMilestone()) {
+    System.out.println("达到新的百分比里程碑!");
+}
 ```
 
 ### 各模块功能示例

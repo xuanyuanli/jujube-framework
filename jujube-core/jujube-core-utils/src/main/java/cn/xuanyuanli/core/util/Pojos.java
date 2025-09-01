@@ -60,7 +60,6 @@ import cn.xuanyuanli.core.util.beancopy.JavassistBeanCopierFactory;
  * </ol>
  *
  * @author xuanyuanli
- * @since 2021/09/01
  */
 
 @Slf4j
