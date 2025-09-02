@@ -17,21 +17,29 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * WebUploader组件工具类
+ * <p>
+ * 提供文件上传相关的工具方法，包括分片文件合并、分片文件上传和大文件分割等功能。
+ * 主要用于支持WebUploader组件的大文件分片上传功能。
+ * </p>
  *
  * @author 李衡 Email：li15038043160@163.com
  * @date 2021/09/01
- * @since 2015年3月3日 上午11:16:18
  */
 @Slf4j
 public class WebUploaderUtil {
 
     /**
      * 合并分片文件
+     * <p>
+     * 将指定目录下的所有分片文件按照文件名数字顺序合并成一个完整的文件。
+     * 如果分片目录中只有一个文件，则直接复制该文件；如果有多个文件，则按文件名排序后依次合并。
+     * 合并完成后会自动清理原分片目录。
+     * </p>
      *
-     * @param chunkDirPath 分片文件放置的目录
-     * @param destFilePath 合并后的文件路径
-     * @return {@link File}
-     * @throws IOException ioexception
+     * @param chunkDirPath 分片文件放置的目录路径，该目录下应包含以数字命名的分片文件
+     * @param destFilePath 合并后的目标文件路径，如果文件不存在会自动创建
+     * @return {@link File} 合并后的文件对象
+     * @throws IOException 当读取分片文件或写入目标文件时发生I/O错误
      */
     public static File mergeChunkFile(String chunkDirPath, String destFilePath) throws IOException {
         return mergeChunkFile(chunkDirPath, destFilePath, true);
@@ -39,12 +47,17 @@ public class WebUploaderUtil {
 
     /**
      * 合并分片文件
+     * <p>
+     * 将指定目录下的所有分片文件按照文件名数字顺序合并成一个完整的文件。
+     * 支持自定义是否在合并完成后清理原分片目录。分片文件按文件名的数字大小进行排序，
+     * 然后使用NIO的FileChannel进行高效的文件合并操作。
+     * </p>
      *
-     * @param chunkDirPath 分片文件放置的目录
-     * @param destFilePath 合并后的文件路径
-     * @param clean        是否清除原分片目录
-     * @return {@link File}
-     * @throws IOException ioexception
+     * @param chunkDirPath 分片文件放置的目录路径，该目录下应包含以数字命名的分片文件
+     * @param destFilePath 合并后的目标文件路径，如果文件不存在会自动创建
+     * @param clean        是否在合并完成后清除原分片目录，true表示清除，false表示保留
+     * @return {@link File} 合并后的文件对象
+     * @throws IOException 当读取分片文件或写入目标文件时发生I/O错误
      */
     public static File mergeChunkFile(String chunkDirPath, String destFilePath, boolean clean) throws IOException {
         File destFile = Files.createFile(destFilePath);
@@ -80,12 +93,16 @@ public class WebUploaderUtil {
 
     /**
      * 上传分片文件
+     * <p>
+     * 将输入流中的分片文件数据保存到指定的分片目录中，文件名为分片索引。
+     * 如果目标目录不存在会自动创建。该方法主要用于处理客户端上传的分片文件。
+     * </p>
      *
-     * @param chunkIndex   分片index
-     * @param chunkDirPath 分片文件放置的目录
-     * @param inputStream  此次的分片文件流
-     * @throws IllegalStateException 非法状态异常
-     * @throws IOException           ioexception
+     * @param chunkIndex   分片索引，用作文件名，通常从0开始递增
+     * @param chunkDirPath 分片文件存放的目录路径，如果目录不存在会自动创建
+     * @param inputStream  包含分片文件数据的输入流
+     * @throws IllegalStateException 当无法创建目录或文件时抛出此异常
+     * @throws IOException           当读取输入流或写入文件时发生I/O错误
      */
     public static void uploadChunkFile(int chunkIndex, String chunkDirPath, InputStream inputStream) throws IllegalStateException, IOException {
         File chunkDir = Files.createDir(chunkDirPath);
@@ -96,11 +113,16 @@ public class WebUploaderUtil {
 
     /**
      * 分割大文件
+     * <p>
+     * 将指定的大文件按照指定的大小分割成多个小文件片段。
+     * 分割后的文件片段保存在目标目录中，文件名为从0开始的连续数字。
+     * 该方法适用于需要将大文件分割后进行传输或处理的场景。
+     * </p>
      *
-     * @param sourcePath  源路径
-     * @param size        大小
-     * @param destDirPath 目标dir路径
-     * @throws Exception 异常
+     * @param sourcePath  源文件的完整路径
+     * @param size        每个分片文件的大小（字节数）
+     * @param destDirPath 分片文件存放的目标目录路径，如果目录不存在会自动创建
+     * @throws Exception 当文件读取、写入或创建目录时发生任何异常
      */
     @SuppressWarnings("unused")
     public static void splitFile(String sourcePath, int size, String destDirPath) throws Exception {

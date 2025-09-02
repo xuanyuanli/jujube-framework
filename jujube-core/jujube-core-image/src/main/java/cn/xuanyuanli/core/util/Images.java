@@ -310,6 +310,11 @@ public class Images {
         builder.toFile(destFile);
     }
 
+    /**
+     * 获取随机水印位置
+     *
+     * @return {@link Position} 水印位置对象
+     */
     private static Position getPosition() {
         List<Integer> xList = new ArrayList<>();
         List<Integer> yList = new ArrayList<>();
@@ -637,10 +642,10 @@ public class Images {
     }
 
     /**
-     * 获取heif格式图片的基本信息
+     * 获取HEIF格式图片的基本元数据信息
      *
-     * @param file 文件
-     * @return {@link ImageBaseMeta}
+     * @param file HEIF格式图片文件
+     * @return {@link ImageBaseMeta} 图片基本元数据，包含宽度和高度信息
      */
     @SneakyThrows
     static ImageBaseMeta getHeifImageMeta(File file) {
@@ -704,6 +709,13 @@ public class Images {
         }
     }
 
+    /**
+     * 使用默认方式获取图片的基本元数据信息
+     *
+     * @param fileInputStream 图片文件输入流
+     * @return {@link ImageBaseMeta} 图片基本元数据，包含宽度和高度信息
+     * @throws RuntimeException 当无法读取图片时抛出运行时异常
+     */
     @SneakyThrows
     static ImageBaseMeta getImageMetaDefault(InputStream fileInputStream) {
         try (ImageInputStream input = ImageIO.createImageInputStream(fileInputStream)) {

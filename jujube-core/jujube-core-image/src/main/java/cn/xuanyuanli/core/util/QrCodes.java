@@ -25,7 +25,38 @@ import net.coobird.thumbnailator.Thumbnails;
 import cn.xuanyuanli.core.constant.Charsets;
 
 /**
- * 二维码工具
+ * 二维码工具类
+ * 
+ * <p>该工具类提供了二维码的生成和处理功能，包括：</p>
+ * <ul>
+ *     <li>基础二维码生成：支持指定宽高的二维码生成</li>
+ *     <li>白边处理：可选择是否移除二维码周围的白边</li>
+ *     <li>Logo嵌入：支持在二维码中心嵌入Logo图片</li>
+ *     <li>格式转换：支持将生成的二维码转换为BufferedImage或InputStream</li>
+ *     <li>高精度渲染：通过自定义的QrCodeWriterSelf内部类，解决原生库白边过多的问题</li>
+ * </ul>
+ * 
+ * <p><b>使用示例：</b></p>
+ * <pre>{@code
+ * // 生成基础二维码
+ * BufferedImage qrImage = QrCodes.encode("https://example.com", 300, 300);
+ * 
+ * // 生成无白边的二维码
+ * BufferedImage qrImageNoWhite = QrCodes.encode("Hello World", 200, 200, true);
+ * 
+ * // 生成带Logo的二维码
+ * BufferedImage logoImage = ImageIO.read(new File("logo.png"));
+ * BufferedImage qrWithLogo = QrCodes.createQrCodeWithLogo("https://example.com", 
+ *     300, 300, logoImage, true);
+ * }</pre>
+ * 
+ * <p><b>技术特点：</b></p>
+ * <ul>
+ *     <li>使用ZXing库作为核心二维码引擎</li>
+ *     <li>默认使用GBK字符编码，支持中文内容</li>
+ *     <li>默认采用L级别的纠错等级，平衡码密度和纠错能力</li>
+ *     <li>内置图片处理功能，支持Logo自动缩放和居中放置</li>
+ * </ul>
  *
  * @author xuanyuanli
  * @date 2021/09/01
@@ -155,18 +186,45 @@ public class QrCodes {
 
     /**
      * 为了解决QRCodeWriter宽高非整数情况下，还出现白边的问题，重写了QRCodeWriter
+     * 
+     * <p>该内部类继承自Writer接口，主要解决原生QRCodeWriter在处理宽高时产生过多白边的问题。
+     * 通过重新实现encode方法和renderResult方法，能够更精确地控制二维码的尺寸和边距。</p>
+     * 
+     * @author xuanyuanli
+     * @since 1.0
      */
     private static class QrCodeWriterSelf implements Writer {
 
         private static final int QUIET_ZONE_SIZE = 4;
         private static final MatrixToImageConfig DEFAULT_CONFIG = new MatrixToImageConfig();
 
+        /**
+         * 编码二维码
+         * 
+         * @param contents 二维码内容
+         * @param format 二维码格式
+         * @param width 宽度
+         * @param height 高度
+         * @return BitMatrix对象
+         * @throws WriterException 编码异常
+         */
         @Override
         public BitMatrix encode(String contents, BarcodeFormat format, int width, int height)
                 throws WriterException {
             return encode(contents, format, width, height, null);
         }
 
+        /**
+         * 编码二维码（带提示参数）
+         * 
+         * @param contents 二维码内容
+         * @param format 二维码格式
+         * @param width 宽度
+         * @param height 高度
+         * @param hints 编码提示参数，包含纠错等级、字符集、边距等配置
+         * @return BitMatrix对象
+         * @throws WriterException 编码异常
+         */
         @Override
         public BitMatrix encode(String contents,
                 BarcodeFormat format,
@@ -204,6 +262,16 @@ public class QrCodes {
 
         /**
          * 对 zxing 的 QRCodeWriter 进行扩展, 解决白边过多的问题
+         * 
+         * <p>该方法重新实现了二维码的渲染逻辑，通过动态计算缩放比例和边距，
+         * 有效减少了二维码周围的白边，使生成的二维码更加紧凑。</p>
+         * 
+         * @param code QRCode对象，包含编码后的二维码数据
+         * @param width 期望的输出宽度
+         * @param height 期望的输出高度
+         * @param quietZone 静默区域大小（白边大小）
+         * @return 渲染后的BitMatrix对象
+         * @throws IllegalStateException 当二维码矩阵为空时抛出
          */
         private static BitMatrix renderResult(QRCode code, int width, int height, int quietZone) {
             ByteMatrix input = code.getMatrix();
@@ -281,6 +349,17 @@ public class QrCodes {
         }
 
 
+        /**
+         * 将BitMatrix转换为BufferedImage
+         * 
+         * <p>将二维码的位矩阵数据转换为可显示的图像对象。如果实际生成的二维码尺寸
+         * 与期望尺寸不一致，会进行缩放处理以确保输出图像符合预期大小。</p>
+         * 
+         * @param matrix 二维码位矩阵
+         * @param width 期望的图像宽度
+         * @param height 期望的图像高度
+         * @return 转换后的BufferedImage对象
+         */
         public static BufferedImage toBufferedImage(BitMatrix matrix, int width, int height) {
             int qrCodeWidth = matrix.getWidth();
             int qrCodeHeight = matrix.getHeight();

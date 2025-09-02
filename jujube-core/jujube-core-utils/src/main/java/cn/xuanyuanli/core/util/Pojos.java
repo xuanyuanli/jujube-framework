@@ -107,31 +107,37 @@ public class Pojos {
     }
 
     /**
-     * 获得bean复制者
+     * 从缓存中获取bean复制器
      *
-     * @param sourceObj    源obj
-     * @param destClass    桌子类
-     * @param fieldMapping 字段映射
-     * @param cover        封面
-     * @return {@link BeanCopier}
+     * @param sourceObj    源对象
+     * @param destClass    目标类
+     * @param fieldMapping 字段映射关系
+     * @param cover        是否覆盖目标字段值
+     * @return bean复制器实例
      */
     public static BeanCopier getBeanCopierFromCache(Object sourceObj, Class<?> destClass, FieldMapping fieldMapping, boolean cover) {
         QuadKey quadKey = new QuadKey(sourceObj.getClass(), destClass, sourceObj instanceof Map ? getRowKey(sourceObj) : null, cover);
         return BEAN_COPIER_CACHE.computeIfAbsent(quadKey, key -> getRealBeanCopier(sourceObj, destClass, cover, fieldMapping));
     }
 
+    /**
+     * 获取Map类型源对象的key集合，用于生成唯一的缓存键
+     *
+     * @param sourceObj Map类型的源对象
+     * @return 排序后的key集合
+     */
     private static TreeSet<?> getRowKey(Object sourceObj) {
         return new TreeSet<>(((Map<?, ?>) sourceObj).keySet());
     }
 
     /**
-     * 获取真正bean复印机
+     * 获取真正的bean复制器实例
      *
-     * @param sourceObj    来源obj
-     * @param destClass    dest类
-     * @param cover        覆盖
-     * @param fieldMapping 字段映射
-     * @return {@link BeanCopier }
+     * @param sourceObj    源对象
+     * @param destClass    目标类
+     * @param cover        是否覆盖目标字段值
+     * @param fieldMapping 字段映射关系
+     * @return bean复制器实例
      */
     private static BeanCopier getRealBeanCopier(Object sourceObj, Class<?> destClass, boolean cover, FieldMapping fieldMapping) {
         if (fieldMapping == null) {
@@ -193,10 +199,10 @@ public class Pojos {
     }
 
     /**
-     * 获得字段名称集合
+     * 获取源对象的字段名称列表
      *
-     * @param sourceObj 源obj
-     * @return {@link List}<{@link String}>
+     * @param sourceObj 源对象
+     * @return 字段名称列表
      */
     private static List<String> getFieldNameList(Object sourceObj) {
         List<String> fieldNames;
@@ -212,9 +218,13 @@ public class Pojos {
     /**
      * 复制一个对象的值到另一个对象
      *
-     * @param cover     是否覆盖destObj字段的值。<br> 如果为true，则sourceObj对应字段值会覆盖destObj中对应字段值（不论sourceObj值为空或不为空）<br> 如果为false，则destObj值不为空则不覆盖，为空则覆盖
-     * @param sourceObj 源obj
-     * @param destObj   obj不在座位上
+     * @param sourceObj 源对象
+     * @param destObj   目标对象
+     * @param cover     是否覆盖目标对象字段的值。<br> 
+     *                  如果为true，则源对象对应字段值会覆盖目标对象中对应字段值（不论源对象值为空或不为空）<br> 
+     *                  如果为false，则目标对象值不为空则不覆盖，为空则覆盖
+     * @throws NullPointerException 当源对象或目标对象为null时抛出
+     * @throws IllegalArgumentException 当目标对象为Map类型时抛出
      */
     public static void copy(Object sourceObj, Object destObj, boolean cover) {
         if (sourceObj == null || destObj == null) {
@@ -227,10 +237,12 @@ public class Pojos {
     }
 
     /**
-     * 复制
+     * 复制对象属性值（默认覆盖目标对象属性值）
      *
-     * @param sourceObj 源obj
-     * @param destObj   obj不在座位上
+     * @param sourceObj 源对象
+     * @param destObj   目标对象
+     * @throws NullPointerException 当源对象或目标对象为null时抛出
+     * @throws IllegalArgumentException 当目标对象为Map类型时抛出
      * @see #copy(Object, Object, boolean)
      */
     public static void copy(Object sourceObj, Object destObj) {
@@ -240,23 +252,24 @@ public class Pojos {
     /**
      * 把原始对象集合映射为对应类型的Pojo集合
      *
-     * @param source 源
-     * @param class1 class1
-     * @param <T>    泛型
-     * @return {@link List}<{@link T}>
+     * @param source    源对象集合
+     * @param destClass 目标类型
+     * @param <T>       目标类型泛型
+     * @return 映射后的对象集合
      */
-    public static <T> List<T> mappingArray(List<?> source, Class<T> class1) {
-        return mappingArray(source, class1, null);
+    public static <T> List<T> mappingArray(List<?> source, Class<T> destClass) {
+        return mappingArray(source, destClass, null);
     }
 
     /**
      * 把原始对象集合映射为对应类型的Pojo集合
      *
-     * @param fieldMapping 字段映射
-     * @param source       源
-     * @param destClass    桌子类
-     * @param <T>          泛型
-     * @return {@link List}<{@link T}>
+     * @param source       源对象集合
+     * @param destClass    目标类型
+     * @param fieldMapping 字段映射关系
+     * @param <T>          目标类型泛型
+     * @return 映射后的对象集合
+     * @throws IllegalArgumentException 当目标类型为Map类型时抛出
      */
     public static <T> List<T> mappingArray(List<?> source, Class<T> destClass, FieldMapping fieldMapping) {
         if (destClass == null || source == null) {
@@ -281,18 +294,19 @@ public class Pojos {
     }
 
     /**
-     * 字段对应类(key-value: sourceFieldName-destFieldName)
+     * 字段映射类，用于定义源对象字段到目标对象字段的映射关系
+     * <p>映射关系为 key-value: sourceFieldName-destFieldName</p>
      */
     public static class FieldMapping {
 
         private final Map<String, String> mapping = new LinkedHashMap<>();
 
         /**
-         * 字段映射
+         * 添加字段映射关系
          *
-         * @param sourceField 源领域
-         * @param destField   目标场
-         * @return FieldMapping
+         * @param sourceField 源对象字段名
+         * @param destField   目标对象字段名
+         * @return 当前FieldMapping实例，支持链式调用
          */
         public FieldMapping field(String sourceField, String destField) {
             mapping.put(sourceField, destField);
@@ -300,7 +314,9 @@ public class Pojos {
         }
 
         /**
-         * 获得字段对应表(key-value: sourceFieldName-destFieldName)
+         * 获取字段映射关系表
+         *
+         * @return 字段映射表，key为源字段名，value为目标字段名
          */
         public Map<String, String> getFieldMapping() {
             return mapping;
@@ -308,6 +324,14 @@ public class Pojos {
 
     }
 
+    /**
+     * 四元组缓存键，用于唯一标识Bean复制器的缓存key
+     *
+     * @param sourceClass 源对象类型
+     * @param destClass   目标对象类型
+     * @param mapKeys     Map类型源对象的key集合（用于区分不同Map结构）
+     * @param cover       是否覆盖标志
+     */
     public record QuadKey(Class<?> sourceClass, Class<?> destClass, TreeSet<?> mapKeys, boolean cover) {
 
         @Override

@@ -9,7 +9,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 中国数字
+ * 中文数字转换工具类
+ * <p>
+ * 提供阿拉伯数字与中文数字之间的相互转换功能，支持：
+ * <ul>
+ *     <li>正负数转换</li>
+ *     <li>小数转换</li>
+ *     <li>分数转换</li>
+ *     <li>繁体中文数字</li>
+ *     <li>全角数字</li>
+ * </ul>
+ * 
+ * <p>使用示例：
+ * <pre>
+ * // 阿拉伯数字转中文
+ * String chinese = ChineseNumbers.englishNumberToChinese("12345");  // 一万二千三百四十五
+ * 
+ * // 中文数字转阿拉伯数字
+ * double number = ChineseNumbers.chineseNumberToEnglish("一万二千三百四十五");  // 12345.0
+ * </pre>
  *
  * @author xuanyuanli
  * @date 2021/12/18
@@ -18,46 +36,52 @@ import org.apache.commons.lang3.StringUtils;
 public class ChineseNumbers {
 
     /**
-     * 数字
+     * 中文数字字符数组，索引对应阿拉伯数字0-9
      */
     private static final String[] DIGITS = {"零", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
+    
     /**
-     * 数字map
+     * 数字字符映射表，支持阿拉伯数字、中文数字（简体、繁体）、全角数字等多种格式
      */
     private static final Map<Character, Integer> DIGITS_MAP = new HashMap<>();
+    
     /**
-     * 数字模式
+     * 纯数字字符模式，用于判断输入是否为纯数字字符组合
      */
     private static final Pattern DIGITS_PATTERN;
+    
     /**
-     * 英语十进制模式
+     * 英文小数模式，匹配如"123.45"格式的小数
      */
     private static final Pattern ENGLISH_DECIMAL_PATTERN = Pattern.compile("([0-9]*)\\.([0-9]+)");
+    
     /**
-     * 英语分数模式
+     * 英文分数模式，匹配如"3/4"格式的分数
      */
     private static final Pattern ENGLISH_FRACTION_PATTERN = Pattern.compile("([0-9]*)/([0-9]+)");
 
     /**
-     * 前湾数字
+     * 万位以下的中文数字单位：十、百、千
      */
     private static final String[] BEFORE_WAN_DIGITS = {"十", "百", "千"};
 
     /**
-     * 后湾数字
+     * 万位及以上的中文数字单位：个、万、亿、兆、京
      */
     private static final String[] AFTER_WAN_DIGITS = {"", "万", "亿", "兆", "京"};
 
     /**
-     * -
+     * 负数标识符
      */
     private static final String MINUS = "负";
+    
     /**
-     * 小数
+     * 小数点标识符
      */
     private static final String DECIMAL = "点";
+    
     /**
-     * 分数
+     * 分数标识符
      */
     private static final String FRACTION = "分之";
 
@@ -114,10 +138,19 @@ public class ChineseNumbers {
     }
 
     /**
-     * 将英文表示的数字转化为中文表示的数字，支持负数、小数、不支持分数
+     * 将阿拉伯数字字符串转换为中文数字字符串
+     * <p>
+     * 支持转换格式：
+     * <ul>
+     *     <li>正整数：如"12345" → "一万二千三百四十五"</li>
+     *     <li>负整数：如"-123" → "负一百二十三"</li>
+     *     <li>小数：如"3.14" → "三点一四"</li>
+     *     <li>分数：如"3/4" → "四分之三"</li>
+     * </ul>
      *
-     * @param text 英文表示的数字，比如：2009000，5.3，-5.3
-     * @return {@link String}
+     * @param text 阿拉伯数字字符串，如"2009000"、"5.3"、"-5.3"、"3/4"
+     * @return 转换后的中文数字字符串
+     * @throws IllegalArgumentException 当输入为空或格式不正确时抛出
      */
     public static String englishNumberToChinese(String text) {
         if (StringUtils.isEmpty(text)) {
@@ -151,10 +184,13 @@ public class ChineseNumbers {
     }
 
     /**
-     * 直接映射英文数字为中文数字，对应输入的小数部分如此处理
+     * 简单映射阿拉伯数字为中文数字
+     * <p>
+     * 将每个阿拉伯数字字符直接映射为对应的中文数字字符，主要用于处理小数部分。
+     * 例如：将"123"转换为"一二三"。
      *
-     * @param text 文本
-     * @return {@link String}
+     * @param text 纯阿拉伯数字字符串
+     * @return 直接映射后的中文数字字符串
      */
     private static String englishNumberToChineseBrief(String text) {
         StringBuilder result = new StringBuilder();
@@ -165,10 +201,14 @@ public class ChineseNumbers {
     }
 
     /**
-     * 非输入的小数部分需要做更复杂的转换
+     * 完整转换阿拉伯数字为中文数字（含单位）
+     * <p>
+     * 对整数部分进行复杂的转换，包括添加适当的中文数字单位（如十、百、千、万、亿等）。
+     * 使用权重计算法将数字按位分解，然后组合成标准的中文数字表达方式。
+     * 例如：将"12345"转换为"一万二千三百四十五"。
      *
-     * @param text 文本
-     * @return {@link String}
+     * @param text 纯阿拉伯数字字符串
+     * @return 包含中文数字单位的完整中文数字字符串
      */
     private static String englishNumberToChineseFull(String text) {
         int power = 0;
@@ -218,10 +258,20 @@ public class ChineseNumbers {
     }
 
     /**
-     * 中国许多英语
+     * 将中文数字字符串转换为阿拉伯数字
+     * <p>
+     * 支持转换格式：
+     * <ul>
+     *     <li>正负整数：如"一万二千三百四十五" → 12345.0</li>
+     *     <li>小数：如"三点一四" → 3.14</li>
+     *     <li>分数：如"四分之三" → 0.75</li>
+     *     <li>繁体数字：如"壹萬貳仟參佰肆拾伍" → 12345.0</li>
+     *     <li>全角数字：如"１２３４５" → 12345.0</li>
+     * </ul>
      *
-     * @param text 输入中文数字，支持正负数、小数、分数，比如：五千四百九十一万四千七百一十
-     * @return 转化为double的结果
+     * @param text 中文数字字符串，如"五千四百九十一万四千七百一十"、"三点一四"、"四分之三"
+     * @return 转换后的数字值
+     * @throws IllegalArgumentException 当输入为空或格式不正确时抛出
      */
     public static double chineseNumberToEnglish(String text) {
         if (StringUtils.isEmpty(text)) {
@@ -244,10 +294,13 @@ public class ChineseNumbers {
     }
 
     /**
-     * 输入如果完全匹配中文对应的数字，直接调用此函数映射输出
+     * 简单转换中文数字为阿拉伯数字（纯数字映射）
+     * <p>
+     * 当输入完全由数字字符组成时，直接进行字符到数字的映射转换。
+     * 例如：将"一二三四五"转换为12345。
      *
-     * @param text 文本
-     * @return long
+     * @param text 纯数字字符的中文字符串
+     * @return 转换后的长整型数字
      */
     private static long chineseToEnglishBrief(String text) {
         char[] chars = text.toCharArray();
@@ -260,10 +313,24 @@ public class ChineseNumbers {
     }
 
     /**
-     * 对应复杂的中文数字串
+     * 完整转换中文数字为阿拉伯数字（含单位解析）
+     * <p>
+     * 处理包含中文数字单位（如十、百、千、万、亿等）的复杂中文数字字符串。
+     * 支持多种格式：
+     * <ul>
+     *     <li>标准中文数字：如"一万二千三百四十五"</li>
+     *     <li>简化表达：如"三百五"（表示350）</li>
+     *     <li>负数：如"负一百二十三"</li>
+     *     <li>小数：如"三点一四"</li>
+     *     <li>繁体数字：如"壹萬貳仟"</li>
+     *     <li>特殊写法：如"廿"（表示二十）、"卅"（表示三十）等</li>
+     * </ul>
+     * 
+     * <p>转换过程包括文本预处理、逐字符解析、单位计算和数值累加等步骤。
      *
-     * @param text 文本
-     * @return double
+     * @param text 包含中文数字单位的字符串
+     * @return 转换后的双精度浮点数
+     * @throws IllegalArgumentException 当遇到无法识别的字符时抛出
      */
     private static double chineseToEnglishFull(String text) {
         text = text.replace("万亿", "兆");

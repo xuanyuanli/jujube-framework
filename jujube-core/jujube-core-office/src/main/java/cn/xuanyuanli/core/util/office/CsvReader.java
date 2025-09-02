@@ -18,7 +18,28 @@ import org.apache.commons.lang3.Validate;
 import cn.xuanyuanli.core.constant.Charsets;
 
 /**
- * Csv读取器
+ * CSV文件读取器，提供对CSV文件的读取和遍历功能
+ * 
+ * <p>支持以下功能：
+ * <ul>
+ *     <li>从文件或输入流读取CSV数据</li>
+ *     <li>支持自定义字符编码和CSV格式</li>
+ *     <li>提供迭代器接口，支持逐行遍历</li>
+ *     <li>支持获取指定行或所有行的数据</li>
+ *     <li>支持单元格内容的自动去空格处理</li>
+ * </ul>
+ * 
+ * <p>使用示例：
+ * <pre>{@code
+ * File csvFile = new File("data.csv");
+ * ExcelReaderConfig config = new ExcelReaderConfig();
+ * CsvReader reader = new CsvReader(csvFile, StandardCharsets.UTF_8, config);
+ * 
+ * // 遍历所有行
+ * for (List<String> row : reader) {
+ *     System.out.println(row);
+ * }
+ * }</pre>
  *
  * @author xuanyuanli
  * @date 2021/09/01
@@ -27,41 +48,48 @@ import cn.xuanyuanli.core.constant.Charsets;
 public class CsvReader implements Iterable<List<String>> {
 
     /**
-     * 配置
+     * Excel读取器配置，包含读取规则和选项
      */
     private final ExcelReaderConfig config;
+    
     /**
-     * 工作薄的总行数
+     * CSV文件的总行数（包含数据的行数）
      */
     @Getter
     private int rowCount;
+    
     /**
-     * csv记录
+     * 解析后的CSV记录列表，每个CSVRecord对应CSV文件中的一行数据
      */
     private List<CSVRecord> csvRecords;
+    
     /**
-     * 默认字符集
+     * 默认字符编码集，使用GBK编码以支持中文字符
      */
     public static final Charset DEFAULT_CHARSET = Charsets.GBK;
 
     /**
-     * 构造
+     * 构造CSV读取器（使用默认CSV格式）
      *
-     * @param file    csv文件
-     * @param charset 文件编码
-     * @param config  文件读取的一些配置规则
+     * @param file    CSV文件对象，必须存在且可读
+     * @param charset 文件字符编码，如UTF-8、GBK等
+     * @param config  Excel读取器配置，包含读取规则和选项
+     * @throws IllegalArgumentException 如果文件不存在
+     * @throws NullPointerException 如果config为null
      */
     public CsvReader(File file, Charset charset, ExcelReaderConfig config) {
         this(file, charset, config, CSVFormat.DEFAULT);
     }
 
     /**
-     * 构造
+     * 构造CSV读取器（自定义CSV格式）
      *
-     * @param file      csv文件
-     * @param charset   文件编码
-     * @param config    文件读取的一些配置规则
-     * @param csvFormat csv格式
+     * @param file      CSV文件对象，必须存在且可读
+     * @param charset   文件字符编码，如UTF-8、GBK等
+     * @param config    Excel读取器配置，包含读取规则和选项
+     * @param csvFormat CSV格式配置，定义分隔符、引号字符等
+     * @throws IllegalArgumentException 如果文件不存在
+     * @throws NullPointerException 如果config为null
      */
     public CsvReader(File file, Charset charset, ExcelReaderConfig config, CSVFormat csvFormat) {
         Objects.requireNonNull(config);
@@ -78,23 +106,25 @@ public class CsvReader implements Iterable<List<String>> {
     }
 
     /**
-     * 构造
+     * 构造CSV读取器（从输入流读取，使用默认CSV格式）
      *
-     * @param charset 文件编码
-     * @param config  文件读取的一些配置规则
-     * @param is      是否
+     * @param is      CSV数据输入流
+     * @param charset 数据字符编码，如UTF-8、GBK等
+     * @param config  Excel读取器配置，包含读取规则和选项
+     * @throws NullPointerException 如果config为null
      */
     public CsvReader(InputStream is, Charset charset, ExcelReaderConfig config) {
         this(is, charset, config, CSVFormat.DEFAULT);
     }
 
     /**
-     * 构造
+     * 构造CSV读取器（从输入流读取，自定义CSV格式）
      *
-     * @param charset   文件编码
-     * @param config    文件读取的一些配置规则
-     * @param is        是否
-     * @param csvFormat csv格式
+     * @param is        CSV数据输入流
+     * @param charset   数据字符编码，如UTF-8、GBK等
+     * @param config    Excel读取器配置，包含读取规则和选项
+     * @param csvFormat CSV格式配置，定义分隔符、引号字符等
+     * @throws NullPointerException 如果config为null
      */
     public CsvReader(InputStream is, Charset charset, ExcelReaderConfig config, CSVFormat csvFormat) {
         Objects.requireNonNull(config);
@@ -110,19 +140,22 @@ public class CsvReader implements Iterable<List<String>> {
     }
 
     /**
-     * 获得行
+     * 获取指定行的数据
      *
-     * @param rowNo 行编号
-     * @return {@link List}<{@link String}>
+     * @param rowNo 行号，从0开始
+     * @return 该行的所有单元格数据列表，每个元素对应一个单元格的内容
+     * @throws IndexOutOfBoundsException 如果行号超出范围
      */
     public List<String> getRow(int rowNo) {
         return recordToStringList(csvRecords.get(rowNo));
     }
 
     /**
-     * 迭代器
+     * 返回用于遍历CSV文件所有行的迭代器
+     * 
+     * <p>每次迭代返回一行数据，以字符串列表的形式表示
      *
-     * @return {@link Iterator}<{@link List}<{@link String}>>
+     * @return 行数据迭代器，每个元素是一行的所有单元格数据
      */
     @Override
     public Iterator<List<String>> iterator() {
@@ -131,10 +164,12 @@ public class CsvReader implements Iterable<List<String>> {
 
 
     /**
-     * 记录字符串列表
+     * 将CSVRecord转换为字符串列表
+     * 
+     * <p>根据配置决定是否对单元格内容进行去空格处理
      *
-     * @param record 记录
-     * @return {@link List}<{@link String}>
+     * @param record CSV记录对象
+     * @return 该记录中所有单元格内容的字符串列表
      */
     private List<String> recordToStringList(CSVRecord record) {
         List<String> list = new ArrayList<>();
@@ -148,9 +183,9 @@ public class CsvReader implements Iterable<List<String>> {
     }
 
     /**
-     * 获得行
+     * 获取CSV文件的所有行数据
      *
-     * @return {@link List}<{@link List}<{@link String}>>
+     * @return 所有行的数据列表，外层列表的每个元素代表一行，内层列表代表该行的所有单元格内容
      */
     public List<List<String>> getRows() {
         List<List<String>> data = new ArrayList<>();
@@ -160,18 +195,32 @@ public class CsvReader implements Iterable<List<String>> {
         return data;
     }
 
+    /**
+     * 内部迭代器实现类，用于遍历CSV文件的所有行
+     */
     private class Itr implements Iterator<List<String>> {
 
         /**
-         * 工作薄的当前行数
+         * 当前迭代的行号，从0开始
          */
         private int currentNum;
 
+        /**
+         * 检查是否还有下一行数据
+         *
+         * @return 如果还有下一行数据则返回true，否则返回false
+         */
         @Override
         public boolean hasNext() {
             return currentNum != rowCount;
         }
 
+        /**
+         * 获取下一行数据并移动到下一位置
+         *
+         * @return 下一行的所有单元格数据列表
+         * @throws NoSuchElementException 如果没有更多数据
+         */
         @Override
         public List<String> next() {
             if (!hasNext()) {
@@ -180,9 +229,14 @@ public class CsvReader implements Iterable<List<String>> {
             return getRow(currentNum++);
         }
 
+        /**
+         * 不支持的删除操作
+         *
+         * @throws UnsupportedOperationException 始终抛出此异常，因为不支持删除操作
+         */
         @Override
         public void remove() {
-            throw new RuntimeException("not execute remove");
+            throw new UnsupportedOperationException("CSV读取器不支持删除操作");
         }
 
     }

@@ -7,22 +7,27 @@ import java.util.List;
 import cn.xuanyuanli.core.util.Texts;
 
 /**
- * 系统对象
+ * 操作系统信息解析类
+ * <p>用于从User-Agent字符串中识别和解析操作系统类型及版本信息</p>
+ * <p>支持识别包括Windows、Mac OSX、Android、Linux、iOS等主流操作系统</p>
+ * <p>继承自{@link UserAgentInfo}，提供操作系统特定的解析功能</p>
  *
  * @author looly
- * @since 4.2.1
  */
 public class OS extends UserAgentInfo {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 未知
+	 * 未知操作系统类型的默认实例
+	 * <p>当无法识别User-Agent中的操作系统信息时返回此实例</p>
 	 */
 	public static final OS UNKNOWN = new OS(NAME_UNKNOWN, null);
 
 	/**
-	 * 支持的引擎类型
+	 * 支持的操作系统类型列表
+	 * <p>包含了常见的操作系统及其识别规则，用于从User-Agent字符串中匹配操作系统信息</p>
+	 * <p>支持的操作系统包括：Windows系列、Mac OSX、Android、Linux、iOS设备等</p>
 	 */
 	public static final List<OS> OSES = new ArrayList<>(Arrays.asList(
 			//
@@ -78,37 +83,43 @@ public class OS extends UserAgentInfo {
 	));
 
 	/**
-	 * 添加自定义的系统类型
+	 * 添加自定义的操作系统类型
+	 * <p>允许用户扩展支持的操作系统类型，添加自定义的识别规则</p>
+	 * <p>此方法是线程安全的，使用synchronized修饰</p>
 	 *
-	 * @param name         浏览器名称
-	 * @param regex        关键字或表达式
-	 * @param versionRegex 匹配版本的正则
-	 * @since 5.7.4
+	 * @param name         操作系统名称
+	 * @param regex        用于匹配User-Agent的关键字或正则表达式
+	 * @param versionRegex 用于提取版本信息的正则表达式，可以为null
 	 */
 	@SuppressWarnings("unused")
 	synchronized public static void addCustomOs(String name, String regex, String versionRegex) {
 		OSES.add(new OS(name, regex, versionRegex));
 	}
 
+	/**
+	 * 版本号匹配的正则表达式模式
+	 * <p>用于从User-Agent字符串中提取操作系统的版本信息</p>
+	 */
 	private String versionPattern;
 
 	/**
-	 * 构造
+	 * 构造操作系统对象
+	 * <p>创建一个不包含版本信息匹配规则的操作系统对象</p>
 	 *
-	 * @param name  系统名称
-	 * @param regex 关键字或表达式
+	 * @param name  操作系统名称
+	 * @param regex 用于匹配User-Agent的关键字或正则表达式
 	 */
 	public OS(String name, String regex) {
 		this(name, regex, null);
 	}
 
 	/**
-	 * 构造
+	 * 构造操作系统对象
+	 * <p>创建一个包含版本信息匹配规则的操作系统对象</p>
 	 *
-	 * @param name         系统名称
-	 * @param regex        关键字或表达式
-	 * @param versionRegex 版本正则表达式
-	 * @since 5.7.4
+	 * @param name         操作系统名称
+	 * @param regex        用于匹配User-Agent的关键字或正则表达式
+	 * @param versionRegex 用于提取版本信息的正则表达式，可以为null
 	 */
 	public OS(String name, String regex, String versionRegex) {
 		super(name, regex);
@@ -118,10 +129,12 @@ public class OS extends UserAgentInfo {
 	}
 
 	/**
-	 * 获取浏览器版本
+	 * 获取操作系统版本信息
+	 * <p>从给定的User-Agent字符串中提取操作系统的版本号</p>
+	 * <p>如果当前操作系统类型为未知或未设置版本匹配规则，则返回null</p>
 	 *
 	 * @param userAgentString User-Agent字符串
-	 * @return 版本
+	 * @return 操作系统版本号，如果无法获取则返回null
 	 */
 	public String getVersion(String userAgentString) {
 		if(isUnknown() || null == this.versionPattern){

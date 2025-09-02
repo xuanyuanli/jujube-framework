@@ -25,27 +25,28 @@ import cn.xuanyuanli.core.util.support.freemarker.ClassloaderTemplateLoader;
 public class Ftls {
 
     /**
-     * 模板总目录
+     * FreeMarker模板文件存放的根目录路径
      */
     private static final String FTL_DIR = "templates";
 
     /**
-     * ftl
+     * 私有构造函数，防止实例化工具类
      */
     private Ftls() {
     }
 
     /**
-     * 文件模板
+     * 文件模板配置对象，用于加载和处理模板文件
      */
     private static final Configuration FILE_TEMPLATE_CONFIGURATION;
+    
     /**
-     * 字符串模板
+     * 字符串模板配置对象，用于处理字符串形式的模板
      */
     private static final Configuration STRING_TEMPLATE_CONFIGURATION;
 
     /**
-     * 字符串模板载入器
+     * 字符串模板加载器，用于动态加载字符串模板
      */
     private static final StringTemplateLoader STRING_TEMPLATE_LOADER;
 
@@ -80,11 +81,12 @@ public class Ftls {
     }
 
     /**
-     * 生成模板到文件
+     * 根据模板名称生成内容并输出到指定文件
      *
-     * @param templateName 模板名称
-     * @param outputPath   输出路径(绝对路径)
-     * @param root         FreeMarker数据模型
+     * @param templateName 模板文件名称，相对于templates目录
+     * @param outputPath   输出文件的绝对路径
+     * @param root         FreeMarker数据模型，包含模板渲染所需的数据
+     * @throws RuntimeException 当文件IO操作失败时抛出
      */
     public static void processFileTemplateToFile(String templateName, String outputPath, Map<String, Object> root) {
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(Files.createFile(outputPath)), Charsets.UTF_8)) {
@@ -95,10 +97,10 @@ public class Ftls {
     }
 
     /**
-     * 生成模板，输出到控制台
+     * 根据模板名称生成内容并输出到控制台
      *
-     * @param templateName 模板名称
-     * @param root         FreeMarker数据模型
+     * @param templateName 模板文件名称，相对于templates目录
+     * @param root         FreeMarker数据模型，包含模板渲染所需的数据
      */
     @SuppressWarnings("unused")
     public static void processFileTemplateToConsole(String templateName, Map<String, Object> root) {
@@ -106,33 +108,34 @@ public class Ftls {
     }
 
     /**
-     * 生成模板，输出String
+     * 根据模板名称生成内容并返回字符串
      *
-     * @param templateName 模板名称
-     * @param root         FreeMarker数据模型
-     * @return {@link String}
+     * @param templateName 模板文件名称，相对于templates目录
+     * @param root         FreeMarker数据模型，包含模板渲染所需的数据
+     * @return 生成的内容字符串
      */
     public static String processFileTemplateToString(String templateName, Map<String, Object> root) {
         return processTemplateToString(getFileTemplate(templateName), root);
     }
 
     /**
-     * 工艺文件模板
+     * 处理文件模板并输出到指定的Writer
      *
-     * @param templateName 模板名称
-     * @param root         根
-     * @param out          出
+     * @param templateName 模板文件名称，相对于templates目录
+     * @param root         FreeMarker数据模型，包含模板渲染所需的数据
+     * @param out          输出流写入器
      */
     private static void processFileTemplateTo(String templateName, Map<String, Object> root, Writer out) {
         processTemplateTo(getFileTemplate(templateName), root, out);
     }
 
     /**
-     * 处理模板源文件，生成内容
+     * 根据字符串模板源码生成内容并返回字符串
      *
-     * @param ftlSource 模板源码
-     * @param map       root
-     * @return {@link String}
+     * @param ftlSource 模板源代码字符串
+     * @param map       FreeMarker数据模型，包含模板渲染所需的数据
+     * @return 生成的内容字符串
+     * @throws RuntimeException 当模板处理失败时抛出
      */
     public static String processStringTemplateToString(String ftlSource, Map<String, Object> map) {
         String defaultFtlName = "default_" + ftlSource.hashCode();
@@ -146,10 +149,11 @@ public class Ftls {
     }
 
     /**
-     * 获得文件模板
+     * 根据模板名称获取文件模板对象
      *
-     * @param templateName 模板名称
-     * @return {@link Template}
+     * @param templateName 模板文件名称，相对于templates目录
+     * @return FreeMarker模板对象
+     * @throws RuntimeException 当模板文件读取失败时抛出
      */
     private static Template getFileTemplate(String templateName) {
         try {
@@ -160,11 +164,11 @@ public class Ftls {
     }
 
     /**
-     * 处理模板到字符串中
+     * 处理模板对象并返回生成的字符串内容
      *
-     * @param template 模板
-     * @param map      map
-     * @return {@link String}
+     * @param template FreeMarker模板对象
+     * @param map      FreeMarker数据模型，包含模板渲染所需的数据
+     * @return 生成的内容字符串
      */
     private static String processTemplateToString(Template template, Map<String, Object> map) {
         StringWriter result = new StringWriter();
@@ -173,12 +177,12 @@ public class Ftls {
     }
 
     /**
-     * 生成模板，输出到...
+     * 处理模板对象并输出到指定的Writer
      *
-     * @param template 模板
-     * @param root     根
-     * @param out      出
-     * @author xuanyuanli Email：xuanyuanli999@gmail.com
+     * @param template FreeMarker模板对象
+     * @param root     FreeMarker数据模型，包含模板渲染所需的数据
+     * @param out      输出流写入器
+     * @throws RuntimeException 当模板处理失败时抛出
      */
     private static void processTemplateTo(Template template, Map<String, Object> root, Writer out) {
         try {
@@ -189,15 +193,15 @@ public class Ftls {
     }
 
     /**
-     * 静态模型
+     * FreeMarker静态模型对象，用于在模板中访问Java类的静态方法和字段
      */
     private final static TemplateHashModel STATIC_MODELS = new BeansWrapperBuilder(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS).build().getStaticModels();
 
     /**
-     * 导入Class类的静态方法到Freemarker
+     * 获取指定类的静态模型，用于在FreeMarker模板中调用该类的静态方法
      *
-     * @param clazz clazz
-     * @return {@link TemplateHashModel}
+     * @param clazz 需要导入静态方法的Java类
+     * @return 该类对应的FreeMarker静态模型对象，如果获取失败则返回null
      */
     public static TemplateHashModel useStaticPackage(Class<?> clazz) {
         try {

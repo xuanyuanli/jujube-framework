@@ -70,7 +70,7 @@ public class ExcelWriter {
     private static final String IMAGE_PREFIX = "image:";
 
     /**
-     * 优秀作家
+     * 私有构造函数，防止实例化工具类
      */
     private ExcelWriter() {
     }
@@ -81,8 +81,8 @@ public class ExcelWriter {
      * @param templateFilePath 模板文件路径
      * @param destFileName     要写入的文件路径
      * @param copyLineIndex    设定保留模板前几行
-     * @param lines            数据
-     * @param sheetHandler     单处理程序
+     * @param lines            数据，每个元素代表一行，每行包含多列数据
+     * @param sheetHandler     工作表处理器，用于对工作表进行额外的自定义处理
      */
     public static void writeExcelWithTemplate(String templateFilePath, String destFileName, int copyLineIndex, List<List<String>> lines,
             ExcelSheetHandler sheetHandler) {
@@ -135,10 +135,10 @@ public class ExcelWriter {
     }
 
     /**
-     * 获得合理的单元格内容
+     * 获得合理的单元格内容，如果内容长度超过Excel单元格最大长度，则进行截取
      *
-     * @param cValue c值
-     * @return {@link String}
+     * @param cValue 单元格的原始值
+     * @return 处理后的单元格值，确保不超过Excel单元格最大长度限制
      */
     private static String getReasonableValue(String cValue) {
         if (cValue != null && cValue.length() > MAXIMUM_LENGTH) {
@@ -148,21 +148,21 @@ public class ExcelWriter {
     }
 
     /**
-     * 生成excle
+     * 生成Excel文件到指定路径
      *
-     * @param destFile excel文件地址
-     * @param lines    数据
+     * @param destFile 目标Excel文件
+     * @param lines    数据，每个元素代表一行，每行包含多列数据
      */
     public static void generateExcel(File destFile, List<List<String>> lines) {
         generateExcel(destFile, lines, false);
     }
 
     /**
-     * 生成excle
+     * 生成Excel文件到指定路径，支持图片处理
      *
-     * @param destFile    excel文件地址
-     * @param lines       数据
-     * @param handleImage 是否处理图片--把图片嵌入到excel。规则：单元格内容以"image:"开头则进行嵌入
+     * @param destFile    目标Excel文件
+     * @param lines       数据，每个元素代表一行，每行包含多列数据
+     * @param handleImage 是否处理图片，如果为true，则单元格内容以"image:"开头的会被处理为嵌入图片
      */
     public static void generateExcel(File destFile, List<List<String>> lines, boolean handleImage) {
         if (!destFile.exists()) {
@@ -178,21 +178,21 @@ public class ExcelWriter {
     }
 
     /**
-     * 生成excle
+     * 生成Excel文件并返回输入流
      *
-     * @param lines 数据
-     * @return {@link InputStream}
+     * @param lines 数据，每个元素代表一行，每行包含多列数据
+     * @return Excel文件的输入流
      */
     public static InputStream generateExcelInputStream(List<List<String>> lines) {
         return generateExcelInputStream(lines, false);
     }
 
     /**
-     * 生成excle
+     * 生成Excel文件并返回输入流，支持图片处理
      *
-     * @param lines       数据
-     * @param handleImage 是否处理图片--把图片嵌入到excel。规则：单元格内容以"image:"开头则进行嵌入
-     * @return {@link InputStream}
+     * @param lines       数据，每个元素代表一行，每行包含多列数据
+     * @param handleImage 是否处理图片，如果为true，则单元格内容以"image:"开头的会被处理为嵌入图片
+     * @return Excel文件的输入流，失败时返回null
      */
     public static InputStream generateExcelInputStream(List<List<String>> lines, boolean handleImage) {
         // 解决内存溢出问题，每2000行会先flush到磁盘上
@@ -222,13 +222,13 @@ public class ExcelWriter {
     }
 
     /**
-     * 设置单元格的值为图片
+     * 设置单元格的值为图片，会从URL下载图片并嵌入到Excel中
      *
-     * @param sheet    表
-     * @param rowIndex 行索引
-     * @param row      行
-     * @param colIndex 列索引
-     * @param imgUrl   图片地址
+     * @param sheet    工作表
+     * @param rowIndex 行索引（从0开始）
+     * @param row      行对象
+     * @param colIndex 列索引（从0开始）
+     * @param imgUrl   图片URL地址，需要以"image:"开头
      */
     public static void setCellImageValue(Sheet sheet, int rowIndex, Row row, int colIndex, String imgUrl) {
         sheet.setColumnWidth(colIndex, 4800);
@@ -245,10 +245,10 @@ public class ExcelWriter {
     }
 
     /**
-     * 生成csv文件
+     * 生成CSV文件到指定路径
      *
-     * @param dest 目标路径
-     * @param data 数据
+     * @param dest 目标CSV文件
+     * @param data 数据，每个元素代表一行，每行包含多列数据
      */
     public static void generateCsv(File dest, List<List<String>> data) {
         try {
@@ -259,10 +259,10 @@ public class ExcelWriter {
     }
 
     /**
-     * 生成csv输入流
+     * 生成CSV文件并返回输入流
      *
-     * @param data 数据
-     * @return {@link InputStream}
+     * @param data 数据，每个元素代表一行，每行包含多列数据
+     * @return CSV文件的输入流，失败时返回null
      */
     public static InputStream generateCsvInputStream(List<List<String>> data) {
         try {
@@ -275,10 +275,10 @@ public class ExcelWriter {
     }
 
     /**
-     * 逃避csv
+     * 对CSV数据进行转义处理，确保CSV格式的正确性
      *
-     * @param lines 行
-     * @return {@link List}<{@link String}>
+     * @param lines 原始数据行
+     * @return 转义后的字符串列表，每个字符串代表一行CSV数据
      */
     private static List<String> escapeCsv(List<List<String>> lines) {
         List<String> result = new ArrayList<>();
@@ -301,14 +301,14 @@ public class ExcelWriter {
     }
 
     /**
-     * 设置某些列的值只能输入预制的数据,显示下拉框.
+     * 为工作表的指定区域设置数据验证下拉框
      *
-     * @param sheet    要设置的sheet.
-     * @param textlist 下拉框显示的内容
-     * @param firstRow 开始行
-     * @param endRow   结束行
-     * @param firstCol 开始列
-     * @param endCol   结束列
+     * @param sheet    要设置的工作表
+     * @param textlist 下拉框显示的内容数组
+     * @param firstRow 开始行索引（从0开始）
+     * @param endRow   结束行索引（从0开始）
+     * @param firstCol 开始列索引（从0开始）
+     * @param endCol   结束列索引（从0开始）
      */
     public static void setValidation(Sheet sheet, String[] textlist, int firstRow, int endRow, int firstCol, int endCol) {
         // 设置数据有效性加载在哪个单元格上,四个参数分别是：起始行、终止行、起始列、终止列
@@ -322,11 +322,11 @@ public class ExcelWriter {
     }
 
     /**
-     * 从实体类集合中获取excel数据
+     * 从实体类集合中提取Excel数据，支持根据注解进行格式化
      *
-     * @param extractHead 是否提取并添加头部
-     * @param entities    实体
-     * @return {@link List}<{@link List}<{@link String}>>
+     * @param entities    实体类集合，实体类需要使用@ExcelField注解标记要导出的字段
+     * @param extractHead 是否提取并添加表头行
+     * @return Excel数据，每个子列表代表一行，第一行为表头（如果extractHead为true）
      */
     public static List<List<String>> getLinesFromEntities(List<? extends BaseEntity> entities, boolean extractHead) {
         List<List<String>> lines = new ArrayList<>(entities.size());
@@ -365,15 +365,41 @@ public class ExcelWriter {
         return lines;
     }
 
+    /**
+     * 列信息类，用于存储Excel列的相关信息和格式化配置
+     */
     @Data
     @AllArgsConstructor
     static class Col {
 
+        /**
+         * 字段名称
+         */
         private String fieldName;
+        
+        /**
+         * 列名称（用于表头显示）
+         */
         private String colName;
+        
+        /**
+         * 列索引（用于排序）
+         */
         private int colIndex;
+        
+        /**
+         * 日期格式化模式
+         */
         private String dateFormat;
+        
+        /**
+         * 数字格式化模式
+         */
         private String numberFormat;
+        
+        /**
+         * 自定义格式化模式
+         */
         private String customizeFormat;
     }
 }
