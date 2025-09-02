@@ -474,7 +474,7 @@ class ImagesTest {
             File file = Files.createFile(filename);
             @Cleanup InputStream is = Resources.getClassPathResourcesInputStream("META-INF/images/p1.jpg");
             BufferedImage backgroundImage = Images.getImage(is);
-            BufferedImage zindexImg = QrCodes.encode("https://m.auctionhome.cn/home?managerId=9", 163, 163);
+            BufferedImage zindexImg = QrCodes.encode("https://example.com/home?managerId=9", 163, 163);
 
             // Act
             @Cleanup InputStream merge = Images.merge(backgroundImage, zindexImg, 678, 1050);

@@ -119,7 +119,7 @@ class ExcelWriterTest {
         void setCellImageValue_shouldGenerateExcelWithImage_whenImageUrlProvided() throws IOException {
             // Arrange
             List<List<String>> lines = new ArrayList<>();
-            lines.add(List.of("name", "image:https://img.auctionhome.cn/static/images/auctionhome/login.png"));
+            lines.add(List.of("name", "image:META-INF/test-image.png"));
 
             // Act & Assert
             try (InputStream inputStream = ExcelWriter.generateExcelInputStream(lines, true)) {

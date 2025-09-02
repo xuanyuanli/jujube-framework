@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Https 测试")
 public class HttpsTest {
 
-    private static final String ERROR_URL = "auctionhome";
+    private static final String ERROR_URL = "error";
+    private static final String VALID_HTTPS_URL = "https://httpbin.org/status/200";
+    private static final String TEST_TEXT_URL = "https://httpbin.org/base64/Q0dZYTc2ZTgwbTdQMVY2RA==";
 
     @Nested
     @DisplayName("HTTP状态码获取测试")
@@ -25,7 +27,7 @@ public class HttpsTest {
         @DisplayName("getStatusCode_应该返回200_当访问有效HTTPS URL时")
         void getStatusCode_shouldReturn200_whenAccessingValidHttpsUrl() {
             // Act
-            int result = Https.getStatusCode("https://m.auctionhome.cn");
+            int result = Https.getStatusCode(VALID_HTTPS_URL);
 
             // Assert
             assertThat(result).isEqualTo(200);
@@ -50,7 +52,7 @@ public class HttpsTest {
         @DisplayName("getAsString_应该返回正确内容_当访问文本文件时")
         void getAsString_shouldReturnCorrectContent_whenAccessingTextFile() {
             // Act
-            String result = Https.getAsString("https://m.auctionhome.cn/MP_verify_CGYa76e80m7P1V6D.txt");
+            String result = Https.getAsString(TEST_TEXT_URL);
 
             // Assert
             assertThat(result).isEqualTo("CGYa76e80m7P1V6D");
@@ -90,7 +92,7 @@ public class HttpsTest {
         @DisplayName("getAsStream_应该返回非空输入流_当获取有效资源时")
         void getAsStream_shouldReturnNonEmptyStream_whenGettingValidResource() throws IOException {
             // Act
-            InputStream inputStream = Https.getAsStream("https://m.auctionhome.cn/MP_verify_CGYa76e80m7P1V6D.txt");
+            InputStream inputStream = Https.getAsStream(TEST_TEXT_URL);
 
             // Assert
             assertThat(inputStream).isNotNull();
@@ -101,7 +103,7 @@ public class HttpsTest {
         @DisplayName("getAsStream_应该返回正确的文本内容_当获取文本文件时")
         void getAsStream_shouldReturnCorrectTextContent_whenGettingTextFile() throws IOException {
             // Act
-            InputStream inputStream = Https.getAsStream("https://m.auctionhome.cn/MP_verify_CGYa76e80m7P1V6D.txt");
+            InputStream inputStream = Https.getAsStream(TEST_TEXT_URL);
 
             // Assert
             assertThat(IOUtils.toString(inputStream, StandardCharsets.UTF_8)).isEqualTo("CGYa76e80m7P1V6D");

@@ -23,6 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("QrCodes二维码工具类测试")
 class QrCodesTest {
 
+    private static final String TEST_URL = "https://example.com/home?managerId=9";
+
     @Nested
     @DisplayName("基本二维码生成")
     class BasicQrCodeGeneration {
@@ -31,14 +33,13 @@ class QrCodesTest {
         @DisplayName("应该成功生成基本二维码")
         void encode_shouldGenerateQrCode_whenGivenValidUrlAndDimensions() throws IOException {
             // Arrange
-            String url = "https://m.auctionhome.cn/home?managerId=9";
             int width = 430;
             int height = 430;
             String filename = SystemProperties.TMPDIR + "/createQrCodeWithLogo/" + SnowFlakes.nextId() + ".png";
             File file = Files.createFile(filename);
 
             // Act
-            BufferedImage bufferedImage = QrCodes.encode(url, width, height);
+            BufferedImage bufferedImage = QrCodes.encode(TEST_URL, width, height);
             try (FileOutputStream output = new FileOutputStream(filename)) {
                 ImageIO.write(bufferedImage, "png", output);
             }
@@ -53,7 +54,6 @@ class QrCodesTest {
         @DisplayName("应该成功生成去除白边的二维码")
         void encode_shouldGenerateQrCodeWithoutWhiteBorder_whenDeleteWhiteIsTrue() throws IOException {
             // Arrange
-            String url = "https://m.auctionhome.cn/home?managerId=9";
             int width = 430;
             int height = 430;
             boolean deleteWhite = true;
@@ -61,7 +61,7 @@ class QrCodesTest {
             File file = Files.createFile(filename);
 
             // Act
-            BufferedImage bufferedImage = QrCodes.encode(url, width, height, deleteWhite);
+            BufferedImage bufferedImage = QrCodes.encode(TEST_URL, width, height, deleteWhite);
             try (FileOutputStream output = new FileOutputStream(filename)) {
                 if (bufferedImage != null) {
                     ImageIO.write(bufferedImage, "png", output);
@@ -83,7 +83,6 @@ class QrCodesTest {
         @DisplayName("应该成功生成带Logo的二维码")
         void createQrCodeWithLogo_shouldGenerateQrCodeWithLogo_whenGivenValidParameters() throws IOException {
             // Arrange
-            String url = "https://m.auctionhome.cn/home?managerId=9";
             int width = 430;
             int height = 430;
             File logoFile = Objects.requireNonNull(Resources.getClassPathResources("META-INF/qrcode/logo.png")).getFile();
@@ -93,7 +92,7 @@ class QrCodesTest {
             File file = Files.createFile(filename);
 
             // Act
-            BufferedImage bufferedImage = QrCodes.createQrCodeWithLogo(url, width, height, logoImage, needCompress);
+            BufferedImage bufferedImage = QrCodes.createQrCodeWithLogo(TEST_URL, width, height, logoImage, needCompress);
             try (FileOutputStream output = new FileOutputStream(filename)) {
                 ImageIO.write(bufferedImage, "png", output);
             }
@@ -113,7 +112,7 @@ class QrCodesTest {
         @DisplayName("应该成功将二维码编码为InputStream")
         void encodeToInputStream_shouldGenerateQrCodeInputStream_whenGivenValidParameters() throws IOException {
             // Arrange
-            String url = "http://m.jingrui28.cn/auction/match/1001";
+            String url = "https://example.com/auction/match/1001";
             String filename = SystemProperties.TMPDIR + "/encodeToInputStream/" + SnowFlakes.nextId() + ".png";
 
             // Act & Assert - 测试100x100尺寸
@@ -139,7 +138,7 @@ class QrCodesTest {
         @DisplayName("应该成功将去除白边的二维码编码为InputStream")
         void encodeToInputStream_shouldGenerateQrCodeInputStreamWithoutWhiteBorder_whenDeleteWhiteIsTrue() throws IOException {
             // Arrange
-            String url = "http://m.jingrui28.cn/auction/match/1001";
+            String url = "https://example.com/auction/match/1001";
             boolean deleteWhite = true;
             String filename = SystemProperties.TMPDIR + "/encodeToInputStream/" + SnowFlakes.nextId() + ".png";
 
