@@ -191,7 +191,6 @@ public class QrCodes {
      * 通过重新实现encode方法和renderResult方法，能够更精确地控制二维码的尺寸和边距。</p>
      * 
      * @author xuanyuanli
-     * @since 1.0
      */
     private static class QrCodeWriterSelf implements Writer {
 

@@ -1,8 +1,6 @@
 package cn.xuanyuanli.core.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -12,113 +10,143 @@ import java.util.Map;
 import java.util.Objects;
 
 import lombok.Data;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-public class DataGeneratorTest {
+@DisplayName("DataGenerator 数据生成器测试")
+class DataGeneratorTest {
 
-    @Test
-    public void generateRandomValueByParamType() {
-        String str = DataGenerator.generateRandomValueByParamType(String.class);
-        Assertions.assertThat(str.length()).isGreaterThanOrEqualTo(1).isLessThanOrEqualTo(16);
+    @Nested
+    @DisplayName("随机值生成测试")
+    class RandomValueGenerationTests {
 
-        Short aShort = DataGenerator.generateRandomValueByParamType(Short.class);
-        Assertions.assertThat(aShort).isGreaterThan(Short.MIN_VALUE).isLessThanOrEqualTo(Short.MAX_VALUE);
+        @Test
+        @DisplayName("generateRandomValueByParamType_应该生成合适的随机值_当输入不同类型时")
+        void generateRandomValueByParamType_shouldGenerateAppropriateRandomValues_whenInputDifferentTypes() {
+            // Act & Assert
+            String str = DataGenerator.generateRandomValueByParamType(String.class);
+            assertThat(str.length()).isBetween(1, 16);
 
-        Boolean aBoolean = DataGenerator.generateRandomValueByParamType(Boolean.class);
-        Assertions.assertThat(aBoolean).isIn(true, false);
+            Short aShort = DataGenerator.generateRandomValueByParamType(Short.class);
+            assertThat(aShort).isBetween((short) (Short.MIN_VALUE + 1), Short.MAX_VALUE);
 
-        Double aDouble = DataGenerator.generateRandomValueByParamType(Double.class);
-        Assertions.assertThat(aDouble).isGreaterThan(Double.MIN_VALUE).isLessThanOrEqualTo(Double.MAX_VALUE);
+            Boolean aBoolean = DataGenerator.generateRandomValueByParamType(Boolean.class);
+            assertThat(aBoolean).isIn(true, false);
 
-        Float aFloat = DataGenerator.generateRandomValueByParamType(Float.class);
-        Assertions.assertThat(aFloat).isGreaterThan(Float.MIN_VALUE).isLessThanOrEqualTo(Float.MAX_VALUE);
+            Double aDouble = DataGenerator.generateRandomValueByParamType(Double.class);
+            assertThat(aDouble).isBetween(-Double.MAX_VALUE, Double.MAX_VALUE);
 
-        Long aLong = DataGenerator.generateRandomValueByParamType(Long.class);
-        Assertions.assertThat(aLong).isGreaterThan(Long.MIN_VALUE).isLessThanOrEqualTo(Long.MAX_VALUE);
+            Float aFloat = DataGenerator.generateRandomValueByParamType(Float.class);
+            assertThat(aFloat).isBetween(-Float.MAX_VALUE, Float.MAX_VALUE);
 
-        Integer integer = DataGenerator.generateRandomValueByParamType(Integer.class);
-        Assertions.assertThat(integer).isGreaterThan(Integer.MIN_VALUE).isLessThanOrEqualTo(Integer.MAX_VALUE);
+            Long aLong = DataGenerator.generateRandomValueByParamType(Long.class);
+            assertThat(aLong).isBetween(Long.MIN_VALUE + 1, Long.MAX_VALUE);
 
-        Type type = DataGenerator.generateRandomValueByParamType(Type.class);
-        Assertions.assertThat(type).isNull();
+            Integer integer = DataGenerator.generateRandomValueByParamType(Integer.class);
+            assertThat(integer).isBetween(Integer.MIN_VALUE + 1, Integer.MAX_VALUE);
+
+            Type type = DataGenerator.generateRandomValueByParamType(Type.class);
+            assertThat(type).isNull();
+        }
     }
 
-    @Test
-    public void generateDefaultValueByParamType() {
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(String.class)).isEqualTo("");
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(Short.class)).isEqualTo((short) 0);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(short.class)).isEqualTo((short) 0);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(Boolean.class)).isEqualTo(false);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(boolean.class)).isEqualTo(false);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(Double.class)).isEqualTo(0.0d);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(double.class)).isEqualTo(0.0d);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(Float.class)).isEqualTo(0.0f);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(float.class)).isEqualTo(0.0f);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(Long.class)).isEqualTo(0L);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(long.class)).isEqualTo(0L);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(Integer.class)).isEqualTo(0);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(int.class)).isEqualTo(0);
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(Byte.class)).isEqualTo(Byte.valueOf("0"));
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(byte.class)).isEqualTo(Byte.valueOf("0"));
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(Character.class)).isEqualTo('\u0000');
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(char.class)).isEqualTo('\u0000');
-        Assertions.assertThat(DataGenerator.generateDefaultValueByParamType(Type.class)).isNull();
+    @Nested
+    @DisplayName("默认值生成测试")
+    class DefaultValueGenerationTests {
+
+        @Test
+        @DisplayName("generateDefaultValueByParamType_应该生成正确默认值_当输入不同类型时")
+        void generateDefaultValueByParamType_shouldGenerateCorrectDefaultValues_whenInputDifferentTypes() {
+            // Act & Assert
+            assertThat(DataGenerator.generateDefaultValueByParamType(String.class)).isEqualTo("");
+            assertThat(DataGenerator.generateDefaultValueByParamType(Short.class)).isEqualTo((short) 0);
+            assertThat(DataGenerator.generateDefaultValueByParamType(short.class)).isEqualTo((short) 0);
+            assertThat(DataGenerator.generateDefaultValueByParamType(Boolean.class)).isEqualTo(false);
+            assertThat(DataGenerator.generateDefaultValueByParamType(boolean.class)).isEqualTo(false);
+            assertThat(DataGenerator.generateDefaultValueByParamType(Double.class)).isEqualTo(0.0d);
+            assertThat(DataGenerator.generateDefaultValueByParamType(double.class)).isEqualTo(0.0d);
+            assertThat(DataGenerator.generateDefaultValueByParamType(Float.class)).isEqualTo(0.0f);
+            assertThat(DataGenerator.generateDefaultValueByParamType(float.class)).isEqualTo(0.0f);
+            assertThat(DataGenerator.generateDefaultValueByParamType(Long.class)).isEqualTo(0L);
+            assertThat(DataGenerator.generateDefaultValueByParamType(long.class)).isEqualTo(0L);
+            assertThat(DataGenerator.generateDefaultValueByParamType(Integer.class)).isEqualTo(0);
+            assertThat(DataGenerator.generateDefaultValueByParamType(int.class)).isEqualTo(0);
+            assertThat(DataGenerator.generateDefaultValueByParamType(Byte.class)).isEqualTo(Byte.valueOf("0"));
+            assertThat(DataGenerator.generateDefaultValueByParamType(byte.class)).isEqualTo(Byte.valueOf("0"));
+            assertThat(DataGenerator.generateDefaultValueByParamType(Character.class)).isEqualTo('\u0000');
+            assertThat(DataGenerator.generateDefaultValueByParamType(char.class)).isEqualTo('\u0000');
+            assertThat(DataGenerator.generateDefaultValueByParamType(Type.class)).isNull();
+        }
     }
 
-    @Test
-    void testFullMap() {
-        // 调用方法
-        Map<String, Object> result = DataGenerator.fullMap();
+    @Nested
+    @DisplayName("Map生成测试")
+    class MapGenerationTests {
 
-        // 验证 Map 的大小
-        assertEquals(8, result.size());
+        @Test
+        @DisplayName("fullMap_应该生成完整Map_当调用时")
+        void fullMap_shouldGenerateFullMap_whenCalled() {
+            // Act
+            Map<String, Object> result = DataGenerator.fullMap();
 
-        // 验证每个键值对的类型
-        assertInstanceOf(String.class, result.get("string"));
-        assertInstanceOf(Short.class, result.get("short"));
-        assertInstanceOf(Float.class, result.get("float"));
-        assertInstanceOf(Double.class, result.get("double"));
-        assertInstanceOf(Integer.class, result.get("int"));
-        assertInstanceOf(Long.class, result.get("long"));
-        assertInstanceOf(Date.class, result.get("date"));
-        assertInstanceOf(List.class, result.get("array"));
-
-        // 验证数组内容
-        assertEquals(Arrays.asList(1, 2, 3, 4, 5), result.get("array"));
+            // Assert
+            assertThat(result).hasSize(8);
+            assertThat(result.get("string")).isInstanceOf(String.class);
+            assertThat(result.get("short")).isInstanceOf(Short.class);
+            assertThat(result.get("float")).isInstanceOf(Float.class);
+            assertThat(result.get("double")).isInstanceOf(Double.class);
+            assertThat(result.get("int")).isInstanceOf(Integer.class);
+            assertThat(result.get("long")).isInstanceOf(Long.class);
+            assertThat(result.get("date")).isInstanceOf(Date.class);
+            assertThat(result.get("array")).isInstanceOf(List.class)
+                .isEqualTo(Arrays.asList(1, 2, 3, 4, 5));
+        }
     }
 
-    @Test
-    public void fullObject() {
-        String str = DataGenerator.fullObject(String.class);
-        Assertions.assertThat(Objects.requireNonNull(str).length()).isGreaterThanOrEqualTo(1).isLessThanOrEqualTo(16);
+    @Nested
+    @DisplayName("完整对象生成测试")
+    class FullObjectGenerationTests {
 
-        Short aShort = DataGenerator.fullObject(Short.class);
-        Assertions.assertThat(aShort).isGreaterThan(Short.MIN_VALUE).isLessThanOrEqualTo(Short.MAX_VALUE);
+        @Test
+        @DisplayName("fullObject_应该生成完整对象_当输入基本类型时")
+        void fullObject_shouldGenerateFullObject_whenInputBasicTypes() {
+            // Act & Assert
+            String str = DataGenerator.fullObject(String.class);
+            assertThat(Objects.requireNonNull(str).length()).isBetween(1, 16);
 
-        Boolean aBoolean = DataGenerator.fullObject(Boolean.class);
-        Assertions.assertThat(aBoolean).isIn(true, false);
+            Short aShort = DataGenerator.fullObject(Short.class);
+            assertThat(aShort).isBetween((short) (Short.MIN_VALUE + 1), Short.MAX_VALUE);
 
-        Double aDouble = DataGenerator.fullObject(Double.class);
-        Assertions.assertThat(aDouble).isGreaterThan(Double.MIN_VALUE).isLessThanOrEqualTo(Double.MAX_VALUE);
+            Boolean aBoolean = DataGenerator.fullObject(Boolean.class);
+            assertThat(aBoolean).isIn(true, false);
 
-        Float aFloat = DataGenerator.fullObject(Float.class);
-        Assertions.assertThat(aFloat).isGreaterThan(Float.MIN_VALUE).isLessThanOrEqualTo(Float.MAX_VALUE);
+            Double aDouble = DataGenerator.fullObject(Double.class);
+            assertThat(aDouble).isBetween(-Double.MAX_VALUE, Double.MAX_VALUE);
 
-        Long aLong = DataGenerator.fullObject(Long.class);
-        Assertions.assertThat(aLong).isGreaterThan(Long.MIN_VALUE).isLessThanOrEqualTo(Long.MAX_VALUE);
+            Float aFloat = DataGenerator.fullObject(Float.class);
+            assertThat(aFloat).isBetween(-Float.MAX_VALUE, Float.MAX_VALUE);
 
-        Integer integer = DataGenerator.fullObject(Integer.class);
-        Assertions.assertThat(integer).isGreaterThan(Integer.MIN_VALUE).isLessThanOrEqualTo(Integer.MAX_VALUE);
+            Long aLong = DataGenerator.fullObject(Long.class);
+            assertThat(aLong).isBetween(Long.MIN_VALUE + 1, Long.MAX_VALUE);
 
-        FullObjEnum fullObjectEnum = DataGenerator.fullObject(FullObjEnum.class);
-        Assertions.assertThat(fullObjectEnum).isIn((Object[]) FullObjEnum.values());
+            Integer integer = DataGenerator.fullObject(Integer.class);
+            assertThat(integer).isBetween(Integer.MIN_VALUE + 1, Integer.MAX_VALUE);
+        }
 
-        FullObjTest test = DataGenerator.fullObject(FullObjTest.class);
-        Assertions.assertThat(Objects.requireNonNull(test).getList().size()).isBetween(1, 5);
+        @Test
+        @DisplayName("fullObject_应该生成完整对象_当输入特殊类型时")
+        void fullObject_shouldGenerateFullObject_whenInputSpecialTypes() {
+            // Act & Assert
+            FullObjEnum fullObjectEnum = DataGenerator.fullObject(FullObjEnum.class);
+            assertThat(fullObjectEnum).isIn((Object[]) FullObjEnum.values());
 
-        FullObjInterface testInterface = DataGenerator.fullObject(FullObjInterface.class);
-        Assertions.assertThat(testInterface).isNull();
+            FullObjTest test = DataGenerator.fullObject(FullObjTest.class);
+            assertThat(Objects.requireNonNull(test).getList().size()).isBetween(1, 5);
+
+            FullObjInterface testInterface = DataGenerator.fullObject(FullObjInterface.class);
+            assertThat(testInterface).isNull();
+        }
     }
 
     @Data

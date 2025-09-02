@@ -18,8 +18,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@DisplayName("Pojos 测试")
-public class PojosTest {
+@DisplayName("Pojos 对象映射工具测试")
+class PojosTest {
 
     @Nested
     @DisplayName("对象映射测试")

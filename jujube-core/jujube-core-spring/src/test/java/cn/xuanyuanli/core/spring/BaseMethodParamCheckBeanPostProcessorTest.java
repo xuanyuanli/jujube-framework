@@ -1,6 +1,6 @@
 package cn.xuanyuanli.core.spring;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -17,11 +17,15 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.aop.framework.ProxyFactory;
 
+@SuppressWarnings("unchecked")
+@DisplayName("基础方法参数校验Bean后置处理器测试")
 class BaseMethodParamCheckBeanPostProcessorTest {
 
     private BaseMethodParamCheckBeanPostProcessor processor;
@@ -40,60 +44,117 @@ class BaseMethodParamCheckBeanPostProcessorTest {
         when(processor.isCheck()).thenReturn(check);
     }
 
-    @Test
-    void testPostProcessAfterInitialization_NonAopProxy() throws Exception {
-        Object bean = new CustomBean();
-        Method method = bean.getClass().getMethod("annotatedMethod");
-        when(check.apply(method)).thenReturn(true);
+    @Nested
+    @DisplayName("初始化后处理")
+    class PostProcessAfterInitialization {
 
-        processor.postProcessAfterInitialization(bean, "beanName");
+        @Test
+        @DisplayName("应该调用消费函数一次 - 当Bean为非AOP代理且检查通过时")
+        void postProcessAfterInitialization_shouldCallConsumeOnce_whenBeanIsNonAopProxyAndCheckPasses() throws Exception {
+            // Arrange
+            Object bean = new CustomBean();
+            Method method = bean.getClass().getMethod("annotatedMethod");
+            when(check.apply(method)).thenReturn(true);
 
-        verify(consume, times(1)).apply(any(Method.class), any(Object[].class));
+            // Act
+            processor.postProcessAfterInitialization(bean, "beanName");
+
+            // Assert
+            verify(consume, times(1)).apply(any(Method.class), any(Object[].class));
+        }
+
+        @Test
+        @DisplayName("应该调用消费函数一次 - 当Bean为AOP代理且检查通过时")
+        void postProcessAfterInitialization_shouldCallConsumeOnce_whenBeanIsAopProxyAndCheckPasses() throws Exception {
+            // Arrange
+            Object bean = new CustomBean();
+            ProxyFactory proxyFactory = new ProxyFactory(bean);
+            Object proxy = proxyFactory.getProxy();
+            Method method = bean.getClass().getMethod("annotatedMethod");
+            when(check.apply(method)).thenReturn(true);
+
+            // Act
+            processor.postProcessAfterInitialization(proxy, "beanName");
+
+            // Assert
+            verify(consume, times(1)).apply(any(Method.class), any(Object[].class));
+        }
+
+        @Test
+        @DisplayName("应该抛出运行时异常 - 当校验失败时")
+        void postProcessAfterInitialization_shouldThrowRuntimeException_whenValidationFails() throws Exception {
+            // Arrange
+            Object bean = new CustomBean();
+            Method method = bean.getClass().getMethod("annotatedMethod");
+            when(check.apply(method)).thenReturn(true);
+            when(consume.apply(any(Method.class), any(Object[].class)))
+                    .thenThrow(new RuntimeException("Validation failed"));
+
+            // Act & Assert
+            assertThatThrownBy(() -> processor.postProcessAfterInitialization(bean, "beanName"))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessageContaining("方法的")
+                    .hasMessageContaining("注解相关参数映射有误")
+                    .hasCauseInstanceOf(RuntimeException.class);
+        }
+
+        @Test
+        @DisplayName("应该不调用消费函数 - 当检查不通过时")
+        void postProcessAfterInitialization_shouldNotCallConsume_whenCheckFails() throws Exception {
+            // Arrange
+            Object bean = new CustomBean();
+            Method method = bean.getClass().getMethod("annotatedMethod");
+            when(check.apply(method)).thenReturn(false);
+
+            // Act
+            processor.postProcessAfterInitialization(bean, "beanName");
+
+            // Assert
+            verify(consume, never()).apply(any(Method.class), any(Object[].class));
+        }
     }
 
-    @Test
-    void testPostProcessAfterInitialization_AopProxy() throws Exception {
-        Object bean = new CustomBean();
-        ProxyFactory proxyFactory = new ProxyFactory(bean);
-        Object proxy = proxyFactory.getProxy();
+    @Nested
+    @DisplayName("不同参数类型处理")
+    class ParameterTypeHandling {
 
-        Method method = bean.getClass().getMethod("annotatedMethod");
-        when(check.apply(method)).thenReturn(true);
+        @Test
+        @DisplayName("应该调用消费函数一次 - 当方法有List参数且检查通过时")
+        void postProcessAfterInitialization_shouldCallConsumeOnce_whenMethodHasListParameterAndCheckPasses() throws Exception {
+            // Arrange
+            Object bean = new CustomBeanWithListParam();
+            Method method = bean.getClass().getMethod("methodWithListParam", List.class);
+            when(check.apply(method)).thenReturn(true);
 
-        processor.postProcessAfterInitialization(proxy, "beanName");
+            // Act
+            processor.postProcessAfterInitialization(bean, "beanName");
 
-        verify(consume, times(1)).apply(any(Method.class), any(Object[].class));
-    }
+            // Assert
+            verify(consume, times(1)).apply(any(Method.class), any(Object[].class));
+        }
 
-    @Test
-    void testPostProcessAfterInitialization_ValidationFailure() throws Exception {
-        Object bean = new CustomBean();
-        Method method = bean.getClass().getMethod("annotatedMethod");
-        when(check.apply(method)).thenReturn(true);
-        when(consume.apply(any(Method.class), any(Object[].class))).thenThrow(new RuntimeException("Validation failed"));
+        @Test
+        @DisplayName("应该调用消费函数一次 - 当方法有非List参数且检查通过时")
+        void postProcessAfterInitialization_shouldCallConsumeOnce_whenMethodHasNonListParameterAndCheckPasses() throws Exception {
+            // Arrange
+            Object bean = new CustomBeanWithNonListParam();
+            Method method = bean.getClass().getMethod("methodWithNonListParam", String.class);
+            when(check.apply(method)).thenReturn(true);
 
-        assertThrows(RuntimeException.class, () -> processor.postProcessAfterInitialization(bean, "beanName"));
-    }
+            // Act
+            processor.postProcessAfterInitialization(bean, "beanName");
 
-    @Test
-    void testPostProcessAfterInitialization_ListParameter() throws Exception {
-        Object bean = new CustomBeanWithListParam();
-        Method method = bean.getClass().getMethod("methodWithListParam", List.class);
-        when(check.apply(method)).thenReturn(true);
-
-        processor.postProcessAfterInitialization(bean, "beanName");
-
-        verify(consume, times(1)).apply(any(Method.class), any(Object[].class));
+            // Assert
+            verify(consume, times(1)).apply(any(Method.class), any(Object[].class));
+        }
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @interface CustomAnnotation {
-
     }
 
     @SuppressWarnings("EmptyMethod")
     static class CustomBean {
-
         @CustomAnnotation
         public void annotatedMethod() {
         }
@@ -101,38 +162,13 @@ class BaseMethodParamCheckBeanPostProcessorTest {
 
     @SuppressWarnings("EmptyMethod")
     static class CustomBeanWithListParam {
-
         @SuppressWarnings("unused")
         @CustomAnnotation
         public void methodWithListParam(List<String> list) {
         }
     }
 
-    @Test
-    void testPostProcessAfterInitialization_IsCheckFalse() throws Exception {
-        Object bean = new CustomBean();
-        Method method = bean.getClass().getMethod("annotatedMethod");
-        when(check.apply(method)).thenReturn(false); // isCheck() 返回 false
-
-        processor.postProcessAfterInitialization(bean, "beanName");
-
-        verify(consume, never()).apply(any(Method.class), any(Object[].class)); // 确保 consume 未被调用
-    }
-
-    @Test
-    void testPostProcessAfterInitialization_NonListParameter() throws Exception {
-        Object bean = new CustomBeanWithNonListParam();
-        Method method = bean.getClass().getMethod("methodWithNonListParam", String.class);
-        when(check.apply(method)).thenReturn(true);
-
-        processor.postProcessAfterInitialization(bean, "beanName");
-
-        verify(consume, times(1)).apply(any(Method.class), any(Object[].class)); // 确保 consume 被调用
-        // 这里可以进一步验证参数生成逻辑，确保调用了 DataGenerator.fullObject()
-    }
-
     static class CustomBeanWithNonListParam {
-
         @SuppressWarnings({"unused", "EmptyMethod"})
         @CustomAnnotation
         public void methodWithNonListParam(String param) {

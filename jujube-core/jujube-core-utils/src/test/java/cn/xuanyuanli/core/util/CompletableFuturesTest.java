@@ -1,365 +1,400 @@
 package cn.xuanyuanli.core.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.DisplayName;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-@DisplayName("CompletableFutures工具类测试")
+@DisplayName("CompletableFutures 并行任务工具测试")
+class CompletableFuturesTest {
 
-public class CompletableFuturesTest {
+    @Nested
+    @DisplayName("combine方法测试")
+    class CombineTests {
 
-    @Test
-    @DisplayName("combine: 两个任务都成功执行，返回组合结果")
-    public void combine_BothTasksComplete_ReturnsCombinedResult() {
-        AtomicInteger  counter = new AtomicInteger(0);
-        Supplier<Integer> task1 = () -> {
-            counter.incrementAndGet();
-            return 10;
-        };
-        Supplier<Integer> task2 = () -> {
-            counter.incrementAndGet();
-            return 20;
-        };
-        BiFunction<Integer, Integer, Integer> fn = Integer::sum;
+        @Test
+        @DisplayName("combine_应该返回组合结果_当两个任务都成功执行时")
+        void combine_shouldReturnCombinedResult_whenBothTasksComplete() {
+            // Arrange
+            AtomicInteger counter = new AtomicInteger(0);
+            Supplier<Integer> task1 = () -> {
+                counter.incrementAndGet();
+                return 10;
+            };
+            Supplier<Integer> task2 = () -> {
+                counter.incrementAndGet();
+                return 20;
+            };
+            BiFunction<Integer, Integer, Integer> fn = Integer::sum;
 
-        Integer result = CompletableFutures.combine(task1, task2, fn);
+            // Act
+            Integer result = CompletableFutures.combine(task1, task2, fn);
 
-        Assertions.assertEquals(30, result);
-        Assertions.assertEquals(2, counter.get());
-    }
-
-    @Test
-    @DisplayName("combine: 任务并发执行验证")
-    @Timeout(value = 250, unit = TimeUnit.MILLISECONDS)
-    public void combine_TasksRunConcurrently_Performance() {
-        long start = System.currentTimeMillis();
-        
-        Supplier<Integer> task1 = () -> {
-            try {
-                Thread.sleep(100);
-                return 1;
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
-        };
-        
-        Supplier<Integer> task2 = () -> {
-            try {
-                Thread.sleep(100);
-                return 2;
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
-        };
-        
-        Integer result = CompletableFutures.combine(task1, task2, Integer::sum);
-        
-        long duration = System.currentTimeMillis() - start;
-        Assertions.assertEquals(3, result);
-        Assertions.assertTrue(duration < 200, "任务应该并行执行，总时间应小于200ms，实际:" + duration + "ms");
-    }
-
-    @Test
-    @DisplayName("combine: task1抛出异常")
-    public void combine_Task1ThrowsException_ThrowsRuntimeException() {
-        Supplier<Integer> task1 = () -> {
-            throw new RuntimeException("Task 1 failed");
-        };
-        Supplier<Integer> task2 = () -> 20;
-        BiFunction<Integer, Integer, Integer> fn = Integer::sum;
-
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () ->
-            CompletableFutures.combine(task1, task2, fn)
-        );
-
-        Assertions.assertNotNull(exception.getCause());
-        Assertions.assertTrue(exception.getCause().getMessage().contains("Task 1 failed"));
-    }
-
-    @Test
-    @DisplayName("combine: task2抛出异常")
-    public void combine_Task2ThrowsException_ThrowsRuntimeException() {
-        Supplier<Integer> task1 = () -> 10;
-        Supplier<Integer> task2 = () -> {
-            throw new RuntimeException("Task 2 failed");
-        };
-        BiFunction<Integer, Integer, Integer> fn = Integer::sum;
-
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () ->
-            CompletableFutures.combine(task1, task2, fn)
-        );
-
-        Assertions.assertNotNull(exception.getCause());
-        Assertions.assertTrue(exception.getCause().getMessage().contains("Task 2 failed"));
-    }
-
-    @Test
-    @DisplayName("combine: 两个任务都抛出异常")
-    public void combine_BothTasksThrowException_ThrowsRuntimeException() {
-        Supplier<Integer> task1 = () -> {
-            throw new RuntimeException("Task 1 failed");
-        };
-        Supplier<Integer> task2 = () -> {
-            throw new RuntimeException("Task 2 failed");
-        };
-        BiFunction<Integer, Integer, Integer> fn = Integer::sum;
-
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () ->
-            CompletableFutures.combine(task1, task2, fn)
-        );
-
-        Assertions.assertNotNull(exception.getCause());
-        Assertions.assertTrue(exception.getCause().getMessage().contains("Task 1 failed"));
-    }
-
-    @Test
-    @DisplayName("combine: 组合函数抛出异常")
-    public void combine_CombinerThrowsException_ThrowsRuntimeException() {
-        Supplier<Integer> task1 = () -> 10;
-        Supplier<Integer> task2 = () -> 20;
-        BiFunction<Integer, Integer, Integer> fn = (a, b) -> {
-            throw new RuntimeException("Combiner failed");
-        };
-
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () ->
-            CompletableFutures.combine(task1, task2, fn)
-        );
-
-        Assertions.assertNotNull(exception.getCause());
-        Assertions.assertTrue(exception.getCause().getMessage().contains("Combiner failed"));
-    }
-
-    @Test
-    @DisplayName("combineAll: 多个任务都执行完成")
-    public void combineAll_BothTasksComplete_NoExceptionThrown() {
-        AtomicInteger counter = new AtomicInteger(0);
-        Runnable task1 = counter::incrementAndGet;
-        Runnable task2 = counter::incrementAndGet;
-
-        CompletableFutures.combineAll(task1, task2);
-
-        Assertions.assertEquals(2, counter.get());
-    }
-
-    @Test
-    @DisplayName("combineAll: 其中一个任务失败")
-    public void combineAll_OneTaskFails_ThrowsException() {
-        AtomicInteger counter = new AtomicInteger(0);
-        Runnable task1 = counter::incrementAndGet;
-        Runnable task2 = () -> {
-            throw new RuntimeException("Task failed");
-        };
-
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () ->
-            CompletableFutures.combineAll(task1, task2));
-
-        Assertions.assertNotNull(exception.getCause());
-        Assertions.assertTrue(exception.getCause().getMessage().contains("Task failed"));
-    }
-
-    @Test
-    @DisplayName("combineAny: 单个任务执行")
-    public void combineAny_SingleTask_CompletesSuccessfully() {
-        AtomicInteger counter = new AtomicInteger(0);
-        Runnable task = counter::incrementAndGet;
-
-        CompletableFutures.combineAny(task);
-
-        Assertions.assertEquals(1, counter.get());
-    }
-
-    @Test
-    @DisplayName("combineAny: 多个任务执行，最快的完成")
-    public void combineAny_MultipleTasks_FastestCompletes() {
-        AtomicBoolean fastTaskCompleted = new AtomicBoolean(false);
-        AtomicBoolean slowTaskCompleted = new AtomicBoolean(false);
-        
-        Runnable fastTask = () -> fastTaskCompleted.set(true);
-        
-        Runnable slowTask = () -> {
-            try {
-                Thread.sleep(200);
-                slowTaskCompleted.set(true);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
-        };
-
-        CompletableFutures.combineAny(fastTask, slowTask);
-
-        Assertions.assertTrue(fastTaskCompleted.get(), "快速任务应该已完成");
-        // 给慢任务一些时间检查状态
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    @Test
-    public void combineAny_EmptyTasks_NoExecution() {
-        AtomicInteger counter = new AtomicInteger(0);
-
-        CompletableFutures.combineAny();
-
-        Assertions.assertEquals(0, counter.get());
-    }
-
-    @Test
-    @DisplayName("combineAny: 所有任务都失败")
-    public void combineAny_AllTasksFail_ThrowsException() {
-        Runnable task1 = () -> {
-            throw new RuntimeException("Task 1 failed");
-        };
-        Runnable task2 = () -> {
-            throw new RuntimeException("Task 2 failed");
-        };
-
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () ->
-            CompletableFutures.combineAny(task1, task2));
-
-        Assertions.assertNotNull(exception.getCause());
-    }
-
-    @Test
-    @DisplayName("combineAny: 部分任务失败，成功任务先完成")
-    public void combineAny_PartialTasksFail_SuccessfulTaskCompletes() {
-        AtomicBoolean successTaskCompleted = new AtomicBoolean(false);
-
-        Runnable successTask = () -> successTaskCompleted.set(true);
-        Runnable failTask = () -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            throw new RuntimeException("Task failed");
-        };
-
-        Assertions.assertDoesNotThrow(() -> CompletableFutures.combineAny(successTask, failTask));
-        Assertions.assertTrue(successTaskCompleted.get(), "成功任务应该已完成");
-    }
-
-    // ==================== 边界条件测试 ====================
-
-    @Test
-    @DisplayName("combine: null参数测试")
-    public void combine_NullParameters_ThrowsException() {
-        Supplier<Integer> validTask = () -> 1;
-        BiFunction<Integer, Integer, Integer> validFn = Integer::sum;
-
-        Assertions.assertThrows(NullPointerException.class, () ->
-            CompletableFutures.combine(null, validTask, validFn));
-
-        Assertions.assertThrows(NullPointerException.class, () ->
-            CompletableFutures.combine(validTask, null, validFn));
-
-        Assertions.assertThrows(NullPointerException.class, () ->
-            CompletableFutures.combine(validTask, validTask, null));
-    }
-
-    @Test
-    @DisplayName("combineAll: null数组参数")
-    public void combineAll_NullArray_NoExecution() {
-        Assertions.assertDoesNotThrow(() -> CompletableFutures.combineAll((Runnable[]) null));
-    }
-
-    @Test
-    @DisplayName("combineAny: null数组参数")
-    public void combineAny_NullArray_NoExecution() {
-        Assertions.assertDoesNotThrow(() -> CompletableFutures.combineAny((Runnable[]) null));
-    }
-
-    // ==================== 线程中断处理测试 ====================
-
-    @Test
-    @DisplayName("combine: 任务中抛出InterruptedException")
-    public void combine_TaskInterrupted_HandlesInterruption() {
-        Supplier<Integer> interruptedTask = () -> {
-            try {
-                Thread.sleep(1000); // 模拟长时间操作
-                return 1;
-            } catch (InterruptedException e) {
-                throw new RuntimeException("Task was interrupted", e);
-            }
-        };
-
-        Supplier<Integer> normalTask = () -> 2;
-
-        // 在新线程中执行并中断
-        AtomicReference<RuntimeException> caughtException = new AtomicReference<>();
-        Thread testThread = new Thread(() -> {
-            try {
-                // 启动任务后立即中断当前线程
-                Thread.currentThread().interrupt();
-                CompletableFutures.combine(interruptedTask, normalTask, Integer::sum);
-            } catch (RuntimeException e) {
-                caughtException.set(e);
-            }
-        });
-
-        testThread.start();
-        try {
-            testThread.join(5000); // 最多等待5秒
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            // Assert
+            assertThat(result).isEqualTo(30);
+            assertThat(counter.get()).isEqualTo(2);
         }
 
-        RuntimeException exception = caughtException.get();
-        Assertions.assertNotNull(exception, "应该捕获到RuntimeException");
-        Assertions.assertInstanceOf(InterruptedException.class, exception.getCause(), "异常原因应该是InterruptedException");
-    }
-
-    // ==================== 压力测试 ====================
-
-    @Test
-    @DisplayName("combineAll: 大量任务压力测试")
-    public void combineAll_ManyTasks_CompletesSuccessfully() {
-        AtomicInteger counter = new AtomicInteger(0);
-        Runnable[] tasks = new Runnable[50];
-        for (int i = 0; i < 50; i++) {
-            tasks[i] = counter::incrementAndGet;
-        }
-
-        CompletableFutures.combineAll(tasks);
-
-        Assertions.assertEquals(50, counter.get());
-    }
-
-    @Test
-    @DisplayName("combineAny: 大量任务测试")
-    public void combineAny_ManyTasks_CompletesSuccessfully() {
-        AtomicInteger counter = new AtomicInteger(0);
-        Runnable[] tasks = new Runnable[10];
-        for (int i = 0; i < 10; i++) {
-            final int taskId = i;
-            tasks[i] = () -> {
+        @Test
+        @DisplayName("combine_应该并行执行任务_当验证执行性能时")
+        @Timeout(value = 250, unit = TimeUnit.MILLISECONDS)
+        void combine_shouldRunTasksConcurrently_whenVerifyingPerformance() {
+            // Arrange
+            long start = System.currentTimeMillis();
+            Supplier<Integer> task1 = () -> {
                 try {
-                    // 让第一个任务最快完成
-                    Thread.sleep(taskId * 10);
-                    counter.incrementAndGet();
+                    Thread.sleep(100);
+                    return 1;
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     throw new RuntimeException(e);
                 }
             };
+            Supplier<Integer> task2 = () -> {
+                try {
+                    Thread.sleep(100);
+                    return 2;
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(e);
+                }
+            };
+            
+            // Act
+            Integer result = CompletableFutures.combine(task1, task2, Integer::sum);
+            
+            // Assert
+            long duration = System.currentTimeMillis() - start;
+            assertThat(result).isEqualTo(3);
+            assertThat(duration).isLessThan(200L);
         }
 
-        CompletableFutures.combineAny(tasks);
+        @Test
+        @DisplayName("combine_应该抛出运行时异常_当task1抛出异常时")
+        void combine_shouldThrowRuntimeException_whenTask1ThrowsException() {
+            // Arrange
+            Supplier<Integer> task1 = () -> {
+                throw new RuntimeException("Task 1 failed");
+            };
+            Supplier<Integer> task2 = () -> 20;
+            BiFunction<Integer, Integer, Integer> fn = Integer::sum;
 
-        // 至少有一个任务完成了
-        Assertions.assertTrue(counter.get() >= 1, "至少应有一个任务完成");
+            // Act & Assert
+            assertThatThrownBy(() -> CompletableFutures.combine(task1, task2, fn))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(ExecutionException.class);
+        }
+
+        @Test
+        @DisplayName("combine_应该抛出运行时异常_当task2抛出异常时")
+        void combine_shouldThrowRuntimeException_whenTask2ThrowsException() {
+            // Arrange
+            Supplier<Integer> task1 = () -> 10;
+            Supplier<Integer> task2 = () -> {
+                throw new RuntimeException("Task 2 failed");
+            };
+            BiFunction<Integer, Integer, Integer> fn = Integer::sum;
+
+            // Act & Assert
+            assertThatThrownBy(() -> CompletableFutures.combine(task1, task2, fn))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(ExecutionException.class);
+        }
+
+        @Test
+        @DisplayName("combine_应该抛出运行时异常_当两个任务都抛出异常时")
+        void combine_shouldThrowRuntimeException_whenBothTasksThrowException() {
+            // Arrange
+            Supplier<Integer> task1 = () -> {
+                throw new RuntimeException("Task 1 failed");
+            };
+            Supplier<Integer> task2 = () -> {
+                throw new RuntimeException("Task 2 failed");
+            };
+            BiFunction<Integer, Integer, Integer> fn = Integer::sum;
+
+            // Act & Assert
+            assertThatThrownBy(() -> CompletableFutures.combine(task1, task2, fn))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(ExecutionException.class);
+        }
+
+        @Test
+        @DisplayName("combine_应该抛出运行时异常_当组合函数抛出异常时")
+        void combine_shouldThrowRuntimeException_whenCombinerThrowsException() {
+            // Arrange
+            Supplier<Integer> task1 = () -> 10;
+            Supplier<Integer> task2 = () -> 20;
+            BiFunction<Integer, Integer, Integer> fn = (a, b) -> {
+                throw new RuntimeException("Combiner failed");
+            };
+
+            // Act & Assert
+            assertThatThrownBy(() -> CompletableFutures.combine(task1, task2, fn))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(ExecutionException.class);
+        }
+
+        @Test
+        @DisplayName("combine_应该抛出空指针异常_当参数为null时")
+        void combine_shouldThrowNullPointerException_whenParametersAreNull() {
+            // Arrange
+            Supplier<Integer> validTask = () -> 1;
+            BiFunction<Integer, Integer, Integer> validFn = Integer::sum;
+
+            // Act & Assert
+            assertThatThrownBy(() -> CompletableFutures.combine(null, validTask, validFn))
+                .isInstanceOf(NullPointerException.class);
+
+            assertThatThrownBy(() -> CompletableFutures.combine(validTask, null, validFn))
+                .isInstanceOf(NullPointerException.class);
+
+            assertThatThrownBy(() -> CompletableFutures.combine(validTask, validTask, null))
+                .isInstanceOf(NullPointerException.class);
+        }
+
+        @Test
+        @DisplayName("combine_应该处理线程中断_当任务被中断时")
+        void combine_shouldHandleInterruption_whenTaskIsInterrupted() {
+            // Arrange
+            Supplier<Integer> interruptedTask = () -> {
+                try {
+                    Thread.sleep(1000); // 模拟长时间操作
+                    return 1;
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Task was interrupted", e);
+                }
+            };
+            Supplier<Integer> normalTask = () -> 2;
+            AtomicReference<RuntimeException> caughtException = new AtomicReference<>();
+
+            // Act
+            Thread testThread = new Thread(() -> {
+                try {
+                    // 启动任务后立即中断当前线程
+                    Thread.currentThread().interrupt();
+                    CompletableFutures.combine(interruptedTask, normalTask, Integer::sum);
+                } catch (RuntimeException e) {
+                    caughtException.set(e);
+                }
+            });
+
+            testThread.start();
+            try {
+                testThread.join(5000); // 最多等待5秒
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            // Assert
+            RuntimeException exception = caughtException.get();
+            assertThat(exception).isNotNull();
+            assertThat(exception.getCause()).isInstanceOf(InterruptedException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("combineAll方法测试")
+    class CombineAllTests {
+
+        @Test
+        @DisplayName("combineAll_应该执行完成所有任务_当所有任务正常时")
+        void combineAll_shouldCompleteAllTasks_whenAllTasksAreNormal() {
+            // Arrange
+            AtomicInteger counter = new AtomicInteger(0);
+            Runnable task1 = counter::incrementAndGet;
+            Runnable task2 = counter::incrementAndGet;
+
+            // Act
+            CompletableFutures.combineAll(task1, task2);
+
+            // Assert
+            assertThat(counter.get()).isEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("combineAll_应该抛出运行时异常_当其中一个任务失败时")
+        void combineAll_shouldThrowRuntimeException_whenOneTaskFails() {
+            // Arrange
+            AtomicInteger counter = new AtomicInteger(0);
+            Runnable task1 = counter::incrementAndGet;
+            Runnable task2 = () -> {
+                throw new RuntimeException("Task failed");
+            };
+
+            // Act & Assert
+            assertThatThrownBy(() -> CompletableFutures.combineAll(task1, task2))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(ExecutionException.class);
+        }
+
+        @Test
+        @DisplayName("combineAll_应该执行大量任务_当进行压力测试时")
+        void combineAll_shouldExecuteManyTasks_whenPerformingStressTest() {
+            // Arrange
+            AtomicInteger counter = new AtomicInteger(0);
+            Runnable[] tasks = new Runnable[50];
+            for (int i = 0; i < 50; i++) {
+                tasks[i] = counter::incrementAndGet;
+            }
+
+            // Act
+            CompletableFutures.combineAll(tasks);
+
+            // Assert
+            assertThat(counter.get()).isEqualTo(50);
+        }
+
+        @Test
+        @DisplayName("combineAll_应该正常执行_当参数为null数组时")
+        void combineAll_shouldExecuteNormally_whenNullArray() {
+            // Act & Assert
+            assertThatNoException().isThrownBy(() -> CompletableFutures.combineAll((Runnable[]) null));
+        }
+    }
+
+    @Nested
+    @DisplayName("combineAny方法测试")
+    class CombineAnyTests {
+
+        @Test
+        @DisplayName("combineAny_应该成功完成_当执行单个任务时")
+        void combineAny_shouldCompleteSuccessfully_whenExecutingSingleTask() {
+            // Arrange
+            AtomicInteger counter = new AtomicInteger(0);
+            Runnable task = counter::incrementAndGet;
+
+            // Act
+            CompletableFutures.combineAny(task);
+
+            // Assert
+            assertThat(counter.get()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("combineAny_应该完成最快的任务_当执行多个任务时")
+        void combineAny_shouldCompleteFastestTask_whenExecutingMultipleTasks() {
+            // Arrange
+            AtomicBoolean fastTaskCompleted = new AtomicBoolean(false);
+
+            Runnable fastTask = () -> fastTaskCompleted.set(true);
+            Runnable slowTask = () -> {
+                try {
+                    Thread.sleep(200);
+                    // 慢任务完成（在快任务之后）
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(e);
+                }
+            };
+
+            // Act
+            CompletableFutures.combineAny(fastTask, slowTask);
+
+            // Assert
+            assertThat(fastTaskCompleted.get()).isTrue();
+            // 给慢任务一些时间检查状态
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        @Test
+        @DisplayName("combineAny_应该不执行任何任务_当任务为空时")
+        void combineAny_shouldNotExecuteAnyTask_whenTasksAreEmpty() {
+            // Arrange
+            AtomicInteger counter = new AtomicInteger(0);
+
+            // Act
+            CompletableFutures.combineAny();
+
+            // Assert
+            assertThat(counter.get()).isEqualTo(0);
+        }
+
+        @Test
+        @DisplayName("combineAny_应该抛出运行时异常_当所有任务都失败时")
+        void combineAny_shouldThrowRuntimeException_whenAllTasksFail() {
+            // Arrange
+            Runnable task1 = () -> {
+                throw new RuntimeException("Task 1 failed");
+            };
+            Runnable task2 = () -> {
+                throw new RuntimeException("Task 2 failed");
+            };
+
+            // Act & Assert
+            assertThatThrownBy(() -> CompletableFutures.combineAny(task1, task2))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(Exception.class);
+        }
+
+        @Test
+        @DisplayName("combineAny_应该完成成功的任务_当部分任务失败且成功任务先完成时")
+        void combineAny_shouldCompleteSuccessfulTask_whenPartialTasksFailAndSuccessfulTaskCompletesFirst() {
+            // Arrange
+            AtomicBoolean successTaskCompleted = new AtomicBoolean(false);
+            Runnable successTask = () -> successTaskCompleted.set(true);
+            Runnable failTask = () -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                throw new RuntimeException("Task failed");
+            };
+
+            // Act & Assert
+            assertThatNoException().isThrownBy(() -> CompletableFutures.combineAny(successTask, failTask));
+            assertThat(successTaskCompleted.get()).isTrue();
+        }
+
+        @Test
+        @DisplayName("combineAny_应该成功完成_当进行大量任务测试时")
+        void combineAny_shouldCompleteSuccessfully_whenPerformingManyTasksTest() {
+            // Arrange
+            AtomicInteger counter = new AtomicInteger(0);
+            Runnable[] tasks = new Runnable[10];
+            for (int i = 0; i < 10; i++) {
+                final int taskId = i;
+                tasks[i] = () -> {
+                    try {
+                        // 让第一个任务最快完成
+                        Thread.sleep(taskId * 10);
+                        counter.incrementAndGet();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException(e);
+                    }
+                };
+            }
+
+            // Act
+            CompletableFutures.combineAny(tasks);
+
+            // Assert
+            assertThat(counter.get()).isGreaterThanOrEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("combineAny_应该正常执行_当参数为null数组时")
+        void combineAny_shouldExecuteNormally_whenNullArray() {
+            // Act & Assert
+            assertThatNoException().isThrownBy(() -> CompletableFutures.combineAny((Runnable[]) null));
+        }
     }
 }

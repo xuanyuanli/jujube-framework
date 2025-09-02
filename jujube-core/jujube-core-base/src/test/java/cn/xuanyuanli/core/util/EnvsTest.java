@@ -1,13 +1,12 @@
 package cn.xuanyuanli.core.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DisplayName("Envs 环境变量获取工具测试")
 class EnvsTest {
@@ -32,91 +31,121 @@ class EnvsTest {
         }
     }
 
-    @Test
-    @DisplayName("获取存在的系统属性")
-    void shouldReturnSystemPropertyWhenExists() {
-        // 设置系统属性
-        System.setProperty(TEST_PROPERTY_KEY, TEST_PROPERTY_VALUE);
-        
-        String result = Envs.getEnv(TEST_PROPERTY_KEY);
-        
-        assertEquals(TEST_PROPERTY_VALUE, result);
-    }
+    @Nested
+    @DisplayName("系统属性获取测试")
+    class SystemPropertyTests {
 
-    @Test
-    @DisplayName("当系统属性不存在时，应该尝试获取环境变量")
-    void shouldTryEnvironmentVariableWhenSystemPropertyNotExists() {
-        // 确保系统属性不存在
-        System.clearProperty(TEST_PROPERTY_KEY);
-        
-        String result = Envs.getEnv(TEST_PROPERTY_KEY);
-        
-        // 由于我们无法控制环境变量，只能验证结果与 System.getenv 一致
-        assertEquals(System.getenv(TEST_PROPERTY_KEY), result);
-    }
+        @Test
+        @DisplayName("getEnv_应该返回系统属性值_当系统属性存在时")
+        void getEnv_shouldReturnSystemPropertyValue_whenSystemPropertyExists() {
+            // Arrange
+            System.setProperty(TEST_PROPERTY_KEY, TEST_PROPERTY_VALUE);
 
-    @Test
-    @DisplayName("当系统属性为空字符串时，应该尝试获取环境变量")
-    void shouldTryEnvironmentVariableWhenSystemPropertyIsEmpty() {
-        // 设置系统属性为空字符串
-        System.setProperty(TEST_PROPERTY_KEY, "");
-        
-        String result = Envs.getEnv(TEST_PROPERTY_KEY);
-        
-        // 由于系统属性是空字符串，应该尝试获取环境变量
-        assertEquals(System.getenv(TEST_PROPERTY_KEY), result);
-    }
+            // Act
+            String result = Envs.getEnv(TEST_PROPERTY_KEY);
 
-    @Test
-    @DisplayName("当系统属性和环境变量都不存在时，应该返回null")
-    void shouldReturnNullWhenBothSystemPropertyAndEnvironmentVariableAreNull() {
-        // 使用一个不存在的键
-        String nonExistentKey = "definitely.non.existent.key.12345";
-        
-        String result = Envs.getEnv(nonExistentKey);
-        
-        assertNull(result);
-    }
-
-    @Test
-    @DisplayName("系统属性优先级应该高于环境变量")
-    void shouldPreferSystemPropertyOverEnvironmentVariable() {
-        // 设置系统属性
-        System.setProperty(TEST_PROPERTY_KEY, TEST_PROPERTY_VALUE);
-        
-        String result = Envs.getEnv(TEST_PROPERTY_KEY);
-        
-        // 系统属性应该优先
-        assertEquals(TEST_PROPERTY_VALUE, result);
-    }
-
-    @Test
-    @DisplayName("使用真实的系统属性进行集成测试")
-    void shouldWorkWithRealSystemProperty() {
-        // 使用 Java 内置的系统属性进行测试
-        String javaVersion = Envs.getEnv("java.version");
-        
-        // java.version 应该总是存在
-        assertNotNull(javaVersion);
-        assertEquals(System.getProperty("java.version"), javaVersion);
-    }
-
-    @Test
-    @DisplayName("使用PATH环境变量进行测试")
-    void shouldWorkWithRealEnvironmentVariable() {
-        // PATH 环境变量在所有操作系统上都应该存在
-        String pathEnv = System.getenv("PATH");
-        if (pathEnv == null) {
-            // 在某些系统上可能是 Path
-            pathEnv = System.getenv("Path");
+            // Assert
+            assertThat(result).isEqualTo(TEST_PROPERTY_VALUE);
         }
-        
-        // 如果系统有 PATH 环境变量，测试我们的方法
-        if (pathEnv != null) {
-            // 确保系统属性中没有 PATH
-            System.clearProperty("PATH");
-            String result = Envs.getEnv("PATH");
-            assertEquals(pathEnv, result);
+
+        @Test
+        @DisplayName("getEnv_应该尝试获取环境变量_当系统属性不存在时")
+        void getEnv_shouldTryEnvironmentVariable_whenSystemPropertyNotExists() {
+            // Arrange
+            System.clearProperty(TEST_PROPERTY_KEY);
+
+            // Act
+            String result = Envs.getEnv(TEST_PROPERTY_KEY);
+
+            // Assert
+            // 由于我们无法控制环境变量，只能验证结果与 System.getenv 一致
+            assertThat(result).isEqualTo(System.getenv(TEST_PROPERTY_KEY));
+        }
+
+        @Test
+        @DisplayName("getEnv_应该尝试获取环境变量_当系统属性为空字符串时")
+        void getEnv_shouldTryEnvironmentVariable_whenSystemPropertyIsEmpty() {
+            // Arrange
+            System.setProperty(TEST_PROPERTY_KEY, "");
+
+            // Act
+            String result = Envs.getEnv(TEST_PROPERTY_KEY);
+
+            // Assert
+            // 由于系统属性是空字符串，应该尝试获取环境变量
+            assertThat(result).isEqualTo(System.getenv(TEST_PROPERTY_KEY));
+        }
+
+        @Test
+        @DisplayName("getEnv_应该返回null_当系统属性和环境变量都不存在时")
+        void getEnv_shouldReturnNull_whenBothSystemPropertyAndEnvironmentVariableAreNull() {
+            // Arrange
+            String nonExistentKey = "definitely.non.existent.key.12345";
+
+            // Act
+            String result = Envs.getEnv(nonExistentKey);
+
+            // Assert
+            assertThat(result).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("优先级测试")
+    class PriorityTests {
+
+        @Test
+        @DisplayName("getEnv_应该优先返回系统属性_当系统属性和环境变量都存在时")
+        void getEnv_shouldPreferSystemProperty_whenBothSystemPropertyAndEnvironmentVariableExist() {
+            // Arrange
+            System.setProperty(TEST_PROPERTY_KEY, TEST_PROPERTY_VALUE);
+
+            // Act
+            String result = Envs.getEnv(TEST_PROPERTY_KEY);
+
+            // Assert
+            // 系统属性应该优先
+            assertThat(result).isEqualTo(TEST_PROPERTY_VALUE);
+        }
+    }
+
+    @Nested
+    @DisplayName("集成测试")
+    class IntegrationTests {
+
+        @Test
+        @DisplayName("getEnv_应该正常工作_当使用真实系统属性时")
+        void getEnv_shouldWorkCorrectly_whenUsingRealSystemProperty() {
+            // Act
+            String javaVersion = Envs.getEnv("java.version");
+
+            // Assert
+            // java.version 应该总是存在
+            assertThat(javaVersion).isNotNull().isNotEmpty();
+            assertThat(javaVersion).isEqualTo(System.getProperty("java.version"));
+        }
+
+        @Test
+        @DisplayName("getEnv_应该正常工作_当使用PATH环境变量时")
+        void getEnv_shouldWorkCorrectly_whenUsingPATHEnvironmentVariable() {
+            // Arrange
+            String pathEnv = System.getenv("PATH");
+            if (pathEnv == null) {
+                // 在某些系统上可能是 Path
+                pathEnv = System.getenv("Path");
+            }
+
+            // 如果系统有 PATH 环境变量，测试我们的方法
+            if (pathEnv != null) {
+                // Arrange
+                System.clearProperty("PATH");
+
+                // Act
+                String result = Envs.getEnv("PATH");
+
+                // Assert
+                assertThat(result).isEqualTo(pathEnv);
+            }
         }
     }
 }

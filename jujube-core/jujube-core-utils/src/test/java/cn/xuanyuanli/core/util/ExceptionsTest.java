@@ -1,72 +1,119 @@
 package cn.xuanyuanli.core.util;
 
-import org.junit.jupiter.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Exceptions 工具类测试")
+@DisplayName("Exceptions 异常工具类测试")
 class ExceptionsTest {
 
-    @Test
-    @DisplayName("应该抛出运行时异常")
-    void shouldThrowRuntimeException() {
-        IllegalArgumentException originalException = new IllegalArgumentException("Original exception");
-        Assertions.assertThrows(RuntimeException.class, () -> Exceptions.throwException(originalException));
+    @Nested
+    @DisplayName("异常抛出测试")
+    class ExceptionThrowingTests {
+
+        @Test
+        @DisplayName("throwException_应该抛出运行时异常_当输入非空异常时")
+        void throwException_shouldThrowRuntimeException_whenInputNonNullException() {
+            // Arrange
+            IllegalArgumentException originalException = new IllegalArgumentException("Original exception");
+
+            // Act & Assert
+            assertThatThrownBy(() -> Exceptions.throwException(originalException))
+                .isInstanceOf(RuntimeException.class);
+        }
+
+        @Test
+        @DisplayName("throwException_应该抛出空指针异常_当输入null异常时")
+        void throwException_shouldThrowNullPointerException_whenInputNullException() {
+            // Act & Assert
+            assertThatThrownBy(() -> Exceptions.throwException(null))
+                .isInstanceOf(NullPointerException.class);
+        }
     }
 
-    @Test
-    @DisplayName("抛出null异常应该抛出空指针异常")
-    void shouldThrowNullPointerExceptionWhenExceptionIsNull() {
-        Assertions.assertThrows(NullPointerException.class, () -> Exceptions.throwException(null));
-    }
+    @Nested
+    @DisplayName("异常转字符串测试")
+    class ExceptionToStringTests {
 
-    @Test
-    @DisplayName("应该将异常转换为字符串")
-    void shouldConvertExceptionToString() {
-        IllegalArgumentException exception = new IllegalArgumentException("Test message");
-        String result = Exceptions.exceptionToString(exception);
-        Assertions.assertTrue(result.startsWith("java.lang.IllegalArgumentException"));
-        Assertions.assertTrue(result.contains("Test message"));
-    }
+        @Test
+        @DisplayName("exceptionToString_应该转换异常为字符串_当输入正常异常时")
+        void exceptionToString_shouldConvertExceptionToString_whenInputNormalException() {
+            // Arrange
+            IllegalArgumentException exception = new IllegalArgumentException("Test message");
 
-    @Test
-    @DisplayName("处理null异常时应该返回适当的字符串")
-    void shouldHandleNullExceptionToString() {
-        String result = Exceptions.exceptionToString(null);
-        Assertions.assertEquals("null", result);
-    }
+            // Act
+            String result = Exceptions.exceptionToString(exception);
 
-    @Test
-    @DisplayName("应该按指定长度裁剪异常字符串")
-    void shouldTruncateExceptionStringToSpecifiedLength() {
-        IllegalArgumentException exception = new IllegalArgumentException("Test message");
-        String result = Exceptions.exceptionToString(exception, 9);
-        Assertions.assertEquals("java.lang", result);
-    }
+            // Assert
+            assertThat(result).startsWith("java.lang.IllegalArgumentException")
+                .contains("Test message");
+        }
 
-    @Test
-    @DisplayName("负数长度应该返回空字符串")
-    void shouldReturnEmptyStringForNegativeLength() {
-        IllegalArgumentException exception = new IllegalArgumentException("Test message");
-        String result = Exceptions.exceptionToString(exception, -1);
-        Assertions.assertEquals("", result);
-    }
+        @Test
+        @DisplayName("exceptionToString_应该返回null字符串_当输入null异常时")
+        void exceptionToString_shouldReturnNullString_whenInputNullException() {
+            // Act
+            String result = Exceptions.exceptionToString(null);
 
-    @Test
-    @DisplayName("零长度应该返回空字符串")
-    void shouldReturnEmptyStringForZeroLength() {
-        IllegalArgumentException exception = new IllegalArgumentException("Test message");
-        String result = Exceptions.exceptionToString(exception, 0);
-        Assertions.assertEquals("", result);
-    }
+            // Assert
+            assertThat(result).isEqualTo("null");
+        }
 
-    @Test
-    @DisplayName("长度超过异常字符串长度时应该返回完整字符串")
-    void shouldReturnCompleteStringWhenLengthExceedsExceptionStringLength() {
-        IllegalArgumentException exception = new IllegalArgumentException();
-        String fullString = Exceptions.exceptionToString(exception);
-        String result = Exceptions.exceptionToString(exception, fullString.length() + 10);
-        Assertions.assertEquals(fullString, result);
+        @Test
+        @DisplayName("exceptionToString_应该按指定长度裁剪_当指定长度时")
+        void exceptionToString_shouldTruncateToSpecifiedLength_whenLengthSpecified() {
+            // Arrange
+            IllegalArgumentException exception = new IllegalArgumentException("Test message");
+
+            // Act
+            String result = Exceptions.exceptionToString(exception, 9);
+
+            // Assert
+            assertThat(result).isEqualTo("java.lang");
+        }
+
+        @Test
+        @DisplayName("exceptionToString_应该返回空字符串_当长度为负数时")
+        void exceptionToString_shouldReturnEmptyString_whenLengthIsNegative() {
+            // Arrange
+            IllegalArgumentException exception = new IllegalArgumentException("Test message");
+
+            // Act
+            String result = Exceptions.exceptionToString(exception, -1);
+
+            // Assert
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("exceptionToString_应该返回空字符串_当长度为零时")
+        void exceptionToString_shouldReturnEmptyString_whenLengthIsZero() {
+            // Arrange
+            IllegalArgumentException exception = new IllegalArgumentException("Test message");
+
+            // Act
+            String result = Exceptions.exceptionToString(exception, 0);
+
+            // Assert
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("exceptionToString_应该返回完整字符串_当长度超过原字符串长度时")
+        void exceptionToString_shouldReturnCompleteString_whenLengthExceedsOriginalLength() {
+            // Arrange
+            IllegalArgumentException exception = new IllegalArgumentException();
+            String fullString = Exceptions.exceptionToString(exception);
+
+            // Act
+            String result = Exceptions.exceptionToString(exception, fullString.length() + 10);
+
+            // Assert
+            assertThat(result).isEqualTo(fullString);
+        }
     }
 }
 
