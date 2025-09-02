@@ -36,32 +36,127 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Excel读取器
+ * Excel 文件读取器
+ * <p>
+ * 基于 Apache POI 实现的高性能 Excel 读取工具，支持 .xls 和 .xlsx 格式文件。
+ * 提供灵活的读取配置和数据转换功能，适用于大文件流式处理场景。主要特性：
+ * <ul>
+ * <li><strong>多格式支持：</strong>兼容 Excel 97-2003(.xls) 和 Excel 2007+(.xlsx)</li>
+ * <li><strong>流式处理：</strong>实现 Iterable 接口，支持逐行遍历，内存友好</li>
+ * <li><strong>灵活配置：</strong>支持跳过标题行、空行终止等多种读取策略</li>
+ * <li><strong>数据转换：</strong>自动处理公式计算、日期格式转换、数据类型识别</li>
+ * <li><strong>对象映射：</strong>支持将 Excel 行数据映射为 Java 对象</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>基础使用示例：</strong>
+ * <pre>{@code
+ * try (FileInputStream fis = new FileInputStream("data.xlsx")) {
+ *     ExcelReaderConfig config = ExcelReaderConfig.builder()
+ *         .skipHeaderRow(true)
+ *         .blankLineTerminated(true)
+ *         .build();
+ *     
+ *     ExcelReader reader = new ExcelReader(fis, 0, config);
+ *     
+ *     // 逐行遍历
+ *     for (List<String> row : reader) {
+ *         System.out.println("行数据: " + row);
+ *     }
+ *     
+ *     // 转换为对象列表
+ *     List<UserDto> users = reader.readToList(UserDto.class);
+ * }
+ * }</pre>
+ * </p>
+ * 
+ * <p>
+ * <strong>对象映射示例：</strong>
+ * <pre>{@code
+ * public class UserDto {
+ *     @ExcelField("姓名")
+ *     private String name;
+ *     
+ *     @ExcelField("年龄")
+ *     private Integer age;
+ *     
+ *     @ExcelField(value = "出生日期", dateFormat = "yyyy-MM-dd")
+ *     private Date birthDate;
+ * }
+ * 
+ * List<UserDto> users = reader.readToList(UserDto.class);
+ * }</pre>
+ * </p>
+ * 
+ * <p>
+ * <strong>高级特性：</strong>
+ * <ul>
+ * <li><strong>自定义单元格处理：</strong>通过 setCellContentHandle 自定义数据提取逻辑</li>
+ * <li><strong>公式计算：</strong>自动计算公式并返回结果值</li>
+ * <li><strong>日期识别：</strong>智能识别 Excel 日期格式并转换</li>
+ * <li><strong>异常处理：</strong>完善的错误处理和日志记录</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * <strong>性能优化：</strong>
+ * <ul>
+ * <li>采用流式处理，避免大文件内存溢出</li>
+ * <li>延迟初始化，提高启动性能</li>
+ * <li>内置缓存机制，减少重复计算</li>
+ * </ul>
+ * </p>
  *
  * @author xuanyuanli Email：xuanyuanli999@gmail.com
  * @date 2021/09/01
+ * @see ExcelReaderConfig
+ * @see ExcelField
  */
 public class ExcelReader implements Iterable<List<String>> {
 
     /**
-     * 一个Sheet工作薄
+     * Excel 工作表实例
+     * <p>
+     * 当前要读取的 Excel 工作表（Sheet）对象，包含所有表格数据。
+     * 通过 POI 的 WorkbookFactory 从输入流中创建。
+     * </p>
      */
     private Sheet sheet;
     /**
-     * 工作薄的总行数
+     * 工作表的总行数
+     * <p>
+     * 根据配置策略计算的实际数据行数：
+     * <ul>
+     * <li>如果启用空行终止：计算到遇到第一个空行为止</li>
+     * <li>如果未启用空行终止：使用 POI 的 getLastRowNum() + 1</li>
+     * </ul>
+     * </p>
      */
     @Getter
     private int rowCount;
     /**
-     * 配置
+     * Excel 读取配置
+     * <p>
+     * 包含读取策略的配置对象，如是否跳过标题行、是否空行终止等。
+     * 在构造时传入并不可变。
+     * </p>
      */
     private final ExcelReaderConfig config;
     /**
-     * 评估者
+     * Excel 公式计算器
+     * <p>
+     * POI 的 FormulaEvaluator，用于计算 Excel 中的公式并返回结果值。
+     * 当遇到公式单元格时，会自动计算并提取数值。
+     * </p>
      */
     private FormulaEvaluator evaluator;
     /**
-     * 单元格内容处理
+     * 自定义单元格内容处理器
+     * <p>
+     * 函数式接口，允许用户自定义单元格数据的提取和转换逻辑。
+     * 如果设置了此处理器，会覆盖默认的单元格读取逻辑。
+     * </p>
      */
     @Setter
     private Function<Cell, String> cellContentHandle;
@@ -72,11 +167,22 @@ public class ExcelReader implements Iterable<List<String>> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     * 构造函数
+     * 构造 Excel 读取器
+     * <p>
+     * 初始化 Excel 读取器，解析指定的工作表并准备读取数据。
+     * 支持 .xls 和 .xlsx 格式的 Excel 文件。
+     * </p>
+     * 
+     * <p>
+     * <strong>注意：</strong>构造器会消费输入流，请确保在使用后正确关闭流。
+     * </p>
      *
-     * @param inputStream Excel文件流
-     * @param sheetIndex  要解析的sheetIndex,从0开始
-     * @param config      配置
+     * @param inputStream Excel 文件输入流，不可为 null
+     * @param sheetIndex  要读取的工作表索引，从 0 开始计数
+     * @param config      读取配置，不可为 null
+     * @throws IllegalArgumentException 当 config 为 null 时
+     * @throws RuntimeException 当 Excel 文件解析失败时
+     * @see ExcelReaderConfig
      */
     public ExcelReader(InputStream inputStream, int sheetIndex, ExcelReaderConfig config) {
         Objects.requireNonNull(config);
@@ -85,10 +191,15 @@ public class ExcelReader implements Iterable<List<String>> {
     }
 
     /**
-     * 初始化
+     * 初始化 Excel 读取器内部组件
+     * <p>
+     * 从输入流中创建 Excel 工作簿，初始化公式计算器，
+     * 获取指定的工作表并计算总行数。
+     * </p>
      *
-     * @param inputStream 输入流
-     * @param sheetIndex  表索引
+     * @param inputStream Excel 文件输入流
+     * @param sheetIndex  工作表索引，从 0 开始
+     * @throws RuntimeException 当文件解析失败时
      */
     private void init(InputStream inputStream, int sheetIndex) {
         try {
@@ -102,9 +213,22 @@ public class ExcelReader implements Iterable<List<String>> {
     }
 
     /**
-     * 得到真实总行数<br> 有时Excel中删除了内容，但没有删除格式，会留下空白行。
+     * 计算工作表的真实数据行数
+     * <p>
+     * 解决 Excel 中删除内容但保留格式导致的虚假行问题。
+     * 遍历所有行，遇到第一个空行或空白行时停止计数。
+     * </p>
+     * 
+     * <p>
+     * <strong>判断空行的条件：</strong>
+     * <ul>
+     * <li>Row 对象为 null（被删除的行）</li>
+     * <li>所有单元格都为空或空白字符串</li>
+     * </ul>
+     * </p>
      *
-     * @return int
+     * @return 实际包含数据的行数
+     * @see #isBlankRow(List)
      */
     public int realRows() {
         int con = sheet.getLastRowNum() + 1;
@@ -124,9 +248,24 @@ public class ExcelReader implements Iterable<List<String>> {
     }
 
     /**
-     * 迭代器
+     * 获取行数据迭代器
+     * <p>
+     * 实现 {@link Iterable} 接口，支持使用 for-each 循环遍历 Excel 数据。
+     * 迭代器采用懒加载方式，适合处理大文件。
+     * </p>
+     * 
+     * <p>
+     * <strong>使用示例：</strong>
+     * <pre>{@code
+     * for (List<String> row : excelReader) {
+     *     // 处理每一行数据
+     *     System.out.println(row);
+     * }
+     * }</pre>
+     * </p>
      *
-     * @return {@link Iterator}<{@link List}<{@link String}>>
+     * @return 行数据迭代器，每个元素为一行的字符串列表
+     * @see Iterable#iterator()
      */
     @Override
     public Iterator<List<String>> iterator() {
@@ -134,9 +273,14 @@ public class ExcelReader implements Iterable<List<String>> {
     }
 
     /**
-     * 获得第一行数据
+     * 获取第一行数据
+     * <p>
+     * 返回 Excel 的第一行数据，通常用于获取列标题。
+     * 如果第一行不存在或为空，则返回空列表。
+     * </p>
      *
-     * @return {@link List}<{@link String}>
+     * @return 第一行的字符串列表，不为 null
+     * @see #getRow(int)
      */
     public List<String> first() {
         return getRow(0);
