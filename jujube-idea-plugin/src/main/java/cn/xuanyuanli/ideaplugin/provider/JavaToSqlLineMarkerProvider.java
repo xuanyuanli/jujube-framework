@@ -26,7 +26,10 @@ public class JavaToSqlLineMarkerProvider extends RelatedItemLineMarkerProvider {
             String methodName = method.getName();
 
             PsiClass psiClass = method.getContainingClass();
-            if (!Utils.isBaseDao(Objects.requireNonNull(psiClass))) {
+            if (psiClass == null) {
+                return;
+            }
+            if (!Utils.isBaseDao(psiClass)) {
                 return;
             }
             if (Utils.isOverwriteMethod(method) || Utils.isDefaultMethod(method) || Utils.isJpaMethod(methodName)) {

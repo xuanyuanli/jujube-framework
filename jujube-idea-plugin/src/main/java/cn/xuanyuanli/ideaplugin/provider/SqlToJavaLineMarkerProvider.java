@@ -24,8 +24,8 @@ public class SqlToJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
-        System.out.println(element.getClass().getName() + " : " + element.getText().length()
-                + " : " + Texts.truncate(element.getText(), 100).replace("\n", "\t"));
+//        System.out.println(element.getClass().getName() + " : " + element.getText().length()
+//                + " : " + Texts.truncate(element.getText(), 100).replace("\n", "\t"));
         // 检查元素是否是 SQL 文件中的方法定义
         if (Utils.isSqlFile(element.getContainingFile()) && isMethodDefinition(element)) {
             // 获取方法名
@@ -60,7 +60,7 @@ public class SqlToJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
     private static boolean isSqlTokenEle(PsiElement element) {
         PsiElement prevSibling = element.getPrevSibling();
-        if (prevSibling == null){
+        if (prevSibling == null && element.getParent() != null) {
             prevSibling = element.getParent().getPrevSibling();
         }
         PsiElement nextSibling = element.getNextSibling();

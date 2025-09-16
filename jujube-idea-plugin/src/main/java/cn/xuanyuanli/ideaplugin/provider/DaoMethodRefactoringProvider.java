@@ -27,8 +27,11 @@ public class DaoMethodRefactoringProvider implements RefactoringElementListenerP
         if (!(element instanceof PsiMethod method)) {
             return null;
         }
+        if (method.getContainingClass() == null) {
+            return null;
+        }
         String methodName = method.getName();
-        if (!Utils.isBaseDao(Objects.requireNonNull(method.getContainingClass())) || Utils.isJpaMethod(methodName)) {
+        if (!Utils.isBaseDao(method.getContainingClass()) || Utils.isJpaMethod(methodName)) {
             return null;
         }
         return new RefactoringElementListener() {
