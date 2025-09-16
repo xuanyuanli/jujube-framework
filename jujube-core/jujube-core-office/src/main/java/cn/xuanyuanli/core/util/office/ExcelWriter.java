@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import cn.xuanyuanli.core.util.*;
 import kong.unirest.core.Unirest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,14 +41,10 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import cn.xuanyuanli.core.constant.Charsets;
 import cn.xuanyuanli.core.constant.SystemProperties;
 import cn.xuanyuanli.core.lang.BaseEntity;
-import cn.xuanyuanli.core.util.Beans;
-import cn.xuanyuanli.core.util.Dates;
-import cn.xuanyuanli.core.util.Files;
-import cn.xuanyuanli.core.util.Numbers;
-import cn.xuanyuanli.core.util.Texts;
 import cn.xuanyuanli.core.util.snowflake.SnowFlakes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 /**
  * Excel写入工具类
@@ -85,7 +83,7 @@ public class ExcelWriter {
      * @param sheetHandler     工作表处理器，用于对工作表进行额外的自定义处理
      */
     public static void writeExcelWithTemplate(String templateFilePath, String destFileName, int copyLineIndex, List<List<String>> lines,
-            ExcelSheetHandler sheetHandler) {
+                                              ExcelSheetHandler sheetHandler) {
         FileOutputStream out = null;
         FileInputStream templateInput = null;
         File destFile;
@@ -169,7 +167,7 @@ public class ExcelWriter {
             destFile = Files.createFile(destFile.getAbsolutePath());
         }
         try (FileOutputStream outputStream = new FileOutputStream(destFile);
-                InputStream input = generateExcelInputStream(lines, handleImage)) {
+             InputStream input = generateExcelInputStream(lines, handleImage)) {
             IOUtils.copy(Objects.requireNonNull(input), outputStream);
             logger.info("生成Excle：{},共{}行数据", destFile.getAbsolutePath(), lines.size());
         } catch (IOException e) {
@@ -228,12 +226,35 @@ public class ExcelWriter {
      * @param rowIndex 行索引（从0开始）
      * @param row      行对象
      * @param colIndex 列索引（从0开始）
-     * @param imgUrl   图片URL地址，需要以"image:"开头
+     * @param imgUrl   图片URL地址或资源路径，需要以"image:"开头
      */
     public static void setCellImageValue(Sheet sheet, int rowIndex, Row row, int colIndex, String imgUrl) {
         sheet.setColumnWidth(colIndex, 4800);
         row.setHeight((short) 2200);
-        byte[] bytes = Unirest.get(imgUrl.substring(IMAGE_PREFIX.length())).asBytes().getBody();
+
+        String imagePath = imgUrl.substring(IMAGE_PREFIX.length());
+        byte[] bytes = null;
+
+        try {
+            if (imagePath.startsWith("http:") || imagePath.startsWith("https:")) {
+                bytes = Unirest.get(imagePath).asBytes().getBody();
+            } else {
+                Resource classPathResources = Resources.getClassPathResources(imagePath);
+                if (classPathResources != null) {
+                    try (var inputStream = classPathResources.getInputStream();) {
+                        bytes = inputStream.readAllBytes();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to load image from: " + imagePath, e);
+            return;
+        }
+
+        if (bytes == null) {
+            logger.warn("Failed to load image from: {}", imagePath);
+            return;
+        }
         int myPictureId = sheet.getWorkbook().addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
         XSSFClientAnchor myAnchor = new XSSFClientAnchor();
         myAnchor.setCol1(colIndex);
@@ -376,27 +397,27 @@ public class ExcelWriter {
          * 字段名称
          */
         private String fieldName;
-        
+
         /**
          * 列名称（用于表头显示）
          */
         private String colName;
-        
+
         /**
          * 列索引（用于排序）
          */
         private int colIndex;
-        
+
         /**
          * 日期格式化模式
          */
         private String dateFormat;
-        
+
         /**
          * 数字格式化模式
          */
         private String numberFormat;
-        
+
         /**
          * 自定义格式化模式
          */
